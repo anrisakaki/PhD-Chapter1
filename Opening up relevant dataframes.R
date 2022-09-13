@@ -1,0 +1,13 @@
+# Opening up relevant packages
+library(tidyverse)
+library(usethis)
+library(haven)
+library(gtsummary)
+library(gt)
+library(sf)
+library(fixest)
+library(modelsummary)
+library(bookdown)
+library(kableExtra)
+library(ggeffects)
+library(xtable)
