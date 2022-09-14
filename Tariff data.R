@@ -46,3 +46,15 @@ tariff$Industry <-  forcats::fct_recode(tariff$isic2,
                                         "Business support services" = "74",
                                         "Waste management" = "92",
                                         "Other Services" = "93")
+# Bar chart for tariff cuts 
+tariff <- tariff %>% 
+  arrange(desc(Change_rate)) %>% 
+  mutate(Change_rate = Change_rate*100)
+
+ggplot(dplyr::filter(tariff, Change_rate > 0.1), aes(reorder(Industry, Change_rate), Change_rate)) +
+  geom_col() +
+  labs(x = "Industry",
+       y= "Tariff Cut (Percentage Points)") +
+  theme(axis.text.x = element_text(angle = 90))+
+  coord_flip()
+ggsave("industrybarchart.png")
