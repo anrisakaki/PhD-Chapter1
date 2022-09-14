@@ -67,16 +67,3 @@ preBTA_provtariff_k <- provtariff_weights_k %>%
 postBTA_provtariff_k <- provtariff_weights_k %>% 
   group_by(tinh) %>% 
   summarise(postprov_tariff_k = weighted.mean(mfn_ave_all, weight_02_k))
-
-preBTA_textiles <- provtariff_weights %>% 
-  mutate(across(isic2, as.character)) %>% 
-  filter(isic2 > 16 & isic2 < 20) %>% 
-  filter(!isic2 %in% c('2'))
-
-preprovBTA_textiles <- preBTA_textiles %>%
-  group_by(tinh) %>%
-  summarise(preprov_tariff_textiles = weighted.mean(col2_ave_all, weight_02))
-
-postprovBTA_textiles <- preBTA_textiles %>%
-  group_by(tinh) %>%
-  summarise(postprov_tariff_textiles = weighted.mean(mfn_ave_all, weight_02))
