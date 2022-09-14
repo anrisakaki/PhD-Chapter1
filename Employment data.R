@@ -28,7 +28,7 @@ employment_mf_02$sex <- factor(employment_mf_02$m1c2,
                                c(1,2),
                                c("Male", "Female"))
 
-# PANEL FOR EMPLOYMENT DATA   
+## 2002 - 2004 panel 
 employment_mf_02p <- employment_mf_02 %>% 
   select(-c(tinh, xa, hoso, matv)) %>% 
   select(-ends_with(".x")) %>% 
