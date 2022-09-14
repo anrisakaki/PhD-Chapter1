@@ -3,7 +3,6 @@
 ###############################################
 
 # 2002 
-
 m3_02$m3c7[is.na(m3_02$m3c7)] <- 0
 
 educ_02 <- m2_02 %>% select(tinh, xa, hoso, matv, tinh02, xa02, hoso02, matv02, hhid, ivid, m2c1)
@@ -40,4 +39,135 @@ employment_mf_02p <- merge(ivid0204, employment_mf_02p, by = c("xa02", "hhid02",
   rename(hoso02 = hoso02.x,
          matv02 = matv02.x) # N = 39,988
 
-emp_ivid04 <- employment_mf_02p %>% select("tinh", "huyen", "xa", "hoso", "matv", "hhid", "ivid") # ivid of individuals who reappears in the VHLSS 2004, based on their 2004 identifiers 
+emp_ivid04 <- employment_mf_02p %>% select("tinh", "huyen", "xa", "hoso", "matv", "hhid", "ivid")
+
+# 2004 
+m4a_04$m4ac5[is.na(m4a_04$m4ac5)] <- 0
+
+employment_mf_04a <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "diaban", "hoso", "matv", "hhid", "ivid")) %>%
+  distinct() %>% 
+  select(tinh, huyen, xa, diaban, hoso, matv, hhid, ivid, m1ac2, m1ac5, m1ac6, m2c1, m4ac1a, m4ac1c, m4ac2, m4ac5) %>% 
+  rename(
+    "industry" = m4ac5,
+    "wage_work" = m4ac1a
+  ) #Merging data on age, sex, marital status, and industry worked in (N = 202,321)
+
+employment_mf_04a <- merge(employment_mf_04a, weights_04, by = c("tinh", "huyen", "xa")) %>% 
+  distinct()
+
+employment_mf_04 <- employment_mf_04a %>%
+  filter(m1ac5 >= 18) %>%
+  filter(m1ac5 < 65) # N = 117,114
+
+#Recoding binary variable for sex
+employment_mf_04$sex <- factor(employment_mf_04$m1ac2,
+                               c(1,2),
+                               c("Male", "Female")) 
+
+employment_mf_04p <- left_join(emp_ivid04, employment_mf_04, by = c("tinh", "huyen", "xa", "hoso", "matv", "hhid", "ivid")) %>% 
+  distinct() #N = 40,014
+
+# 2006 
+m4a_06$m4ac5[is.na(m4a_06$m4ac5)] <- 0
+
+employment_mf_06 <- merge(m1a_06, m4a_06, by = c("tinh", "huyen", "xa", "diaban", "hoso", "matv", "hhid", "ivid"))
+employment_mf_06 <- merge(employment_mf_06, weights_06, by = c("tinh", "huyen", "xa"))
+
+employment_mf_06 <- employment_mf_06 %>%
+  filter(m1ac5 >= 18,
+         m1ac5 < 65) %>% # N = 117,552 
+  rename("industry" = m4ac5,
+         "wage_work" = m4ac1a) 
+
+## Recoding binary variable for sex
+employment_mf_06$sex <- factor(employment_mf_06$m1ac2,
+                               c(1,2),
+                               c("Male", "Female")) 
+
+employment_mf_06p <- employment_mf_06 %>% 
+  rename(ivid06 = ivid)
+
+employment_mf_06p <- left_join(ivid020406, employment_mf_06p, by = "ivid06") %>% 
+  distinct() #N = 31,981
+
+#########################################################
+# CREATING EMPLOMYMENT DUMMIES AND LABELLING INDUSTRIES #
+#########################################################
+
+emp020406 <- c("employment_mf_02", "employment_mf_04", "employment_mf_06", "employment_mf_02p", "employment_mf_04p", "employment_mf_06p")
+
+for(i in emp020406) {
+  assign(i,get(i) %>%
+           mutate(
+             tal = as.numeric(industry %in% c(18, 19)),
+             agri_work = as.numeric(industry %in% c(1,2,4,5)),
+             service = as.numeric(industry > 50),
+             manu = as.numeric(industry > 14 & industry < 38),
+             wage_work = as.numeric(wage_work < 2),
+             construction = 45
+           ))
+  
+  assign(i,get(i) %>%
+           mutate(Industry = recode(industry,
+                                    "0" = "Unemployed",
+                                    "1" = "Agriculture, hunting and related service activities",
+                                    "2" = "Forestry, logging and related service activities",
+                                    "5" = "Fishing, operation of fish hatcheries and fish farms; service activities incidental to fishing",
+                                    "10" = "Mining of coal and lignite" ,
+                                    "11" = "Extraction of crude petroleum and natural gas; service activities incidental to oil and gas extraction excluding surveying",
+                                    "12" = "Mining of uranium and thorium ores",
+                                    "13" =  "Mining of metal ores",
+                                    "14" = "Other mining and quarrying",
+                                    "15" = "Manufacture of food products and beverages",
+                                    "16" = "Manufacture of tobacco products",
+                                    "17" = "Manufacture of textiles",
+                                    "18" = "Manufacture of wearing apparel",
+                                    "19" = "Manufacture of leather goods (including footwear)",
+                                    "20" = "Manufacture of wood and of products of wood",
+                                    "21" = "Manufacture of paper and paper products",
+                                    "22" = "Publishing, printing and reproduction of recorded media",
+                                    "23" = "Manufacture of coke, refined petroleum products and nuclear fuel",
+                                    "24" = "Manufacture of chemicals and chemical products",
+                                    "25" = "Manufacture of rubber and plastics products",
+                                    "26" = "Manufacture of other non-metallic mineral products",
+                                    "27" = "Manufacture of basic metals",
+                                    "28" = "Manufacture of fabricated metal products",
+                                    "29" = "Manufacture of not-yet-classified machinery and equipment",
+                                    "30" = "Manufacture of office, accounting and computing machinery",
+                                    "31" = "Manufacture of electrical machinery and apparatus n.e.c.",
+                                    "32" = "Manufacture of radio, television and communication equipment and apparatus",
+                                    "33" = "Manufacture of medical, precision and optical instruments, watches and clocks",
+                                    "34" = "Manufacture of motor vehicles, trailers and semi-trailers",
+                                    "35" = "Manufacture of other transport equipment",
+                                    "36" = "Manufacture of furniture; manufacturing n.e.c.",
+                                    "37" = "Recycling",
+                                    "40" = "Electricity, gas, steam and hot water supply",
+                                    "41" = "Collection, purification and distribution of water",
+                                    "45" = "Construction",
+                                    "50" = "Sale, maintenance and repair of motor vehicles and motorcycles; retail sale of automotive fuel",
+                                    "51" = "Wholesale trade and commission trade, except of motor vehicles and motorcycles",
+                                    "52" ="Retail trade, except of motor vehicles and motorcycles; repair of personal and household goods",
+                                    "55" = "Hotels and restaurants",
+                                    "60" = "Land transport; transport via pipelines",
+                                    "61" = "Water transport",
+                                    "62" = "Air transport",
+                                    "63" = "Supporting and auxiliary transport activities",
+                                    "64" = "Post and telecommunications",
+                                    "65" = "Financial intermediation",
+                                    "66" = "Insurance and pension funding, except compulsory social security",
+                                    "67" = "Activities auxiliary to financial intermediation",
+                                    "70" = "Scientific and industrial activities",
+                                    "71" = "Real estate activities",
+                                    "72" = "Renting of machinery and equipment without operator and of personal and household goods",
+                                    "73" = "Computer and related activities",
+                                    "74" = "Other business activities",
+                                    "75" = "Public administration and defence; compulsory social security",
+                                    "80" = "Education",
+                                    "85" = "Health and social work",
+                                    "90" = "Sporting and other recreational activities",
+                                    "91"= "Activities of the party, organisations and associations",
+                                    "92" = "Sewage and refuse disposal, sanitation and similar activities",
+                                    "93" = "Other service activities",
+                                    "95" = "Private households with employed persons",
+                                    "99" = "Extra-territorial organizations and bodies")))
+}
