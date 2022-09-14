@@ -112,15 +112,28 @@ for (i in emp0406){
              age5 = as.numeric(age > 55 & age < 66)))
 }
 
+employment0204_p <- bind_rows(employment_mf_02p, employment_mf_04p)
+
+employment_mf_0206_p <- merge(ivid020406, employment_mf_02, by = "ivid02")
+
+employment0206_p <- bind_rows(employment_mf_0206_p, employment_mf_06p)
+
+employment0204 <- bind_rows(employment_mf_02, employment_mf_04)
+
+employment_mf_06 <- employment_mf_06 %>% 
+  mutate(across(c(huyen, diaban, xa, hoso, matv), as.numeric)) %>% 
+  mutate(across(tinh, as.factor))
+
+employment0206 <- bind_rows(employment_mf_02, employment_mf_06)
+
+y <- c("agri_work", "manu", "tal", "construction")
+
 ############################################################
 # REGRESSION ON STRUCTURAL TRANSFORMATION USING PANEL DATA #
 ############################################################
 
 # 2002 - 2004 
 ## Topalova tariffs
-
-employment0204_p <- bind_rows(employment_mf_02p, employment_mf_04p)
-
 models_0204_p_summary <- list()
 
 for (i in y){
@@ -148,11 +161,6 @@ for (i in y){
 
 # 2002 - 2006 
 ## Topalova tariffs
-
-employment_mf_0206_p <- merge(ivid020406, employment_mf_02, by = "ivid02")
-
-employment0206_p <- bind_rows(employment_mf_0206_p, employment_mf_06p)
-
 models_0206_p_summary <- list()
 
 for (i in y){
@@ -184,10 +192,6 @@ for (i in y){
 
 # 2002 - 2004 
 ## Topalova tariffs 
-
-employment0204 <- bind_rows(employment_mf_02, employment_mf_04)
-
-y <- c("agri_work", "manu", "tal", "construction")
 models_0204_summary <- list()
 
 for (i in y){
@@ -215,13 +219,6 @@ for (i in y){
 
 # 2002 - 2006 
 ## Topalova tariffs 
-
-employment_mf_06 <- employment_mf_06 %>% 
-  mutate(across(c(huyen, diaban, xa, hoso, matv), as.numeric)) %>% 
-  mutate(across(tinh, as.factor))
-
-employment0206 <- bind_rows(employment_mf_02, employment_mf_06)
-
 models_0206_summary <- list()
 
 for (i in y){
@@ -257,9 +254,8 @@ etable(list(
   models_0204_p_summary[[1]],
   models_0204_p_k_summary[[1]],
   models_0206_p_summary[[1]],
-  models_0206_p_k_summary[[1]]
-),
-tex = TRUE
+  models_0206_p_k_summary[[1]]),
+  tex = TRUE
 )
 
 ## Construction 
