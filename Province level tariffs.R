@@ -80,4 +80,3 @@ preprovBTA_textiles <- preBTA_textiles %>%
 postprovBTA_textiles <- preBTA_textiles %>%
   group_by(tinh) %>%
   summarise(postprov_tariff_textiles = weighted.mean(mfn_ave_all, weight_02))
-
