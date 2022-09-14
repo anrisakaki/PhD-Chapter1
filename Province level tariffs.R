@@ -67,3 +67,10 @@ preBTA_provtariff_k <- provtariff_weights_k %>%
 postBTA_provtariff_k <- provtariff_weights_k %>% 
   group_by(tinh) %>% 
   summarise(postprov_tariff_k = weighted.mean(mfn_ave_all, weight_02_k))
+
+preBTA_tariffs <- c("preBTA_provtariff", "preBTA_provtariff_k")
+
+for(i in preBTA_tariffs){
+  assign(i, get(i) %>% 
+           mutate(across(tinh, as.factor)))
+}
