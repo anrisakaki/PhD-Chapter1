@@ -111,3 +111,154 @@ for (i in emp0406){
              age4 = as.numeric(age > 45 & age < 56),
              age5 = as.numeric(age > 55 & age < 66)))
 }
+
+############################################################
+# REGRESSION ON STRUCTURAL TRANSFORMATION USING PANEL DATA #
+############################################################
+
+# 2002 - 2004 
+## Topalova tariffs
+
+employment0204_p <- bind_rows(employment_mf_02p, employment_mf_04p)
+
+models_0204_p_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ factor(sex)/provtariff | year + ivid"))
+  model <- feols(formula,
+                 data = employment0204_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0204_p_summary[[i]] <- model
+}
+
+## Kovak tariffs 
+models_0204_p_k_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ factor(sex)/provtariff_k | year + ivid"))
+  model <- feols(formula,
+                 data = employment0204_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0204_p_k_summary[[i]] <- model
+}
+
+# 2002 - 2006 
+## Topalova tariffs
+
+employment_mf_0206_p <- merge(ivid020406, employment_mf_02, by = "ivid02")
+
+employment0206_p <- bind_rows(employment_mf_0206_p, employment_mf_06p)
+
+models_0206_p_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ factor(sex)/provtariff | year + ivid02"))
+  model <- feols(formula,
+                 data = employment0206_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0206_p_summary[[i]] <- model
+}
+
+## Kovak tariffs 
+models_0206_p_k_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ factor(sex)/provtariff_k | year + ivid02"))
+  model <- feols(formula,
+                 data = employment0206_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0206_p_k_summary[[i]] <- model
+}
+
+######################################################################
+# REGRESSION ON STRUCTURAL TRANSFORMATION USING CROSS SECTIONAL DATA #
+######################################################################
+
+# 2002 - 2004 
+## Topalova tariffs 
+
+employment0204 <- bind_rows(employment_mf_02, employment_mf_04)
+
+y <- c("agri_work", "manu", "tal", "construction")
+models_0204_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ factor(sex)*provtariff + age + age^2  + educ + factor(urban) | year + tinh"))
+  model <- feols(formula,
+                 data = employment0204,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0204_summary[[i]] <- model
+}
+
+## Kovak tariffs 
+models_0204_k_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ factor(sex)*provtariff_k + age + age^2 + i(urban) + educ| year + tinh"))
+  model <- feols(formula,
+                 data = employment0204,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0204_k_summary[[i]] <- model
+}
+
+# 2002 - 2006 
+## Topalova tariffs 
+
+employment_mf_06 <- employment_mf_06 %>% 
+  mutate(across(c(huyen, diaban, xa, hoso, matv), as.numeric)) %>% 
+  mutate(across(tinh, as.factor))
+
+employment0206 <- bind_rows(employment_mf_02, employment_mf_06)
+
+models_0206_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ factor(sex)*provtariff + age + age^2 + educ + factor(urban) | year + tinh"))
+  model <- feols(formula,
+                 data = employment0206,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0206_summary[[i]] <- model
+}
+
+## Kovak tariffs 
+models_0206_k_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ factor(sex)*provtariff_k + age + age^2 + i(urban) + educ| year + tinh"))
+  model <- feols(formula,
+                 data = employment0206,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0206_k_summary[[i]] <- model
+}
+
+###############################################################
+# SUMMARY TABLES FOR REGRESSIONS ON STRUCTURAL TRANSFORMATION #
+###############################################################
+
+# Panel data 
+
+## Construction 
+etable(list(
+  models_0204_p_summary[[4]],
+  models_0204_p_k_summary[[4]],
+  models_0206_p_summary[[4]],
+  models_0206_p_k_summary[[4]]
+  ),
+  tex = TRUE
+)
