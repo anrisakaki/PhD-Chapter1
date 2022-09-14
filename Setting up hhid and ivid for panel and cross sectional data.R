@@ -87,9 +87,11 @@ for(i in hh06){
            mutate(hhid = tinh*10^9 + huyen*10^7 + xa*10^5 + diaban*10^2 + hoso))
 }
 
-# Setting up HOUSEHOLD panel 
+##############################
+# SETTING UP HOUSEHOLD PANEL #
+##############################
 
-## 2002 - 2004 
+# 2002 - 2004 
 ho1_04 <- ho1_04 %>%
   mutate(xa02 = tinh02 * 10^4 + huyen02 * 10^2 + xa02)
 
@@ -134,7 +136,7 @@ hhid04 <- ho1_04 %>%
   filter(m1c1 == 1) %>% 
   select(tinh, huyen, xa, hoso, hhid)
 
-## 2002 - 2006  
+# 2002 - 2006  
 
 diaban04 <- diaban04 %>% 
   rename(diaban04 = diaban,
@@ -147,7 +149,7 @@ hhid0406 <- merge(ttchung_06, diaban04, by = c("tinh04", "huyen04", "xa04")) %>%
   rename(hhid06 = hhid) %>% 
   select(hhid04, hhid06)
 
-## 2002- 2004 - 2006 panel final 
+# 2002- 2004 - 2006 panel final 
 
 hhid020406 <- hhid0204 %>% 
   select(hhid02, hhid) %>% 
@@ -159,7 +161,7 @@ hhid020406 <- merge(hhid020406, hhid0406, by = "hhid04") # N = 10,778
 # GENERATING INDIVIDUAL IDENTIFIERS #
 #####################################
 
-## 2002 
+# 2002 
 id02 <- c("m1_02", "m2_02", "m3_02", "m5a_02")
 
 for(i in id02){
@@ -172,7 +174,7 @@ for(i in id02){
   assign(i, df)
 }
 
-## 2004 
+# 2004 
 m1b_04 <- m1b_04 %>%
   rename("matv" = m1bc7)
 
@@ -205,9 +207,11 @@ for(i in id06){
   
 }
 
+###################################
+# SETTING UP FOR INDIVIDUAL PANEL #
+###################################
 
-# Setting up ivid02 ivid04 for panel data
-
+# 2002 - 2004
 ivid04 <- m1b_04 %>%
   filter(m1bc6 == 1) %>% 
   filter(!is.na(matv)) %>% 
@@ -222,4 +226,94 @@ ivid0204 <- ivid0204 %>%
 
 ivid0204$ivid02 <- as.character(as.numeric(ivid0204$ivid02))
 
-# Setting up 
+# 2002 - 2006 
+ivid0406 <- m1b_06 %>% 
+  filter(m1bc6 == 1) %>% 
+  rename(matv04 = m1bc3) %>% 
+  select(hhid, ivid, matv04, m1bc4, m1bc5) %>% 
+  rename(hhid06 = hhid,
+         ivid06 = ivid) # N = 87,330
+
+ivid0406 <- merge(hhid0406, ivid0406, by = "hhid06") # N = 87,330
+
+ivid0406 <- ivid0406 %>% 
+  mutate(ivid04 = hhid04*100 + matv04) %>% 
+  select(ivid04, ivid06, m1bc4, m1bc5)
+
+ivid0406$ivid04 <- as.character(as.numeric(ivid0406$ivid04))
+
+######################################
+# CHECKING ACCURACY OF PANEL CREATED #
+######################################
+
+# 2002 - 2004 
+## Checking if merged dataset is accurate by comparing age in 2002 and 2002 age and sex reported in VHLSS 2004 to VHLSS 2002 
+age_vhlss02 <- m1_02 %>%
+  select(xa02, hoso, matv02, hhid, ivid, m1c2, m1c5) %>% 
+  rename("hhid02" = "hhid",
+         hoso02 = hoso) %>% 
+  rename("ivid02" = "ivid")
+
+age_vhlss0204 <- merge(ivid0204, age_vhlss02, by = c("xa02", "hhid02", "ivid02"), all.x=TRUE) ##Keeping the Age02 dataframe to those in the panel (N = 88,826)
+
+age_vhlss0204 <- age_vhlss0204 %>%
+  mutate(agediff = m1bc5 - m1c5,
+         sexdiff = m1bc4 - m1c2)
+
+age_vhlss0204$agecorrect <- 1
+age_vhlss0204$agecorrect[age_vhlss0204$agediff > 0] <- 0
+age_vhlss0204$agecorrect[age_vhlss0204$agediff < 0] <- 0
+
+age_vhlss0204$sexcorrect <- 1
+age_vhlss0204$sexcorrect[age_vhlss0204$sexdiff > 0] <- 0
+age_vhlss0204$sexcorrect[age_vhlss0204$sexdiff < 0] <- 0
+
+age_vhlss0204$correct <- ifelse(age_vhlss0204$agecorrect == 1 & age_vhlss0204$sexcorrect == 1, 1, 0)
+
+proportions(table(age_vhlss0204$correct)) ## 14.1% of the matches are incorrect. I drop the mismatched observations.  
+
+ivid0204 <- age_vhlss0204 %>% 
+  filter(correct == 1) %>% 
+  filter(!is.na(ivid02))
+
+ivid02 <- ivid0204 %>% select(hhid02, ivid02)
+ivid04 <- ivid0204 %>% select(hhid, ivid)
+
+ivid0204 <- ivid0204 %>%
+  select(xa02, hoso02.x, matv02.x, hhid02, ivid02, tinh, huyen, xa, hoso, matv, hhid, ivid) %>% 
+  rename(hoso02 = hoso02.x,
+         matv02 = matv02.x) # Finally, I have a panel of 78,051 individuals 
+
+# 2002 - 2006 
+age_vhlss04 <- m123a_04 %>% 
+  select(ivid, m1ac2, m1ac5) %>% 
+  rename(ivid04 = ivid)
+
+age_vhlss04 <- merge(age_vhlss04, ivid0406, by = "ivid04")
+
+age_vhlss04 <- age_vhlss04 %>% 
+  mutate(agediff = m1bc5 - m1ac5,
+         sexdiff = m1bc4 - m1ac2)
+
+age_vhlss04$agecorrect <- 1
+age_vhlss04$agecorrect[age_vhlss04$agediff > 0] <- 0
+age_vhlss04$agecorrect[age_vhlss04$agediff < 0] <- 0
+
+age_vhlss04$sexcorrect <- 1
+age_vhlss04$sexcorrect[age_vhlss04$sexdiff > 0] <- 0
+age_vhlss04$sexcorrect[age_vhlss04$sexdiff < 0] <- 0
+
+age_vhlss04$correct <- ifelse(age_vhlss04$agecorrect == 1 & age_vhlss04$sexcorrect == 1, 1, 0)
+
+proportions(table(age_vhlss04$correct)) # 93.5% of observations were matched correctly. 
+
+ivid0406 <- age_vhlss04 %>% 
+  filter(correct == 1) %>% 
+  select(ivid04, ivid06) # N = 80,869
+
+# 2002 - 2006 panel final 
+ivid020406 <- ivid0204 %>% 
+  rename(ivid04 = ivid)
+
+ivid020406 <- merge(ivid020406, ivid0406, by = "ivid04") %>% 
+  select(ivid02, ivid04, ivid06)
