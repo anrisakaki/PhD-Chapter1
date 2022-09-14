@@ -429,3 +429,670 @@ sec020406 <- list(sec_02, sec_04, sec_06) %>%
 
 sec020406 <- sec020406 %>%
   arrange(as.numeric(as.character(FChange, decreasing = TRUE)))
+
+#################################################
+# PROVINCE-LEVEL SECTORAL COMPOSITION BY GENDER #
+#################################################
+
+# 2002 
+agri_prov_02 <- employment_mf_02 %>% 
+  filter(agri_work == 1) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+manu_prov_02 <- employment_mf_02 %>% 
+  filter(manu == 1) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+manu_exc_al_prov_02 <- employment_mf_02 %>% 
+  filter(manu == 1) %>%
+  filter(tal == 0) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+textiles_prov_02 <- employment_mf_02 %>% 
+  filter(industry == 17) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+tal_prov_02 <- employment_mf_02 %>% 
+  filter(tal == 1) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+con_prov_02 <- employment_mf_02 %>% 
+  filter(industry == 45) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+prov_ams_02 <- c("agri_prov_02", "manu_prov_02", "manu_exc_al_prov_02", "textiles_prov_02", "tal_prov_02", "con_prov_02")
+
+for(i in prov_ams_02){
+  
+  assign(i, left_join(get(i), provtariff_weights_prov, by = "tinh"))
+  
+  assign(i, get(i) %>% 
+           mutate(n_workers = n/nworkers*100)) # Share of province in sector 
+  
+  assign(i, get(i) %>% 
+           select(tinh, n_workers))
+  
+  if(i %in% c("agri_prov_02")){
+    assign(i, get(i) %>%
+             rename(n_agri = n_workers))    
+  }  
+  
+  if(i %in% c("manu_prov_02")){
+    assign(i, get(i) %>%
+             rename(n_manu = n_workers))    
+  }   
+  
+  if(i %in% c("manu_exc_al_prov_02")){
+    assign(i, get(i) %>%
+             rename(n_manu_exc_al = n_workers))    
+  }
+  
+  if(i %in% c("textiles_prov_02")){
+    assign(i, get(i) %>%
+             rename(n_textiles = n_workers))    
+  } 
+  
+  if(i %in% c("tal_prov_02")){
+    assign(i, get(i) %>%
+             rename(n_tal = n_workers))    
+  }  
+  
+  if(i %in% c("con_prov_02")){
+    assign(i, get(i) %>%
+             rename(n_con = n_workers))    
+  }   
+}
+
+prov_ams_02 <- list(agri_prov_02, manu_prov_02, manu_exc_al_prov_02, textiles_prov_02, tal_prov_02, con_prov_02) %>% 
+  reduce(full_join, by = "tinh")
+
+# 2004 
+agri_prov_04 <- employment_mf_04 %>% 
+  filter(agri_work == 1) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+manu_prov_04 <- employment_mf_04 %>% 
+  filter(manu == 1) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+manu_exc_al_prov_04 <- employment_mf_04 %>% 
+  filter(manu == 1) %>% 
+  filter(tal == 0) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+service_prov_04 <- employment_mf_04 %>% 
+  filter(service == 1) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+tal_prov_04 <- employment_mf_04 %>% 
+  filter(tal == 1) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+con_prov_04 <- employment_mf_04 %>% 
+  filter(industry == 45) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+prov_workers_04 <- employment_mf_04 %>% 
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt) %>% 
+  rename(nworkers = n)
+
+fd_ams_04 <- c("agri_prov_04", "manu_prov_04", "manu_exc_al_prov_04", "service_prov_04", "tal_prov_04", "con_prov_04")
+
+for(i in fd_ams_04){
+  
+  assign(i, left_join(get(i), prov_workers_04, by = "tinh"))
+  
+  assign(i, get(i) %>% 
+           mutate(n_workers = n/nworkers*100)) # Share of province in sector 
+  
+  assign(i, get(i) %>% 
+           select(tinh, n_workers))
+  
+  if(i %in% c("agri_prov_04")){
+    assign(i, get(i) %>%
+             rename(n_agri_04 = n_workers))    
+  }  
+  
+  if(i %in% c("manu_prov_04")){
+    assign(i, get(i) %>%
+             rename(n_manu_04 = n_workers))    
+  }   
+  
+  if(i %in% c("manu_exc_al_prov_04")){
+    assign(i, get(i) %>%
+             rename(n_manu_exc_al_04 = n_workers))    
+  }  
+  
+  if(i %in% c("service_prov_04")){
+    assign(i, get(i) %>%
+             rename(n_service_04 = n_workers))    
+  } 
+  
+  if(i %in% c("tal_prov_04")){
+    assign(i, get(i) %>%
+             rename(n_tal_04 = n_workers))    
+  }   
+  
+  if(i %in% c("con_prov_04")){
+    assign(i, get(i) %>%
+             rename(n_con_04 = n_workers))    
+  }   
+}
+
+prov_ams_04 <- list(agri_prov_04, manu_prov_04, manu_exc_al_prov_04, service_prov_04, tal_prov_04, con_prov_04) %>% 
+  reduce(full_join, by = "tinh")
+
+# 2006 
+agri_prov_06 <- employment_mf_06 %>% 
+  filter(agri_work == 1) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+manu_prov_06 <- employment_mf_06 %>% 
+  filter(manu == 1) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+manu_exc_al_prov_06 <- employment_mf_06 %>% 
+  filter(manu == 1) %>% 
+  filter(tal == 0) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+textiles_prov_06 <- employment_mf_06 %>% 
+  filter(industry == 17) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+tal_prov_06 <- employment_mf_06 %>% 
+  filter(tal == 1) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+con_prov_06 <- employment_mf_06 %>% 
+  filter(industry == 45) %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+prov_workers_06 <- employment_mf_06 %>% 
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt) %>% 
+  rename(nworkers = n)
+
+fd_ams_06 <- c("agri_prov_06", "manu_prov_06", "manu_exc_al_prov_06", "textiles_prov_06", "tal_prov_06", "con_prov_06")
+
+for(i in fd_ams_06){
+  
+  assign(i, left_join(get(i), prov_workers_06, by = "tinh"))
+  
+  assign(i, get(i) %>% 
+           mutate(n_workers = n/nworkers*100)) # Share of province in sector 
+  
+  assign(i, get(i) %>% 
+           select(tinh, n_workers))
+  
+  if(i %in% c("agri_prov_06")){
+    assign(i, get(i) %>%
+             rename(n_agri_06 = n_workers))    
+  }  
+  
+  if(i %in% c("manu_prov_06")){
+    assign(i, get(i) %>%
+             rename(n_manu_06 = n_workers))    
+  }   
+  
+  if(i %in% c("manu_exc_al_prov_06")){
+    assign(i, get(i) %>%
+             rename(n_manu_exc_al_06 = n_workers))    
+  }   
+  
+  if(i %in% c("textiles_prov_06")){
+    assign(i, get(i) %>%
+             rename(n_textiles_06 = n_workers))    
+  } 
+  
+  if(i %in% c("tal_prov_06")){
+    assign(i, get(i) %>%
+             rename(n_tal_06 = n_workers))    
+  }   
+  
+  if(i %in% c("con_prov_06")){
+    assign(i, get(i) %>%
+             rename(n_con_06 = n_workers))    
+  }  
+}
+
+prov_ams_06 <- list(agri_prov_06, manu_prov_06, manu_exc_al_prov_06, textiles_prov_06, tal_prov_06, con_prov_06) %>% 
+  reduce(full_join, by = "tinh")
+
+# Merging 2002 and 2004 data 
+prov_ams_060402 <- list(prov_ams_02, prov_ams_04, prov_ams_06) %>% 
+  reduce(full_join, by = "tinh") %>% 
+  mutate(
+    agri_change_0402 = n_agri_04 - n_agri, 
+    manu_change_0402 = n_manu_04, n_manu,
+    tal_change_0402 = n_tal_04 - n_tal,
+    agri_change_0602 = n_agri_06 - n_agri,
+    manu_change_0602 = n_manu_06, n_manu,
+    textiles_change_0602 = n_textiles_06 - n_textiles,
+    tal_change_0602 = n_tal_06 - n_tal,
+    con_change_0602 = n_con_06 - n_con,
+    manu_exc_al_change_0602 = n_manu_exc_al_06 - n_manu_exc_al,
+  )
+
+prov_ams_060402 <- prov_ams_060402 %>% 
+  mutate(Tinh = recode(tinh,
+                       "101" = "Hanoi",
+                       "103" = "Hai Phong",
+                       "104" = "Vinh Phuc",
+                       "105" = "Ha Tay",
+                       "106" = "Bac Ninh",
+                       "107" = "Hai Duong",
+                       "109" = "Hung Yen",
+                       "111" = "Ha Nam",
+                       "113" = "Nam Dinh",
+                       "115" = "Thai Binh",
+                       "117" = "Ninh Binh",
+                       "201" = "Ha Giang",
+                       "203" = "Cao Bang",
+                       "205" = "Lao Cai",
+                       "207" = "Bac Can",
+                       "209" = "Lang Son",
+                       "211" = "Tuyen Quyen",
+                       "213" = "Yen Bai",
+                       "215" = "Thai Nguyen",
+                       "217" = "Phu Tho",
+                       "221" = "Bac Giang",
+                       "225" = "Quang Ninh",
+                       "301" = "Lai Chau",
+                       "303" = "Son La",
+                       "305" = "Hoa Binh",
+                       "401" = "Thanh Hoa",
+                       "403" = "Nghe An",
+                       "405" = "Ha Tinh",
+                       "407" = "Quang Binh",
+                       "409" = "Quang Tri",
+                       "411" = "Hue",
+                       "501" = "Da Nang",
+                       "503" = "Quang Nam",
+                       "505" = "Quang Ngai",
+                       "507" = "Binh Dinh",
+                       "509" = "Phu Yen",
+                       "511" = "Khanh Hoa",
+                       "601" = "Kon Tum",
+                       "603" = "Gia Lai",
+                       "605" = "Dac Lac",
+                       "607" = "Lam Dong",
+                       "701" = "Ho Chi Minh",
+                       "705" = "Ninh Thuan",
+                       "707" = "Binh Phuoc",
+                       "709" = "Tay Ninh",
+                       "711" = "Binh Duong",
+                       "713" = "Dong Nai",
+                       "715" = "Binh Thuan",
+                       "717" = "Ba Ria - Vung Tau",
+                       "801" = "Long An",
+                       "803" = "Dong Thap",
+                       "805" = "An Giang",
+                       "807" = "Tien Giang",
+                       "809" = "Vinh Long",
+                       "811" = "Ben Tre",
+                       "813" = "Kien Giang",
+                       "815" = "Can Tho",
+                       "817" = "Tra Vinh",
+                       "819" = "Soc Trang",
+                       "821" = "Bac Lieu",
+                       "823" = "Ca Mau"))
+
+#########################################################
+# PROVINCE-LEVEL FEMALE AND MALE EMPLOYMENT COMPOSITION #
+#########################################################
+
+# 2002 
+f_prov_02 <- employment_mf_02 %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt) %>% 
+  rename(Female_prov = n)
+
+fagri_prov_02 <- employment_mf_02 %>%
+  filter(agri_work == 1) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+fmanu_prov_02 <- employment_mf_02 %>% 
+  filter(manu == 1) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+fmanu_exc_al_prov_02 <- employment_mf_02 %>%
+  filter(manu == 1) %>%
+  filter(tal == 0) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+fservice_prov_02 <- employment_mf_02 %>% 
+  filter(service == 1) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+ftal_prov_02 <- employment_mf_02 %>% 
+  filter(tal == 1) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+f_ams_02 <- c("fagri_prov_02", "fmanu_prov_02", "fmanu_exc_al_prov_02", "fservice_prov_02", "ftal_prov_02")
+
+for (i in f_ams_02){
+  assign(i, left_join(get(i), f_prov_02, by = "tinh"))
+  
+  assign(i, get(i) %>% 
+           mutate(Fsec_02 = n / Female_prov) %>% 
+           select(-c("Female_prov", "n")))
+  
+  if(i %in% c("fagri_prov_02")){
+    assign(i, get(i) %>%
+             rename(F_Agri_02 = Fsec_02))    
+  }
+  
+  if(i %in% c("fmanu_prov_02")){
+    assign(i, get(i) %>%
+             rename(F_Manu_02 = Fsec_02))    
+  }
+  
+  if(i %in% c("fmanu_exc_al_prov_02")){
+    assign(i, get(i) %>%
+             rename(F_Manu_exc_al_02 = Fsec_02))    
+  }  
+  
+  if(i %in% c("fservice_prov_02")){
+    assign(i, get(i) %>%
+             rename(F_Serv_02 = Fsec_02))
+  } 
+  
+  if(i %in% c("ftal_prov_02")){
+    assign(i, get(i) %>%
+             rename(F_Tal_02 = Fsec_02))
+  }  
+  
+}
+
+preBTA_provtariff <- preBTA_provtariff %>% 
+  rename(tinh = tinh02)
+
+f_ams_02 <- list(fagri_prov_02, fmanu_prov_02, fmanu_exc_al_prov_02, fservice_prov_02, ftal_prov_02, preBTA_provtariff) %>% 
+  reduce(full_join, by = "tinh")
+
+# 2004 
+
+f_prov_04 <- employment_mf_04 %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt) %>% 
+  rename(Female_prov = n)
+
+fagri_prov_04 <- employment_mf_04 %>%
+  filter(agri_work == 1) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+fmanu_prov_04 <- employment_mf_04 %>%
+  filter(manu == 1) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+fservice_prov_04 <- employment_mf_04 %>%
+  filter(service == 1) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+ftal_prov_04 <- employment_mf_04 %>%
+  filter(tal == 1) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+f_ams_04 <- c("fagri_prov_04", "fmanu_prov_04", "fservice_prov_04", "ftal_prov_04")
+
+for (i in f_ams_04){
+  assign(i, left_join(get(i), f_prov_04, by = "tinh"))
+  
+  assign(i, get(i) %>% 
+           mutate(Fsec_04 = n / Female_prov) %>% 
+           select(-c("Female_prov", "n")))
+  
+  if(i %in% c("agri_prov_04")){
+    assign(i, get(i) %>%
+             rename(F_Agri_04 = Fsec_04))    
+  }
+  
+  if(i %in% c("manu_prov_04")){
+    assign(i, get(i) %>%
+             rename(F_Manu_04 = Fsec_04))    
+  }
+  
+  if(i %in% c("service_prov_04")){
+    assign(i, get(i) %>%
+             rename(F_Serv_04 = Fsec_04))
+  }   
+  
+  if(i %in% c("tal_prov_04")){
+    assign(i, get(i) %>%
+             rename(F_Tal_04 = Fsec_04))
+  } 
+}
+
+postBTA_provtariff <- postBTA_provtariff %>% 
+  rename(tinh = tinh02)
+
+f_ams_04 <- list(agri_prov_04, manu_prov_04, service_prov_04, tal_prov_04, postBTA_provtariff) %>% 
+  reduce(full_join, by = "tinh")
+
+# 2006 
+
+f_prov_06 <- employment_mf_06 %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt) %>% 
+  rename(Female_prov = n)
+
+fagri_prov_06 <- employment_mf_06 %>%
+  filter(agri_work == 1) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+fmanu_prov_06 <- employment_mf_06 %>%
+  filter(manu == 1) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+fmanu_exc_al_prov_06 <- employment_mf_06 %>%
+  filter(manu == 1) %>%
+  filter(tal == 0) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+fservice_prov_06 <- employment_mf_06 %>%
+  filter(service == 1) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+ftal_prov_06 <- employment_mf_06 %>%
+  filter(tal == 1) %>% 
+  filter(sex == "Female") %>% 
+  select(tinh, hhwt) %>%   
+  group_by(tinh) %>% 
+  count(tinh, wt = hhwt)
+
+f_ams_06 <- c("fagri_prov_06", "fmanu_prov_06", "fmanu_exc_al_prov_06", "fservice_prov_06", "ftal_prov_06")
+
+for (i in f_ams_06){
+  
+  assign(i, left_join(get(i), f_prov_06,  by = "tinh"))
+  
+  assign(i, get(i) %>% 
+           mutate(Fsec_06 = n / Female_prov) %>% 
+           select(-c("Female_prov", "n")))
+  
+  if(i %in% c("fagri_prov_06")){
+    assign(i, get(i) %>%
+             rename(F_Agri_06 = Fsec_06))    
+  }
+  
+  if(i %in% c("fmanu_prov_06")){
+    assign(i, get(i) %>%
+             rename(F_Manu_06 = Fsec_06))    
+  }
+  
+  if(i %in% c("fmanu_exc_al_prov_06")){
+    assign(i, get(i) %>%
+             rename(F_Manu_exc_al_06 = Fsec_06))    
+  }  
+  
+  if(i %in% c("fservice_prov_06")){
+    assign(i, get(i) %>%
+             rename(F_Serv_06 = Fsec_06))
+  }   
+  
+  if(i %in% c("ftal_prov_06")){
+    assign(i, get(i) %>%
+             rename(F_Tal_06 = Fsec_06))
+  } 
+}
+
+f_ams_06<- list(fagri_prov_06, fmanu_prov_06, fservice_prov_06, ftal_prov_06) %>% 
+  reduce(full_join, by = "tinh")
+
+# Merging 2002, 2004 and 2006 data 
+f_ams_060402 <- list(f_ams_02, f_ams_04, f_ams_06) %>% 
+  reduce(full_join, by = "tinh") %>% 
+  mutate(
+    fd_f_agri_0602 = F_Agri_06 - F_Agri_02,
+    fd_f_manu_0602 = F_Manu_06 - F_Manu_02,
+    fd_f_service_0602 = F_Serv_06 - F_Serv_02,
+    fd_f_tal_0602 = F_Tal_06 - F_Tal_02,
+    fd_tariff = postprov_tariff - preprov_tariff,
+  )
+
+f_ams_060402 <- f_ams_060402 %>% 
+  mutate(Tinh = recode(tinh,
+                       "101" = "Hanoi",
+                       "103" = "Hai Phong",
+                       "104" = "Vinh Phuc",
+                       "105" = "Ha Tay",
+                       "106" = "Bac Ninh",
+                       "107" = "Hai Duong",
+                       "109" = "Hung Yen",
+                       "111" = "Ha Nam",
+                       "113" = "Nam Dinh",
+                       "115" = "Thai Binh",
+                       "117" = "Ninh Binh",
+                       "201" = "Ha Giang",
+                       "203" = "Cao Bang",
+                       "205" = "Lao Cai",
+                       "207" = "Bac Can",
+                       "209" = "Lang Son",
+                       "211" = "Tuyen Quyen",
+                       "213" = "Yen Bai",
+                       "215" = "Thai Nguyen",
+                       "217" = "Phu Tho",
+                       "221" = "Bac Giang",
+                       "225" = "Quang Ninh",
+                       "301" = "Lai Chau",
+                       "303" = "Son La",
+                       "305" = "Hoa Binh",
+                       "401" = "Thanh Hoa",
+                       "403" = "Nghe An",
+                       "405" = "Ha Tinh",
+                       "407" = "Quang Binh",
+                       "409" = "Quang Tri",
+                       "411" = "Hue",
+                       "501" = "Da Nang",
+                       "503" = "Quang Nam",
+                       "505" = "Quang Ngai",
+                       "507" = "Binh Dinh",
+                       "509" = "Phu Yen",
+                       "511" = "Khanh Hoa",
+                       "601" = "Kon Tum",
+                       "603" = "Gia Lai",
+                       "605" = "Dac Lac",
+                       "607" = "Lam Dong",
+                       "701" = "Ho Chi Minh",
+                       "705" = "Ninh Thuan",
+                       "707" = "Binh Phuoc",
+                       "709" = "Tay Ninh",
+                       "711" = "Binh Duong",
+                       "713" = "Dong Nai",
+                       "715" = "Binh Thuan",
+                       "717" = "Ba Ria - Vung Tau",
+                       "801" = "Long An",
+                       "803" = "Dong Thap",
+                       "805" = "An Giang",
+                       "807" = "Tien Giang",
+                       "809" = "Vinh Long",
+                       "811" = "Ben Tre",
+                       "813" = "Kien Giang",
+                       "815" = "Can Tho",
+                       "817" = "Tra Vinh",
+                       "819" = "Soc Trang",
+                       "821" = "Bac Lieu",
+                       "823" = "Ca Mau"))
