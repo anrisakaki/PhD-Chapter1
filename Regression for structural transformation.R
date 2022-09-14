@@ -252,6 +252,15 @@ for (i in y){
 ###############################################################
 
 # Panel data 
+## Agriculture 
+etable(list(
+  models_0204_p_summary[[1]],
+  models_0204_p_k_summary[[1]],
+  models_0206_p_summary[[1]],
+  models_0206_p_k_summary[[1]]
+),
+tex = TRUE
+)
 
 ## Construction 
 etable(list(
