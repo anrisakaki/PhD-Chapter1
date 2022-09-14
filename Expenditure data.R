@@ -177,7 +177,7 @@ totalexp_06 <- totalexp_06 %>%
     "scarves" = 42  
   )  
 
-#Calculating expenditure on FPG and temptation goods as share of total HH expenditure 
+# Calculating expenditure on FPG and temptation goods as share of total HH expenditure 
 totalexp_02 <- totalexp_02 %>% 
   mutate(tempcon_ratio_02 = (alcohol + cigarettes) / hhexp2rl) %>% 
   mutate(fcon = fabric + sewing + tailor + jewelry + scarves + cosmetics) %>% 
@@ -190,3 +190,9 @@ for( i in totalexp0406) {
                    tempcon_ratio = (liquor + beer + cigarettes)/hhexp2rl,
                    fcon_ratio = (fabric + tailor + jewelry + scarves + cosmetics)/hhexp2rl))
 }
+
+# Merging data frame on FPG and temptation goods with data on weights
+
+totalexp_02 <- merge(totalexp_02, weights_exp_02, by = c("tinh02", "xa02", "hhid"))
+totalexp_04 <- merge(totalexp_04, weights_exp_04, by = "hhid")
+totalexp_06 <- merge(totalexp_06, weights_exp_06, by = "hhid")
