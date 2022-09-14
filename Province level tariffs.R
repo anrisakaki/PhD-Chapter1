@@ -31,9 +31,9 @@ postBTA_provtariff <- provtariff_weights %>%
   group_by(tinh) %>% 
   summarise(postprov_tariff = weighted.mean(mfn_ave_all, weight_02))
 
-##################################################
+###############################################
 # PROVINCE-LEVEL TARIFFS USING KOVAK'S METHOD #
-##################################################
+###############################################
 
 for(i in emp020406) {
   assign(i,get(i) %>%
