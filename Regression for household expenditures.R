@@ -40,7 +40,6 @@ exp_0602 <- bind_rows(exp_02, exp_06)
 #######################################################################
 
 # Panel data
-
 ## 2002 
 totalexp_02_p <- totalexp_02 %>% 
   rename(hhid02 = hhid)
@@ -97,6 +96,51 @@ totalexp_06_p <- list(totalexp_06_p, postBTA_provtariff, postBTA_provtariff_k) %
 
 totalexp_0204_p <- bind_rows(totalexp_02_p, totalexp_04_p)
 totalexp_0206_p <- bind_rows(totalexp_0206_p, totalexp_06_p)
+
+#########################################################
+# SETTING UP FOR REGRESSION ON FIXED AND DURABLE ASSETS #
+#########################################################
+
+# Cross-section 
+## Merging data with data on tariffs 
+### 2002
+dur_exp_02 <- list(dur_exp_02, preBTA_provtariff, preBTA_provtariff_k) %>% 
+  reduce(full_join, by = "tinh") %>% 
+  rename(provtariff = preprov_tariff,
+         provtariff_k = preprov_tariff_k)
+
+### 2004 - 2006 
+for(i in dur_exp_020406){
+  if(i %in% c("dur_exp_04", "dur_exp_06")){
+    
+    assign(i, list(get(i), postBTA_provtariff, postBTA_provtariff_k) %>% 
+             reduce(full_join, by = "tinh") %>% 
+             rename(provtariff = postprov_tariff,
+                    provtariff_k = postprov_tariff_k))
+  }
+}
+
+# Panel data 
+#2002 - 2004 
+dur_exp_02_p <- dur_exp_02 %>% 
+  rename(hhid02 = hhid)
+
+dur_exp_02_p <- merge(hhid02, dur_exp_02_p, by = c("hhid02", "xa02"))
+
+dur_exp_04_p <- merge(hhid0204, dur_exp_04, by = c("tinh", "hhid"))
+
+# 2002 - 2006 
+dur_exp_0602_p <- dur_exp_02 %>% 
+  rename(hhid02 = hhid)
+
+dur_exp_0602_p <- merge(hhid020406, dur_exp_0602_p, by = "hhid02")
+
+dur_exp_06_p <- dur_exp_06 %>% 
+  rename(hhid06 = hhid)
+
+dur_exp_06_p <- merge(hhid020406, dur_exp_06_p, by = "hhid06")
+
+dur_exp_02006_p <- bind_rows(dur_exp_0602_p, dur_exp_06_p)
 
 ########################################################################
 # REGRESSION ON EXPENDITURE ON HOUSEHOLD PUBLIC GOODS USING PANEL DATA #
