@@ -196,3 +196,86 @@ for( i in totalexp0406) {
 totalexp_02 <- merge(totalexp_02, weights_exp_02, by = c("tinh02", "xa02", "hhid"))
 totalexp_04 <- merge(totalexp_04, weights_exp_04, by = "hhid")
 totalexp_06 <- merge(totalexp_06, weights_exp_06, by = "hhid")
+
+#########################################################
+# EXPENDITURE DATA ON HOUSEHOLD FIXED AND DURABLE GOODS #
+#########################################################
+
+# 2002 
+dur_exp_02 <- m7_02 %>%
+  mutate(mats = recode(mats,
+                       "27" = "sewing_equipment",
+                       "34" = "sewing_machine",
+                       "54" = "gas_cook",
+                       "53" = "electric_cook",
+                       "49" = "washing_machine")) %>% 
+  filter(m7c3_2 < 2002) %>% 
+  select(hhid, mats, m7c4) %>% 
+  group_by(hhid) %>% 
+  pivot_wider(names_from = mats, values_from = m7c4, , values_fn = mean) %>% 
+  replace(is.na(.), 0) %>% 
+  select(-"NA") %>% 
+  mutate(sewing = sewing_equipment + sewing_machine,
+         gas_electric_cook = gas_cook + electric_cook)
+
+dur_exp_02 <- list(dur_exp_02, ttexp_02, weights_exp_02) %>% 
+  reduce(full_join, by = "hhid") %>% 
+  rename(tinh = tinh02)
+
+# 2004 
+dur_exp_04 <- m6b_04 %>% 
+  mutate(across(m6bma, as.numeric)) %>% 
+  filter(m6bc4b > 2001) %>% 
+  mutate(m6bc5 = m6bc5*m6bc3) %>% 
+  mutate(m6bma = recode(m6bma,
+                        "35" = "sewing",
+                        "50" = "washing_machine",
+                        "53" = "electric_cook",
+                        "54" = "gas_cook")) %>% 
+  select(hhid, m6bma, m6bc5) %>% 
+  group_by(hhid) %>%  
+  pivot_wider(names_from = m6bma, values_from = m6bc5, values_fn = mean) %>% 
+  replace(is.na(.), 0) %>%  
+  select(-"NA") %>% 
+  mutate(gas_electric_cook = gas_cook + electric_cook)
+
+tinh_04 <- m6b_04 %>% 
+  select(hhid, tinh) %>% 
+  distinct()
+
+dur_exp_04 <- list(dur_exp_04, tinh_04, ttexp_04, weights_exp_04) %>%
+  reduce(full_join, by = "hhid")
+
+# 2006 
+dur_exp_06 <- m6b_06 %>% 
+  mutate(across(m6bma, as.numeric)) %>% 
+  filter(m6bc4b > 2001) %>% 
+  mutate(m6bc5 = m6bc5*m6bc3) %>% 
+  mutate(m6bma = recode(m6bma,
+                        "35" = "sewing",
+                        "50" = "washing_machine",
+                        "53" = "electric_cook",
+                        "54" = "gas_cook")) %>% 
+  select(hhid, m6bma, m6bc5) %>% 
+  group_by(hhid) %>%  
+  pivot_wider(names_from = m6bma, values_from = m6bc5, values_fn = mean) %>% 
+  replace(is.na(.), 0) %>%  
+  select(-"NA") %>% 
+  mutate(gas_electric_cook = gas_cook + electric_cook) 
+
+tinh_06 <- m6b_06 %>% 
+  select(hhid, tinh) %>% 
+  distinct()
+
+dur_exp_06 <- list(dur_exp_06, tinh_06, weights_exp_06) %>% 
+  reduce(full_join, by = "hhid")
+
+# Calculating the ratio of household expenditure spent on 'female' public goods and merging with tariff data 
+dur_exp_020406 <- c("dur_exp_02", "dur_exp_04", "dur_exp_06") 
+
+for(i in dur_exp_020406){
+  assign(i, get(i) %>% 
+           mutate(sewing_share = sewing/hhexp2rl,
+                  washing_share = washing_machine/hhexp2rl,
+                  cooking_share = gas_electric_cook/hhexp2rl))
+}
