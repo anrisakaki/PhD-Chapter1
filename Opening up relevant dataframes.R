@@ -65,6 +65,7 @@ m5a2_04 <- read_dta(file = "Full VHLSS/2004/m5a2.dta")
 m5b1_04 <- read_dta(file = "Full VHLSS/2004/m5b1.dta")
 m5b2_04 <- read_dta(file = "Full VHLSS/2004/m5b2.dta")
 m6a_04 <- read_dta(file = "Full VHLSS/2004/m6a.dta")
+m6b_04 <- read_dta(file = "Full VHLSS/2004/m6b.dta")
 
 ## 2006
 exp_06 <- read_dta(file = "Full VHLSS/2006/hhexpe06.dta")
@@ -76,4 +77,6 @@ m4a_06 <- read_dta(file = "Full VHLSS/2006/muc4a.dta") #DF containing employment
 m5a2_06 <- read_dta(file = "Full VHLSS/2006/muc5a2.dta")
 m5b1_06 <- read_dta(file = "Full VHLSS/2006/muc5b1.dta")
 m5b2_06 <- read_dta(file = "Full VHLSS/2006/muc5b2.dta") #DF containing hh consumption patterns
-ttchung_06 <- read_dta(file = "Full VHLSS/2006/ttchung.dta")
+m6a_06 <- read_dta(file = "Full VHLSS/2006/muc6a.dta")
+m6b_06 <- read_dta(file = "Full VHLSS/2006/muc6b.dta")
+sttchung_06 <- read_dta(file = "Full VHLSS/2006/ttchung.dta")
