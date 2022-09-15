@@ -32,7 +32,6 @@ exp_0206_p <- bind_rows(exp_0206, exp_06_p)
 # Cross-sectional data 
 
 exp_0402 <- bind_rows(exp_02, exp_04)
-
 exp_0602 <- bind_rows(exp_02, exp_06)
 
 #######################################################################
@@ -120,16 +119,20 @@ for(i in dur_exp_020406){
   }
 }
 
+dur_exp_0204 <- bind_rows(dur_exp_02, dur_exp_04)
+dur_exp_0206 <- bind_rows(dur_exp_02, dur_exp_06)
+
 # Panel data 
-#2002 - 2004 
+## 2002 - 2004 
 dur_exp_02_p <- dur_exp_02 %>% 
   rename(hhid02 = hhid)
 
 dur_exp_02_p <- merge(hhid02, dur_exp_02_p, by = c("hhid02", "xa02"))
 
-dur_exp_04_p <- merge(hhid0204, dur_exp_04, by = c("tinh", "hhid"))
+dur_exp_04_p <- merge(hhid0204, dur_exp_04, by = c("tinh", "hhid")) %>% 
+  mutate(across(tinh, as.factor))
 
-# 2002 - 2006 
+## 2002 - 2006 
 dur_exp_0602_p <- dur_exp_02 %>% 
   rename(hhid02 = hhid)
 
@@ -140,7 +143,8 @@ dur_exp_06_p <- dur_exp_06 %>%
 
 dur_exp_06_p <- merge(hhid020406, dur_exp_06_p, by = "hhid06")
 
-dur_exp_02006_p <- bind_rows(dur_exp_0602_p, dur_exp_06_p)
+dur_exp_0204_p <- bind_rows(dur_exp_02_p, dur_exp_04_p)
+dur_exp_0206_p <- bind_rows(dur_exp_0602_p, dur_exp_06_p)
 
 ########################################################################
 # REGRESSION ON EXPENDITURE ON HOUSEHOLD PUBLIC GOODS USING PANEL DATA #
