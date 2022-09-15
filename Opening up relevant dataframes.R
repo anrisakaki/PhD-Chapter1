@@ -51,6 +51,7 @@ m6a2_02 <- read_dta(file = "Full VHLSS/VHLSS 2002 N= 45,000/muc6a2.dta")
 m6b1_02 <- read_dta(file = "Full VHLSS/VHLSS 2002 N= 45,000/muc6b1.dta")
 m6b2_02 <- read_dta(file = "Full VHLSS/VHLSS 2002 N= 45,000/muc6b2.dta")
 m6b34_02 <- read_dta (file = "Full VHLSS/VHLSS 2002 N= 45,000/muc6b34.dta")
+m7_02 <- read_dta(file = "Full VHLSS/VHLSS 2002 N= 45,000/muc7.dta")
 
 ## 2004 
 ho1_04 <- read_dta(file = "Full VHLSS/2004/ho1.dta")
@@ -63,6 +64,7 @@ m4a_04 <- read_dta(file = "Full VHLSS/2004/m4a.dta") #DF containing work
 m5a2_04 <- read_dta(file = "Full VHLSS/2004/m5a2.dta")
 m5b1_04 <- read_dta(file = "Full VHLSS/2004/m5b1.dta")
 m5b2_04 <- read_dta(file = "Full VHLSS/2004/m5b2.dta")
+m6a_04 <- read_dta(file = "Full VHLSS/2004/m6a.dta")
 
 ## 2006
 exp_06 <- read_dta(file = "Full VHLSS/2006/hhexpe06.dta")
