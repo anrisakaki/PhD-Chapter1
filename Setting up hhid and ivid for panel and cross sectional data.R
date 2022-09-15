@@ -18,7 +18,7 @@ exp_02 <- exp_02 %>%
   mutate(hoso = diaban02*10^3 + hoso) %>% 
   mutate(xa = tinh * 10^4 + huyen * 10^2 + xa)
 
-hh02 <- c("exp_02", "m1_02", "m2_02", "m3_02", "m5a_02", "m5b4_02", "m6a2_02", "m6b1_02", "m6b2_02", "m6b34_02")
+hh02 <- c("exp_02", "m1_02", "m2_02", "m3_02", "m5a_02", "m5b4_02", "m6a2_02", "m6b1_02", "m6b2_02", "m6b34_02", "m7_02")
 
 for(i in hh02){
   assign(i, mutate(get(i),
@@ -40,11 +40,11 @@ diaban04 <- m123a_04 %>%
 exp_04 <- left_join(exp_04, diaban04, by = c("tinh", "huyen", "xa")) %>% 
   distinct()
 
-hh04 <- c("exp_04", "ho1_04", "m123a_04", "m1b_04", "m4a_04", "m4a_04a", "m5a2_04", "m5b1_04", "m5b2_04")
+hh04 <- c("exp_04", "ho1_04", "m123a_04", "m1b_04", "m4a_04", "m4a_04a", "m5a2_04", "m5b1_04", "m5b2_04", "m6a_04", "m6b_04")
 
 for(i in hh04){
   
-  if (i %in% c("ho1_04", "m123a_04", "m1b_04", "m4a_04", "m4a_04a")){
+  if (i %in% c("ho1_04", "m123a_04", "m1b_04", "m4a_04", "m4a_04a", "m6a_04", "m6b_04")){
     
     assign(i, get(i) %>% 
              select(-diaban))
@@ -71,11 +71,11 @@ diaban06 <- m1a_06 %>%
   select(tinh, huyen, xa, diaban) %>% 
   distinct()
 
-hh06 <- c("exp_06", "m1a_06", "m1b_06", "m2a_06", "m4a_06", "m5a2_06", "m5b1_06", "m5b2_06", "ttchung_06")
+hh06 <- c("exp_06", "m1a_06", "m1b_06", "m2a_06", "m4a_06", "m5a2_06", "m5b1_06", "m5b2_06", "m6a_06", "m6b_06", "ttchung_06")
 
 for(i in hh06){
   
-  if (i %in% c("m1a_06", "m1b_06", "m2a_06", "m4a_06", "m5a2_06", "m5b1_06", "m5b2_06", "ttchung_06")){
+  if (i %in% c("m1a_06", "m1b_06", "m2a_06", "m4a_06", "m5a2_06", "m5b1_06", "m5b2_06", "m6a_06", "m6b_06", "ttchung_06")){
     assign(i, get(i) %>%
              select(-diaban))
   }
