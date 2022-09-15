@@ -267,7 +267,7 @@ tinh_06 <- m6b_06 %>%
   select(hhid, tinh) %>% 
   distinct()
 
-dur_exp_06 <- list(dur_exp_06, tinh_06, weights_exp_06) %>% 
+dur_exp_06 <- list(dur_exp_06, tinh_06, weights_exp_06, ttexp_06) %>% 
   reduce(full_join, by = "hhid")
 
 # Calculating the ratio of household expenditure spent on 'female' public goods and merging with tariff data 
@@ -277,5 +277,6 @@ for(i in dur_exp_020406){
   assign(i, get(i) %>% 
            mutate(sewing_share = sewing/hhexp2rl,
                   washing_share = washing_machine/hhexp2rl,
-                  cooking_share = gas_electric_cook/hhexp2rl))
+                  cooking_share = gas_electric_cook/hhexp2rl) %>% 
+           mutate(across(tinh, as.factor)))
 }
