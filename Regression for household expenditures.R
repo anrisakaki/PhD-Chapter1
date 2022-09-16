@@ -106,7 +106,8 @@ totalexp_0206_p <- bind_rows(totalexp_0206_p, totalexp_06_p)
 dur_exp_02 <- list(dur_exp_02, preBTA_provtariff, preBTA_provtariff_k) %>% 
   reduce(full_join, by = "tinh") %>% 
   rename(provtariff = preprov_tariff,
-         provtariff_k = preprov_tariff_k)
+         provtariff_k = preprov_tariff_k) %>% 
+  mutate(year = 2002)
 
 ### 2004 - 2006 
 for(i in dur_exp_020406){
@@ -119,6 +120,12 @@ for(i in dur_exp_020406){
   }
 }
 
+dur_exp_04 <- dur_exp_04 %>% 
+  mutate(year = 2004)
+
+dur_exp_06 <- dur_exp_06 %>% 
+  mutate(year = 2006)
+
 dur_exp_0204 <- bind_rows(dur_exp_02, dur_exp_04)
 dur_exp_0206 <- bind_rows(dur_exp_02, dur_exp_06)
 
@@ -127,7 +134,10 @@ dur_exp_0206 <- bind_rows(dur_exp_02, dur_exp_06)
 dur_exp_02_p <- dur_exp_02 %>% 
   rename(hhid02 = hhid)
 
-dur_exp_02_p <- merge(hhid02, dur_exp_02_p, by = c("hhid02", "xa02"))
+dur_exp_02_p <- merge(hhid0204, dur_exp_02_p, by = c("hhid02", "xa02")) %>% 
+  rename(tinh = tinh.x) %>% 
+  select(-"tinh.y") %>% 
+  mutate(across(tinh, as.factor))
 
 dur_exp_04_p <- merge(hhid0204, dur_exp_04, by = c("tinh", "hhid")) %>% 
   mutate(across(tinh, as.factor))
@@ -250,6 +260,49 @@ for(i in y){
                  weights = ~hhwt)
   
   fptg_tce_k_0602_model_summary[[i]] <- model  
+}
+
+####################################################################################
+# REGRESSION ON EXPENDITURE ON HOUSEHOLD FIXED AND DURABLE ASSETS USING PANEL DATA #
+####################################################################################
+
+y_dur <- c("log(sewing_share)", "log(washing_share)", "log(cooking_share)")
+
+dur_exp_tce_0204 <- list()
+dur_exp_tce_k_0204 <- list()
+dur_exp_tce_0206 <- list()
+dur_exp_tce_k_0206 <- list()
+
+# 2002 - 2004 
+for(i in y_dur){
+  formula <- as.formula(paste(i, " ~ provtariff_k | hhid02 + year"))
+  model <- feols(formula,
+                 data = dur_exp_0204_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  dur_exp_tce_k_0204[[i]] <- model  
+}
+
+# 2002 - 2006 
+for(i in y_dur){
+  formula <- as.formula(paste(i, " ~ provtariff | hhid02 + year"))
+  model <- feols(formula,
+                 data = dur_exp_0206_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  dur_exp_tce_0206[[i]] <- model  
+}
+
+for(i in y_dur){
+  formula <- as.formula(paste(i, " ~ provtariff_k | hhid02 + year"))
+  model <- feols(formula,
+                 data = dur_exp_0206_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  dur_exp_tce_k_0206[[i]] <- model  
 }
 
 ##################################################################################
