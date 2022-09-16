@@ -79,4 +79,4 @@ m5b1_06 <- read_dta(file = "Full VHLSS/2006/muc5b1.dta")
 m5b2_06 <- read_dta(file = "Full VHLSS/2006/muc5b2.dta") #DF containing hh consumption patterns
 m6a_06 <- read_dta(file = "Full VHLSS/2006/muc6a.dta")
 m6b_06 <- read_dta(file = "Full VHLSS/2006/muc6b.dta")
-sttchung_06 <- read_dta(file = "Full VHLSS/2006/ttchung.dta")
+ttchung_06 <- read_dta(file = "Full VHLSS/2006/ttchung.dta")
