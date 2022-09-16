@@ -50,11 +50,16 @@ exp_04 <- exp_04 %>%
 # 2002 
 ## Daily non food expenditures 
 daily_nonfood_02 <- m6b1_02 %>%
+  mutate(madong = recode(madong,
+                         "212" = "cosmetics",
+                         "210" = "shampoo",
+                         "211" = "lotion")) %>% 
   select(hhid, madong, m6b1c4) %>% 
   group_by(hhid) %>% 
   pivot_wider(names_from = madong, values_from = m6b1c4, values_fn = mean) %>% 
   replace(is.na(.), 0) %>% 
-  rename("cosmetics" = 20)
+  mutate(cosmetics = cosmetics + shampoo + lotion) %>% 
+  select(-"NA")
 
 ## Annual non-food expenditures 
 nonfood_exp_02 <- m6b2_02 %>% 
@@ -71,10 +76,14 @@ nonfood_exp_02 <- m6b2_02 %>%
 
 ## Food expenditures 
 food_exp_02 <- m6a2_02 %>%
+  mutate(madong = recode(madong,
+                         "154" = "cigarettes",
+                         "145" = "alcohol")) %>% 
   select(hhid, madong, m6a2c6) %>% 
   group_by(hhid) %>% 
   pivot_wider(names_from = madong, values_from = m6a2c6, values_fn = mean) %>% 
-  replace(is.na(.), 0)  
+  replace(is.na(.), 0) %>% 
+  select(-"NA")
 
 ## Merging dataframes together to construct a total expenditures dataframe 
 ttexp_02 <- exp_02 %>%
@@ -86,30 +95,49 @@ totalexp_02 <- list(nonfood_exp_02, daily_nonfood_02, food_exp_02, ttexp_02) %>%
   select(c("tinh02", "xa02", "hoso02", "hhid"), everything()) %>% 
   mutate(across(hoso02, as.numeric))
 
-totalexp_02 <- totalexp_02 %>% 
-  rename(alcohol = 154, 
-         cigarettes = 156)
-
 # 2004 
 ## Daily non food expenditures 
 daily_nonfood_04 <- m5b1_04 %>%
+  mutate(across(m5b1ma, as.numeric)) %>% 
+  mutate(m5b1ma = recode(m5b1ma,
+                         "212" = "cosmetics",
+                         "211" = "lotions",
+                         "210" = "shampoo")) %>%   
   select(tinh, huyen, xa, diaban, hoso, ky, hhid, m5b1ma, m5b1c4) %>%  
-  replace(is.na(.), 0) %>%
   group_by(hhid) %>% 
-  pivot_wider(names_from = m5b1ma, values_from = m5b1c4, values_fill = 0)
+  pivot_wider(names_from = m5b1ma, values_from = m5b1c4, values_fn = mean) %>% 
+  mutate(cosmetics = cosmetics + lotions + shampoo) %>% 
+  replace(is.na(.), 0) %>% 
+  select(-"NA")
 
 ## Annual non food expenditures 
+m5b2_04$m5b2ma <- as.numeric(m5b2_04$m5b2ma)
+m5b2_04$m5b2c2 <- as.numeric(m5b2_04$m5b2c2)
+
 annual_nonfood_04 <- m5b2_04 %>%
-  select(hhid, m5b2ma, m5b2c2) %>% 
-  replace(is.na(.), 0) %>% 
-  group_by(hhid) %>% 
-  pivot_wider(names_from = m5b2ma, values_from = m5b2c2, values_fill = 0)
+  mutate(m5b2ma = as.character(recode(as.numeric(m5b2ma), 
+                         "330" = "jewelry",
+                         "301" = "fabric",
+                         "307" = "tailor",
+                         "304" = "scarves"))) %>%
+  select(hhid, m5b2ma, m5b2c2) %>%
+  group_by(hhid) %>%
+  pivot_wider(names_from = m5b2ma, values_from = m5b2c2, values_fn = mean) %>%
+  replace(is.na(.), 0) %>%
+  select(-"NA")
 
 ## Food expenditures 
 food_exp_04 <- m5a2_04 %>%
+  mutate(across(c(m5a2ma, m5a2c6), as.numeric)) %>% 
+  mutate(m5a2ma = as.character(recode(as.numeric(m5a2ma),
+                         "145" = "beer",
+                         "144" = "liquor",
+                         "154" = "cigarettes"))) %>% 
   select(hhid, m5a2ma, m5a2c6) %>% 
   group_by(hhid) %>% 
-  pivot_wider(names_from = m5a2ma, values_from = m5a2c6, values_fill = 0)
+  pivot_wider(names_from = m5a2ma, values_from = m5a2c6, values_fn = mean) %>% 
+  replace(is.na(.), 0) %>%
+  select(-"NA")  
 
 ## Merging dataframes together to construct a total expenditures dataframe
 ttexp_04 <- exp_04 %>%
@@ -121,39 +149,45 @@ totalexp_04 <- list(annual_nonfood_04, daily_nonfood_04, food_exp_04, ttexp_04) 
   select(-"ky") %>% 
   replace(is.na(.), 0)
 
-## Renaming variables 
-totalexp_04 <- totalexp_04 %>% 
-  replace(is.na(.), 0) %>%
-  mutate(across(tinh, as.factor)) %>%
-  rename(
-    "liquor" = 92,
-    "beer" = 76,
-    "cigarettes" = 78,
-    "cosmetics" = 55,
-    "fabric" = 16,
-    "tailor" = 17,
-    "jewelry" = 27,
-    "domserv" = 37,
-    "scarves" = 9)
-
 # 2006 
 # Daily non food expenditures
 daily_nonfood_06 <- m5b1_06 %>%
+  mutate(across(c(m5b1c1, m5b1c4), as.numeric)) %>% 
+  mutate(m5b1c1 = recode(m5b1c1,
+                         "212" = "cosmetics",
+                         "211" = "lotions",
+                         "210" = "shampoo")) %>% 
   select(tinh, huyen, xa, diaban, hoso, hhid, m5b1c1, m5b1c4) %>% 
+  pivot_wider(names_from = m5b1c1, values_from = m5b1c4, values_fn = mean) %>% 
+  mutate(cosmetics = cosmetics + lotions + shampoo) %>% 
   replace(is.na(.), 0) %>% 
-  pivot_wider(names_from = m5b1c1, values_from = m5b1c4, values_fill = 0)
+  select(-"NA")
 
 # Annual non food expenditures
 annual_nonfood_06 <- m5b2_06 %>% 
+  mutate(across(c(m5b2c1, m5b2c2), as.numeric)) %>% 
+  mutate(m5b2c1 = recode(m5b2c1,
+                         "330" = "jewelry",
+                         "301" = "fabric",
+                         "307" = "tailor",
+                         "304" = "scarves")) %>% 
   select(hhid, m5b2c1, m5b2c2) %>% 
+  pivot_wider(names_from = m5b2c1, values_from = m5b2c2, values_fn = mean) %>% 
   replace(is.na(.), 0) %>% 
-  pivot_wider(names_from = m5b2c1, values_from = m5b2c2, values_fill = 0)
+  select(-"NA")
 
 # Food expenditures 
 food_exp_06 <- m5a2_06 %>%
+  mutate(across(c(m5a2c1, m5a2c6), as.numeric)) %>% 
+  mutate(m5a2c1 = recode(m5a2c1,
+                         "145" = "beer",
+                         "144" = "liquor",
+                         "154" = "cigarettes")) %>% 
   select(hhid, m5a2c1, m5a2c6) %>% 
   group_by(hhid) %>% 
-  pivot_wider(names_from = m5a2c1, values_from = m5a2c6, values_fill = 0)
+  pivot_wider(names_from = m5a2c1, values_from = m5a2c6, values_fn = mean) %>% 
+  replace(is.na(.), 0) %>% 
+  select(-"NA")
 
 ttexp_06 <- exp_06 %>%
   select(hhid, hhexp2rl)
@@ -162,20 +196,6 @@ totalexp_06 <- list(daily_nonfood_06, annual_nonfood_06, food_exp_06, ttexp_06) 
   reduce(full_join, by = "hhid") %>% 
   select(c("tinh", "huyen", "xa", "diaban", "hoso", "hhid"), everything()) %>% 
   replace(is.na(.), 0)  
-
-totalexp_06 <- totalexp_06 %>% 
-  replace(is.na(.), 0) %>% 
-  rename(
-    "liquor" = 84,
-    "beer" = 104,
-    "cigarettes" = 76,
-    "cosmetics" = 21,
-    "fabric" = 43,
-    "tailor" = 45,
-    "jewelry" = 34,
-    "domserv" = 59,
-    "scarves" = 42  
-  )  
 
 # Calculating expenditure on FPG and temptation goods as share of total HH expenditure 
 totalexp_02 <- totalexp_02 %>% 
@@ -192,7 +212,6 @@ for( i in totalexp0406) {
 }
 
 # Merging data frame on FPG and temptation goods with data on weights
-
 totalexp_02 <- merge(totalexp_02, weights_exp_02, by = c("tinh02", "xa02", "hhid"))
 totalexp_04 <- merge(totalexp_04, weights_exp_04, by = "hhid")
 totalexp_06 <- merge(totalexp_06, weights_exp_06, by = "hhid")
@@ -212,7 +231,7 @@ dur_exp_02 <- m7_02 %>%
   filter(m7c3_2 < 2002) %>% 
   select(hhid, mats, m7c4) %>% 
   group_by(hhid) %>% 
-  pivot_wider(names_from = mats, values_from = m7c4, , values_fn = mean) %>% 
+  pivot_wider(names_from = mats, values_from = m7c4, values_fn = mean) %>% 
   replace(is.na(.), 0) %>% 
   select(-"NA") %>% 
   mutate(sewing = sewing_equipment + sewing_machine,
