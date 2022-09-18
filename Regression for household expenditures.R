@@ -275,6 +275,16 @@ dur_exp_tce_k_0206 <- list()
 
 # 2002 - 2004 
 for(i in y_dur){
+  formula <- as.formula(paste(i, " ~ provtariff | hhid02 + year"))
+  model <- feols(formula,
+                 data = dur_exp_0204_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  dur_exp_tce_0204[[i]] <- model  
+}
+
+for(i in y_dur){
   formula <- as.formula(paste(i, " ~ provtariff_k | hhid02 + year"))
   model <- feols(formula,
                  data = dur_exp_0204_p,
