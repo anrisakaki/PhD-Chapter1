@@ -134,9 +134,7 @@ dur_exp_0206 <- bind_rows(dur_exp_02, dur_exp_06)
 dur_exp_02_p <- dur_exp_02 %>% 
   rename(hhid02 = hhid)
 
-dur_exp_02_p <- merge(hhid0204, dur_exp_02_p, by = c("hhid02", "xa02")) %>% 
-  rename(tinh = tinh.x) %>% 
-  select(-"tinh.y") %>% 
+dur_exp_02_p <- merge(hhid02, dur_exp_02_p, by = c("hhid02", "xa02")) %>%
   mutate(across(tinh, as.factor))
 
 dur_exp_04_p <- merge(hhid0204, dur_exp_04, by = c("tinh", "hhid")) %>% 
@@ -275,7 +273,7 @@ dur_exp_tce_k_0206 <- list()
 
 # 2002 - 2004 
 for(i in y_dur){
-  formula <- as.formula(paste(i, " ~ provtariff | hhid02 + year"))
+  formula <- as.formula(paste(i, " ~ provtariff | year + hhid02"))
   model <- feols(formula,
                  data = dur_exp_0204_p,
                  vcov = ~tinh,
@@ -366,3 +364,16 @@ for (i in y_exp){
   
   exp_tce_k_models_0206_summary[[i]] <- model
 }
+
+##########################################################
+# SUMMARY TABLES FOR REGRESSIONS ON HOUEHOLD EXPENDITURE #
+##########################################################
+
+etable(list(dur_exp_tce_0206[[1]],
+            dur_exp_tce_k_0206[[1]],
+       dur_exp_tce_0206[[2]],
+       dur_exp_tce_k_0206[[2]],
+       dur_exp_tce_0206[[3]],
+       dur_exp_tce_k_0206[[3]]),
+       tex = TRUE)
+
