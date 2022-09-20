@@ -80,3 +80,7 @@ m5b2_06 <- read_dta(file = "Full VHLSS/2006/muc5b2.dta") #DF containing hh consu
 m6a_06 <- read_dta(file = "Full VHLSS/2006/muc6a.dta")
 m6b_06 <- read_dta(file = "Full VHLSS/2006/muc6b.dta")
 ttchung_06 <- read_dta(file = "Full VHLSS/2006/ttchung.dta")
+
+# McCaig Panel Identifiers 
+hhid0204 <- read_dta(file = "Full VHLSS/2002-2004 VHLSS Household Panel Identifiers.dta")
+ivid0204 <- read_dta(file = "Full VHLSS/2002-2004 VHLSS Individual Panel Identifiers.dta")
