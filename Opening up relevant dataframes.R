@@ -84,3 +84,5 @@ ttchung_06 <- read_dta(file = "Full VHLSS/2006/ttchung.dta")
 # McCaig Panel Identifiers 
 hhid0204 <- read_dta(file = "Full VHLSS/2002-2004 VHLSS Household Panel Identifiers.dta")
 ivid0204 <- read_dta(file = "Full VHLSS/2002-2004 VHLSS Individual Panel Identifiers.dta")
+hhid0406 <- read_dta(file = "Full VHLSS/2004-2006 VHLSS Household Panel Identifiers.dta")
+ivid0406 <- read_dta(file = "Full VHLSS/2004-2006 VHLSS Individual Panel Identifiers (2013 07 02).dta")
