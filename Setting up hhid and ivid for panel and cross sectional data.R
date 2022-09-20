@@ -25,11 +25,23 @@ for(i in hh02){
                    xa02 = tinh02 * 10^4 + huyen02 * 10^2 + xa02))
   
   assign(i, get(i) %>% 
-           mutate(hhid = xa02*10^5 + hoso))
+           mutate(hhid = xa02*10^5 + hoso) %>%
+           mutate(hhid = recode(hhid,
+                                "823091901120" = 823091901020,
+                                "823110826116" = 823110826016,
+                                "823110826119" = 823110826019,
+                                "823110826120" = 823110826020,
+                                "823131710116" = 823131710016)))
 }
 
 m5aho_02 <- m5aho_02 %>% 
-  mutate(hhid = xa*10^5 + hoso)
+  mutate(hhid = xa*10^5 + hoso) %>% 
+  mutate(hhid = recode(hhid,
+                       "823091901120" = 823091901020,
+                       "823110826116" = 823110826016,
+                       "823110826119" = 823110826019,
+                       "823110826120" = 823110826020,
+                       "823131710116" = 823131710016))
 
 # 2004 
 diaban04 <- m123a_04 %>% 
@@ -60,7 +72,26 @@ for(i in hh04){
     
     assign(i, get(i) %>% 
              mutate(hhid = tinh*10^9+huyen*10^7+xa*10^5+diaban*100+hoso))
-  } 
+  }
+  
+  assign(i, get(i) %>% 
+           mutate(hoso_new = hoso,
+                  hoso_new = case_when(
+                    hhid==106072900714 & quyen==2 ~ 94,
+                    hhid==111033100205 & quyen==2 ~ 95,
+                    hhid==117012500401 & quyen==2 ~ 91,
+                    hhid==211030100502 & quyen==2 ~ 92,
+                    hhid==211073300808 & quyen==2 ~ 98,
+                    hhid==211114700103 & quyen==2 ~ 93,
+                    hhid==301072902115 & quyen==2 ~ 95,
+                    hhid04==305010700902 & quyen==2 ~ 92, 
+                    hhid04==401111300714 & quyen==2 ~ 94, 
+                    hhid04==503212100901 & quyen==2 ~ 91, 
+                    hhid04==503212100902 & quyen==2 ~ 92, 
+                    hhid04==503212100903 & quyen==2 ~ 93,
+                    
+                  ))
+         )
   
 }
 
@@ -86,76 +117,6 @@ for(i in hh06){
   assign(i, get(i) %>% 
            mutate(hhid = tinh*10^9 + huyen*10^7 + xa*10^5 + diaban*10^2 + hoso))
 }
-
-##############################
-# SETTING UP HOUSEHOLD PANEL #
-##############################
-
-# 2002 - 2004 
-ho1_04 <- ho1_04 %>%
-  mutate(xa02 = tinh02 * 10^4 + huyen02 * 10^2 + xa02)
-
-hhid0204a <- ho1_04 %>%
-  filter(m1c1 == 1) %>% 
-  select(tinh02, huyen02, xa02, hoso02, tinh, huyen, xa, hoso, hhid) %>% 
-  filter(!is.na(tinh02)) %>% 
-  select(xa02, hoso02, tinh, huyen, xa, hoso, hhid) %>% 
-  mutate(across(c(xa02, hoso02, tinh, huyen, xa, hoso, hhid), as.numeric))
-
-diaban02a <- diaban02 %>% 
-  select(-hoso02) %>% 
-  distinct() %>% 
-  mutate(xa02 = tinh02 * 10^4 + huyen02 * 10^2 + xa02) %>% 
-  select(xa02, diaban02)
-
-hhid0204a <- left_join(hhid0204a, diaban02a, by = "xa02")
-
-hhid0204a <- hhid0204a %>% 
-  mutate(diaban02 = if_else(diaban02 == 14, 14.1, diaban02)) %>%   
-  mutate(hoso02 = diaban02*10^3 + hoso02,
-         hhid02 = xa02*10^5 + hoso02)
-
-## Households who have only clusterid02 and hoso02 as identifiers 
-hhid0204_clusterid02 <- ho1_04 %>%
-  filter(m1c1 == 1) %>% 
-  filter(is.na(tinh02)) %>%
-  select(hoso02, clusterid02, tinh, huyen, xa, diaban, hoso, hhid) %>% 
-  mutate(across(c(tinh, huyen, xa), as.numeric)) %>% 
-  mutate(xa02 = tinh * 10^4 + huyen * 100 + xa) %>% 
-  select(xa02, hoso02, tinh, huyen, xa, hoso, hhid) %>% 
-  mutate(across(c(xa02, hoso02, tinh, huyen, xa, hoso, hhid), as.numeric)) %>% 
-  mutate(hhid02 = xa02*10^5 + hoso02)
-
-hhid0204 <- bind_rows(hhid0204a, hhid0204_clusterid02) %>% 
-  select(xa02, hoso02, hhid02, tinh, huyen, xa, hoso, hhid)
-
-hhid02 <- hhid0204 %>%
-  select(xa02, hoso02, hhid02)
-
-hhid04 <- ho1_04 %>% 
-  filter(m1c1 == 1) %>% 
-  select(tinh, huyen, xa, hoso, hhid)
-
-# 2002 - 2006  
-
-diaban04 <- diaban04 %>% 
-  rename(diaban04 = diaban,
-         tinh04 = tinh,
-         huyen04 = huyen, 
-         xa04 = xa)
-
-hhid0406 <- merge(ttchung_06, diaban04, by = c("tinh04", "huyen04", "xa04")) %>% 
-  mutate(hhid04 = tinh04*10^9+huyen04*10^7+xa04*10^5+diaban04*100+hoso04) %>% 
-  rename(hhid06 = hhid) %>% 
-  select(hhid04, hhid06)
-
-# 2002- 2004 - 2006 panel final 
-
-hhid020406 <- hhid0204 %>% 
-  select(hhid02, hhid) %>% 
-  rename(hhid04 = hhid)
-
-hhid020406 <- merge(hhid020406, hhid0406, by = "hhid04") # N = 10,778
 
 #####################################
 # GENERATING INDIVIDUAL IDENTIFIERS #
@@ -207,113 +168,11 @@ for(i in id06){
   
 }
 
-###################################
-# SETTING UP FOR INDIVIDUAL PANEL #
-###################################
+####################################################################################
+# SETTING UP 2002 - 2006 PANEL USING MCCAIG'S HOUSEHOLD AND INDIVIDUAL IDENTIFIERS #
+####################################################################################
 
-# 2002 - 2004
-ivid04 <- m1b_04 %>%
-  filter(m1bc6 == 1) %>% 
-  filter(!is.na(matv)) %>% 
-  select(tinh, huyen, xa, hoso, matv, hhid, ivid, m1bc3, m1bc4, m1bc5) %>% 
-  rename("matv02" = m1bc3) #N = 91,723
+hhid0406 <- hhid0406 %>% 
+  select(hhid04_revised, hhid)
 
-ivid0204 <- merge(ivid04, hhid0204, by = c("tinh", "huyen", "xa", "hoso", "hhid"), all.x=TRUE) %>% 
-  distinct() # List of individuals by their 2002 and 2004 identifiers (N = 91,738)
-
-ivid0204 <- ivid0204 %>% 
-  mutate(ivid02 = hhid02*10^2 + matv02)
-
-ivid0204$ivid02 <- as.character(as.numeric(ivid0204$ivid02))
-
-# 2002 - 2006 
-ivid0406 <- m1b_06 %>% 
-  filter(m1bc6 == 1) %>% 
-  rename(matv04 = m1bc3) %>% 
-  select(hhid, ivid, matv04, m1bc4, m1bc5) %>% 
-  rename(hhid06 = hhid,
-         ivid06 = ivid) # N = 87,330
-
-ivid0406 <- merge(hhid0406, ivid0406, by = "hhid06") # N = 87,330
-
-ivid0406 <- ivid0406 %>% 
-  mutate(ivid04 = hhid04*100 + matv04) %>% 
-  select(ivid04, ivid06, m1bc4, m1bc5)
-
-ivid0406$ivid04 <- as.character(as.numeric(ivid0406$ivid04))
-
-######################################
-# CHECKING ACCURACY OF PANEL CREATED #
-######################################
-
-# 2002 - 2004 
-## Checking if merged dataset is accurate by comparing age in 2002 and 2002 age and sex reported in VHLSS 2004 to VHLSS 2002 
-age_vhlss02 <- m1_02 %>%
-  select(xa02, hoso, matv02, hhid, ivid, m1c2, m1c5) %>% 
-  rename("hhid02" = "hhid",
-         hoso02 = hoso) %>% 
-  rename("ivid02" = "ivid")
-
-age_vhlss0204 <- merge(ivid0204, age_vhlss02, by = c("xa02", "hhid02", "ivid02"), all.x=TRUE) ##Keeping the Age02 dataframe to those in the panel (N = 88,826)
-
-age_vhlss0204 <- age_vhlss0204 %>%
-  mutate(agediff = m1bc5 - m1c5,
-         sexdiff = m1bc4 - m1c2)
-
-age_vhlss0204$agecorrect <- 1
-age_vhlss0204$agecorrect[age_vhlss0204$agediff > 0] <- 0
-age_vhlss0204$agecorrect[age_vhlss0204$agediff < 0] <- 0
-
-age_vhlss0204$sexcorrect <- 1
-age_vhlss0204$sexcorrect[age_vhlss0204$sexdiff > 0] <- 0
-age_vhlss0204$sexcorrect[age_vhlss0204$sexdiff < 0] <- 0
-
-age_vhlss0204$correct <- ifelse(age_vhlss0204$agecorrect == 1 & age_vhlss0204$sexcorrect == 1, 1, 0)
-
-proportions(table(age_vhlss0204$correct)) ## 14.1% of the matches are incorrect. I drop the mismatched observations.  
-
-ivid0204 <- age_vhlss0204 %>% 
-  filter(correct == 1) %>% 
-  filter(!is.na(ivid02))
-
-ivid02 <- ivid0204 %>% select(hhid02, ivid02)
-ivid04 <- ivid0204 %>% select(hhid, ivid)
-
-ivid0204 <- ivid0204 %>%
-  select(xa02, hoso02.x, matv02.x, hhid02, ivid02, tinh, huyen, xa, hoso, matv, hhid, ivid) %>% 
-  rename(hoso02 = hoso02.x,
-         matv02 = matv02.x) # Finally, I have a panel of 78,051 individuals 
-
-# 2002 - 2006 
-age_vhlss04 <- m123a_04 %>% 
-  select(ivid, m1ac2, m1ac5) %>% 
-  rename(ivid04 = ivid)
-
-age_vhlss04 <- merge(age_vhlss04, ivid0406, by = "ivid04")
-
-age_vhlss04 <- age_vhlss04 %>% 
-  mutate(agediff = m1bc5 - m1ac5,
-         sexdiff = m1bc4 - m1ac2)
-
-age_vhlss04$agecorrect <- 1
-age_vhlss04$agecorrect[age_vhlss04$agediff > 0] <- 0
-age_vhlss04$agecorrect[age_vhlss04$agediff < 0] <- 0
-
-age_vhlss04$sexcorrect <- 1
-age_vhlss04$sexcorrect[age_vhlss04$sexdiff > 0] <- 0
-age_vhlss04$sexcorrect[age_vhlss04$sexdiff < 0] <- 0
-
-age_vhlss04$correct <- ifelse(age_vhlss04$agecorrect == 1 & age_vhlss04$sexcorrect == 1, 1, 0)
-
-proportions(table(age_vhlss04$correct)) # 93.5% of observations were matched correctly. 
-
-ivid0406 <- age_vhlss04 %>% 
-  filter(correct == 1) %>% 
-  select(ivid04, ivid06) # N = 80,869
-
-# 2002 - 2006 panel final 
-ivid020406 <- ivid0204 %>% 
-  rename(ivid04 = ivid)
-
-ivid020406 <- merge(ivid020406, ivid0406, by = "ivid04") %>% 
-  select(ivid02, ivid04, ivid06)
+hhid0206 <- merge(hhid0204, hhid0406, by = "hhid04")
