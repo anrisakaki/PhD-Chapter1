@@ -41,7 +41,7 @@ inc_02_fspouse <- inc02 %>%
   filter(m1c3 == 1 | m1c3 == 2) %>%
   filter(sex == "Female") %>%
   filter(married == 2) %>%
-  select(hhid02, ivid02, tinh, hhwt, provtariff, provtariff_k, year, totalinc, tal) %>%
+  select(hhid02, ivid02, tinh, hhwt, provtariff, provtariff_k, year, totalinc, tal, agri_work) %>%
   rename(totalinc_wife = totalinc)
 
 m5aho_02 <- m5aho_02 %>% 
@@ -77,7 +77,7 @@ inc_06_fspouse <- inc06 %>%
   filter(m1ac6 == 2,
          m1ac3 == 1 | m1ac3 == 2,
          sex == "Female") %>%
-  select(hhid, ivid, tinh, hhwt, provtariff, provtariff_k, year, totalinc, tal) %>%
+  select(hhid, ivid, tinh, hhwt, provtariff, provtariff_k, year, totalinc, tal, agri_work) %>%
   rename(totalinc_wife = totalinc,
          hhid06 = hhid,
          ivid06 = ivid)
