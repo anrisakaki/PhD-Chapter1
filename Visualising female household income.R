@@ -29,6 +29,32 @@ ggplot(inc_spouse_0602_prov, aes(x = tce*100, y = finc_ratio_prov_0602*100, colo
 # KDE OF FEMALE INCOME AS SHARE OF TOTAL HOUSEHOLD INCOME FOR WOMEN IN AGRI AND IN WEARING APPAREAL AND LEATHER #
 #################################################################################################################
 
+inc_spouse_agrital_02 <- inc_02_fspouse %>% 
+  filter(tal == 1 | agri_work == 1)
+
+inc_spouse_agrital_06 <- inc_06_fspouse %>% 
+  filter(tal == 1 | agri_work == 1)
+
+ggplot(inc_spouse_agrital_02, aes(log(finc_ratio), fill = factor(agri_work))) +
+  geom_density(alpha = 0.2) +
+  labs(x = "(log) Income as a share of total household income in 2001",
+       y = "Density") +
+  scale_fill_discrete(type = c("blue", "red"),
+                      name="",
+                      breaks=c("1", "0"),
+                      labels=c("Agriculture", "Wearing apparel and leather"))
+ggsave(file = "KDE-AgriTal-F_Contribution_02.png", device = png, width = 7, height = 7)
+
+ggplot(inc_spouse_agrital_06, aes(log(finc_ratio), fill = factor(agri_work))) +
+  geom_density(alpha = 0.2) +
+  labs(x = "(log) Income as a share of total household income in 2005",
+       y = "Density") +
+  scale_fill_discrete(type = c("blue", "red"),
+                      name="",
+                      breaks=c("1", "0"),
+                      labels=c("Agriculture", "Wearing apparel and leather"))
+ggsave(file = "KDE-AgriTal-F_Contribution_06.png", device = png, width = 7, height = 7)
+
 ####################################################################################################
 # KDE OF FEMALE INCOME AS SHARE OF TOTAL HOUSEHOLD INCOME FOR WOMEN WHO DID AND DID NOT REALLOCATE #
 ####################################################################################################
