@@ -25,6 +25,10 @@ ggplot(inc_spouse_0602_prov, aes(x = tce*100, y = finc_ratio_prov_0602*100, colo
        y = "Change in province-level female income as a share of her total household income") +
   theme(legend.position = "none")
 
+#################################################################################################################
+# KDE OF FEMALE INCOME AS SHARE OF TOTAL HOUSEHOLD INCOME FOR WOMEN IN AGRI AND IN WEARING APPAREAL AND LEATHER #
+#################################################################################################################
+
 ####################################################################################################
 # KDE OF FEMALE INCOME AS SHARE OF TOTAL HOUSEHOLD INCOME FOR WOMEN WHO DID AND DID NOT REALLOCATE #
 ####################################################################################################
