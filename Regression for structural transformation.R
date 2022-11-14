@@ -187,6 +187,10 @@ for (i in y){
 }
 
 ######################################################################
+# PLOTTING COEFFICIENTS FOR REGRESSIONS ON STRUCTURAL TRANSFORMATION #
+######################################################################
+
+######################################################################
 # REGRESSION ON STRUCTURAL TRANSFORMATION USING CROSS SECTIONAL DATA #
 ######################################################################
 
@@ -235,7 +239,7 @@ for (i in y){
 models_0206_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ factor(sex)*provtariff_k + age + age^2 + i(urban) + educ| year + tinh"))
+  formula <- as.formula(paste(i, " ~ factor(sex)/provtariff_k + age + age^2 + i(urban) + educ| year + tinh"))
   model <- feols(formula,
                  data = employment0206,
                  vcov = ~tinh,
