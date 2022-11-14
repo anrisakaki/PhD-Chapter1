@@ -1,24 +1,50 @@
-###########################################
-# REGRESSION FOR WORKING IN TRADED SECTOR #
-###########################################
+############################################################
+# REGRESSION FOR WORKING IN TRADED SECTOR USING PANEL DATA #
+############################################################
+
+employment0204_exc_agri_p <- employment0204_p %>% 
+  filter(!(agri_work == 1 & year == 2004))
+
+employment0206_exc_agri_p <- employment0206_p %>% 
+  filter(!(agri_work == 1 & year == 2006))
 
 etable(list(
   feols(
-    traded ~ factor(sex)/provtariff | year + ivid,
-    employment0204_p,
+    traded ~ factor(sex)*provtariff | year + ivid,
+    employment0204_exc_agri_p,
     vcov = ~tinh,
     weights = ~hhwt),
-  feols(traded ~ factor(sex)/provtariff_k | year + ivid,
-        employment0204_p,
+  feols(traded ~ factor(sex)*provtariff_k | year + ivid,
+        employment0204_exc_agri_p,
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(traded ~ factor(sex)/provtariff | year + ivid02,
-        employment0206_p,
+  feols(traded ~ factor(sex)*provtariff | year + ivid02,
+        employment0206_exc_agri_p,
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(traded ~ factor(sex)/provtariff_k | year + ivid02,
-        employment0206_p,
+  feols(traded ~ factor(sex)*provtariff_k | year + ivid02,
+        employment0206_exc_agri_p,
         vcov = ~tinh,
         weights = ~hhwt)
   ),
   tex = TRUE)
+
+######################################################################
+# REGRESSION FOR WORKING IN TRADED SECTOR USING CROSS-SECTIONAL DATA #
+######################################################################
+
+employment0204_exc_agri <- employment0204 %>% 
+  filter(!(agri_work == 1))
+
+employment0206_exc_agri <- employment0206 %>% 
+  filter(!(agri_work == 1))
+
+employment_mf_02 %>%
+  filter(!(agri_work == 1)) %>% 
+  group_by(traded, sex) %>% 
+  count(sex, wt = hhwt)
+
+employment_mf_06 %>%
+  filter(!(agri_work == 1)) %>%  
+  group_by(traded, sex) %>% 
+  count(sex, wt = hhwt)
