@@ -71,3 +71,27 @@ inc06 <- merge(employment_mf_06, inc06, by = c("tinh", "huyen", "xa", "hoso", "m
 inc06 <- merge(inc06, rcpi_06, by = c("tinh", "huyen", "xa")) %>% 
   distinct() %>% 
   mutate(totalinc = totalinc * rcpi)
+
+##############################################################
+# DESCRIPTIVE STATISTICS FOR INCOME AND SECTOR OF EMPLOYMENT #
+##############################################################
+
+inc02 %>%
+  filter(agri_work == 1 | tal == 1) %>% 
+  group_by(tal, sex) %>% 
+  summarise(avg_wage = weighted.mean(totalinc, wt = hhwt, na.rm = TRUE))
+
+inc02 %>%
+  filter(agri_work == 1 | construction == 1) %>% 
+  group_by(construction, sex) %>% 
+  summarise(avg_wage = weighted.mean(totalinc, wt = hhwt, na.rm = TRUE))
+
+inc06 %>%
+  filter(agri_work == 1 | tal == 1) %>% 
+  group_by(tal, sex) %>% 
+  summarise(avg_wage = weighted.mean(totalinc, wt = hhwt, na.rm = TRUE))
+
+inc06 %>%
+  filter(agri_work == 1 | construction == 1) %>% 
+  group_by(construction, sex) %>% 
+  summarise(avg_wage = weighted.mean(totalinc, wt = hhwt, na.rm = TRUE))
