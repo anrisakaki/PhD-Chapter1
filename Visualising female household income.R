@@ -4,11 +4,11 @@
 
 inc_spouse_02_prov <- inc_spouse_0206_p %>% 
   group_by(tinh) %>% 
-  summarise(finc_ratio_prov_02 = mean(finc_ratio, na.rm = TRUE))
+  summarise(finc_ratio_prov_02 = weighted.mean(finc_ratio, wt = hhwt, na.rm = TRUE))
 
 inc_spouse_06_prov <- inc_spouse_0602_p %>% 
   group_by(tinh) %>% 
-  summarise(finc_ratio_prov_06 = mean(finc_ratio, na.rm = TRUE))
+  summarise(finc_ratio_prov_06 = weighted.mean(finc_ratio, wt = hhwt, na.rm = TRUE))
 
 inc_spouse_0602_prov <- list(preBTA_provtariff, postBTA_provtariff, inc_spouse_02_prov, inc_spouse_06_prov) %>% 
   reduce(full_join, by = "tinh") %>% 
@@ -55,6 +55,14 @@ ggplot(inc_spouse_agrital_06, aes(log(finc_ratio), fill = factor(agri_work))) +
                       labels=c("Agriculture", "Wearing apparel and leather"))
 ggsave(file = "KDE-AgriTal-F_Contribution_06.png", device = png, width = 7, height = 7)
 
+inc_spouse_agrital_02 %>% 
+  group_by(agri_work) %>% 
+  summarise(weighted.mean(finc_ratio, wt = hhwt, na.rm = TRUE))
+
+inc_spouse_agrital_06 %>% 
+  group_by(agri_work) %>% 
+  summarise(weighted.mean(finc_ratio, wt = hhwt, na.rm = TRUE))
+
 ####################################################################################################
 # KDE OF FEMALE INCOME AS SHARE OF TOTAL HOUSEHOLD INCOME FOR WOMEN WHO DID AND DID NOT REALLOCATE #
 ####################################################################################################
@@ -70,6 +78,16 @@ inc_spouse_reallocated_0206 <- list(reallocated_f_0206, inc_spouse_02_reallocate
   reduce(full_join, by = "ivid02") %>% 
   filter(!is.na(reallocated_tal)) 
 
+# Descriptive statistics 
+inc_spouse_reallocated_0206 %>% 
+  group_by(reallocated_tal) %>% 
+  summarise(weighted.mean(finc_ratio, wt = hhwt, na.rm = TRUE))
+
+inc_spouse_reallocated_0206 %>% 
+  group_by(reallocated_tal) %>% 
+  summarise(weighted.mean(finc_ratio_06, wt = hhwt, na.rm = TRUE))
+
+# KDE 
 ggplot(inc_spouse_reallocated_0206, aes(log(finc_ratio), fill = factor(reallocated_tal))) +
   geom_density(alpha = 0.2) +
   labs(x = "(log) Income as a share of total household income in 2001",
