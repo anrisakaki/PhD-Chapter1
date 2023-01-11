@@ -54,6 +54,11 @@ totalexp_02_p <- merge(hhid0204, totalexp_02_p, by = c("xa02", "hhid02")) %>%
 totalexp_0206_p <- totalexp_02 %>% 
   rename(hhid02 = hhid)
 
+fspouse_02 <- inc_02_fspouse %>% 
+  select(hhid02, finc_ratio)
+
+totalexp_0206_p <- left_join(totalexp_0206_p, fspouse_02, by = "hhid02")
+
 totalexp_0206_p <- merge(hhid020406, totalexp_0206_p, by = "hhid02") %>% 
   rename(tempcon_ratio = tempcon_ratio_02,
          fcon_ratio = fcon_ratio_02) %>% 
@@ -76,6 +81,12 @@ totalexp_04_p <- merge(hhid0204, totalexp_04, by = c("tinh", "huyen", "xa", "hos
   mutate(year = 2004) %>% 
   mutate(across(tinh, as.factor))
 
+fspouse_04 <- inc_04_fspouse %>% 
+  select(hhid, finc_ratio)
+
+totalexp_04_p <- left_join(totalexp_04_p, fspouse_04, by = "hhid")
+
+
 totalexp_04_p <- list(totalexp_04_p, postBTA_provtariff, postBTA_provtariff_k) %>% 
   reduce(full_join, by = "tinh") %>% 
   rename(provtariff = postprov_tariff,
@@ -84,6 +95,12 @@ totalexp_04_p <- list(totalexp_04_p, postBTA_provtariff, postBTA_provtariff_k) %
 ## 2006 
 totalexp_06 <- totalexp_06 %>% 
   rename(hhid06 = hhid)
+
+fspouse_06 <- inc_06_fspouse %>% 
+  select(hhid06, finc_ratio)
+
+totalexp_06 <- left_join(totalexp_06, fspouse_06, by = "hhid06")
+
 totalexp_06_p <- merge(hhid020406, totalexp_06, by = "hhid06") %>% 
   mutate(year = 2006) %>% 
   mutate(across(tinh, as.factor))

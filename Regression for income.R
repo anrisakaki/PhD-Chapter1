@@ -193,6 +193,10 @@ etable(list(
         weights = ~hhwt)),
   tex = TRUE)
 
+###############################################################################################
+# REGRESSION ON WOMENS INCOME AS A SHARE OF TOTAL HOUSEHOLD INCOME USING CROSS-SECTIONAL DATA #
+###############################################################################################
+
 ###########################################################################
 # REGRESSION ON TARIFF CUT EXPOSURE AND INCOME USING CROSS-SECTIONAL DATA #
 ###########################################################################

@@ -9,7 +9,8 @@ for(i in emp02){
   assign(i, get(i) %>% 
            select(-c(diaban02)) %>% 
            mutate(across(tinh, as.factor)) %>% 
-           mutate(traded_nonagri = as.numeric(traded == 1 & agri_work == 0))
+           mutate(traded_nonagri = as.numeric(traded == 1 & agri_work == 0),
+                  traded_manu = as.numeric(traded == 1 & manu == 1))
   )
   
   assign(i, left_join(get(i), preBTA_provtariff, by = "tinh")) # Province-level tariffs created per McCaig 
@@ -68,7 +69,8 @@ for (i in emp0406){
   )
   
   assign(i, get(i) %>% 
-           mutate(traded_nonagri = as.numeric(traded == 1 & agri_work == 0)))
+           mutate(traded_nonagri = as.numeric(traded == 1 & agri_work == 0),
+                  traded_manu = as.numeric(traded == 1 & manu == 1)))
   
   assign(i, left_join(get(i), postBTA_provtariff, by = "tinh")) # Province-level tariffs created per McCaig   
   
@@ -130,7 +132,7 @@ employment_mf_06 <- employment_mf_06 %>%
 
 employment0206 <- bind_rows(employment_mf_02, employment_mf_06)
 
-y <- c("agri_work", "manu", "tal", "construction", "traded_nonagri")
+y <- c("agri_work", "manu", "tal", "construction", "traded_manu")
 
 ############################################################
 # REGRESSION ON STRUCTURAL TRANSFORMATION USING PANEL DATA #
@@ -264,6 +266,16 @@ etable(list(
   models_0206_p_summary[[1]],
   models_0206_p_k_summary[[1]]),
   tex = TRUE
+)
+
+## Manufacturing 
+etable(list(
+  models_0204_p_summary[[2]],
+  models_0204_p_k_summary[[2]],
+  models_0206_p_summary[[2]],
+  models_0206_p_k_summary[[2]]
+),
+tex = TRUE
 )
 
 ## Construction 
