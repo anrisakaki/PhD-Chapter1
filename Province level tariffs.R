@@ -38,7 +38,7 @@ postBTA_provtariff <- provtariff_weights %>%
 for(i in emp020406) {
   assign(i,get(i) %>%
            mutate(
-             traded = as.numeric(industry %in% c(16, 17, 25, 33, 23, 26, 28, 31, 29, 20, 24, 34, 19, 93, 22, 21, 15, 27, 1, 2, 14, 12, 74, 5, 92, 23, 11, 10, 40))
+             traded = as.numeric(industry %in% c(1, 2, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 3, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 40, 74, 92, 93))
            ))
 }
 
