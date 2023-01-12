@@ -171,7 +171,9 @@ etable(list(
 # REGRESSION ON WOMENS INCOME AS A SHARE OF TOTAL HOUSEHOLD INCOME USING PANEL DATA #
 #####################################################################################
 
-# 2002 - 2004 
+# 2002 - 2004 - 2006  
+
+## Log-transformed 
 etable(list(
   feols(
     log(finc_ratio) ~ provtariff | hhid02 + year,
@@ -188,6 +190,28 @@ etable(list(
         weights = ~hhwt),
   
   feols(log(finc_ratio) ~ provtariff_k | ivid02 + year,
+        inc_spouse_0602,
+        vcov = ~tinh,
+        weights = ~hhwt)),
+  tex = TRUE)
+
+## Level 
+etable(list(
+  feols(
+    (finc_ratio) ~ provtariff | hhid02 + year,
+    inc_spouse_0402,
+    vcov = ~tinh,
+    weights = ~hhwt),
+  feols((finc_ratio) ~ provtariff_k | hhid02 + year,
+        inc_spouse_0402,
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols((finc_ratio) ~ provtariff | ivid02 + year,
+        inc_spouse_0602,
+        vcov = ~tinh,
+        weights = ~hhwt),
+  
+  feols((finc_ratio) ~ provtariff_k | ivid02 + year,
         inc_spouse_0602,
         vcov = ~tinh,
         weights = ~hhwt)),
