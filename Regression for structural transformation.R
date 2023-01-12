@@ -278,6 +278,16 @@ etable(list(
 tex = TRUE
 )
 
+## Wearing apparel and leather 
+etable(list(
+  models_0204_p_summary[[3]],
+  models_0204_p_k_summary[[3]],
+  models_0206_p_summary[[3]],
+  models_0206_p_k_summary[[3]]
+),
+tex = TRUE
+)
+
 ## Construction 
 etable(list(
   models_0204_p_summary[[4]],
@@ -286,14 +296,4 @@ etable(list(
   models_0206_p_k_summary[[4]]
   ),
   tex = TRUE
-)
-
-## Traded non-agriculture 
-etable(list(
-  models_0204_p_summary[[5]],
-  models_0204_p_k_summary[[5]],
-  models_0206_p_summary[[5]],
-  models_0206_p_k_summary[[5]]
-),
-tex = TRUE
 )
