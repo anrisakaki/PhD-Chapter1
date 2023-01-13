@@ -38,18 +38,24 @@ inc0602_p <- bind_rows(ivid0206p, inc06_p)
 ########################################################################################
 
 inc_02_fspouse <- inc02 %>%
-  filter(m1c3 == 1 | m1c3 == 2) %>%
-  filter(sex == "Female") %>%
-  filter(married == 2) %>%
-  select(hhid02, ivid02, tinh, hhwt, provtariff, provtariff_k, year, totalinc, tal, agri_work) %>%
-  rename(totalinc_wife = totalinc)
+  select(hhid02, ivid02,tinh, hhwt, sex, m1c3, provtariff, provtariff_k, year, totalinc, tal, agri_work, wage_work)
 
 m5aho_02 <- m5aho_02 %>% 
-  rename(hhid02 = hhid)
+  rename(hhid02 = hhid) %>%
+  mutate(across(tinh, as.factor))
 
-inc_02_fspouse <- merge(inc_02_fspouse, m5aho_02, by = c("tinh", "hhid02")) %>% 
-  mutate(totalinc_hh = m5ac7e + m5ac9,
-         finc_ratio = totalinc_wife/totalinc_hh)
+m5d_02 <- m5d_02 %>% 
+  rename(hhid02 = hhid) %>%
+  mutate(across(tinh, as.factor))
+
+inc_02_fspouse <- list(inc_02_fspouse, m5d_02, m5aho_02) %>% 
+  reduce(full_join, by = c("tinh", "hhid02")) %>%   
+  distinct() %>% 
+    filter(m1c3 == 1 | m1c3 == 2) %>%
+    filter(sex == "Female") %>%
+  replace(is.na(.), 0) %>% 
+  mutate(totalinc_hh = m5ac7e + m5ac9 + m5ac10 + m5d1cong + m5d2cong,
+         finc_ratio = totalinc/totalinc_hh)
 
 #2004
 id_04 <- m123a_04 %>%
@@ -58,37 +64,34 @@ id_04 <- m123a_04 %>%
 inc04 <- merge(id_04, inc04, by = "ivid") %>%
   distinct()
 
-inc_04_fspouse <- inc04 %>%
+hhinc_04 <- ho1_04 %>% 
+  select(hhid, thunhap) %>% 
+  rename(totalinc_hh = thunhap)
+
+inc_04_fspouse <- merge(inc04, hhinc_04, by = "hhid") %>% 
   filter(m1ac3 == 1 | m1ac3 == 2,
          married == 2,
-         sex == "Female") %>%
-  select(hhid, ivid, tinh, hhwt, provtariff, provtariff_k, year, totalinc, tal) %>%
-  rename(totalinc_wife = totalinc)
-
-hhinc_04 <- ho1_04 %>% 
-  select(hhid, m4atn) %>% 
-  rename(totalinc_hh = m4atn)
-
-inc_04_fspouse <- merge(inc_04_fspouse, hhinc_04, by = "hhid") %>% 
-  mutate(finc_ratio = totalinc_wife/totalinc_hh)
+         sex == "Female") %>%         
+  mutate(finc_ratio = totalinc/totalinc_hh) %>% 
+  select(hhid, ivid, tinh, hhwt, provtariff, provtariff_k, year, totalinc, finc_ratio, tal, wage_work)
 
 # 2006
-inc_06_fspouse <- inc06 %>%
+hhinc_06 <- ttchung_06 %>% 
+  select(hhid, thunhap) %>% 
+  rename(hhid06 = hhid,
+         totalinc_hh = thunhap)
+
+inc06 <- inc06 %>% 
+  rename(hhid06 = hhid)
+
+inc_06_fspouse <- merge(inc06, hhinc_06, by = "hhid06") %>% 
   filter(m1ac6 == 2,
          m1ac3 == 1 | m1ac3 == 2,
-         sex == "Female") %>%
-  select(hhid, ivid, tinh, hhwt, provtariff, provtariff_k, year, totalinc, tal, agri_work) %>%
+         sex == "Female") %>%  
+  mutate(finc_ratio = totalinc/totalinc_hh) %>%   
+  select(hhid06, ivid, tinh, hhwt, provtariff, provtariff_k, year, totalinc, tal, agri_work, wage_work, finc_ratio) %>%
   rename(totalinc_wife = totalinc,
-         hhid06 = hhid,
          ivid06 = ivid)
-
-hhinc_06 <- ttchung_06 %>% 
-  select(hhid, m4atn) %>% 
-  rename(hhid06 = hhid,
-         totalinc_hh = m4atn)
-
-inc_06_fspouse <- merge(inc_06_fspouse, hhinc_06, by = "hhid06") %>% 
-  mutate(finc_ratio = totalinc_wife/totalinc_hh)  
 
 # 2002 - 2004 
 inc_hhid0204 <- hhid0204 %>% 
@@ -174,6 +177,7 @@ etable(list(
 # 2002 - 2004 - 2006  
 
 ## Log-transformed 
+### All women 
 etable(list(
   feols(
     log(finc_ratio) ~ provtariff | hhid02 + year,
