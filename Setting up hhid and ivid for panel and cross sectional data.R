@@ -31,6 +31,9 @@ for(i in hh02){
 m5aho_02 <- m5aho_02 %>% 
   mutate(hhid = xa*10^5 + hoso)
 
+m5d_02 <- m5d_02 %>% 
+  mutate(hhid = xa*10^5 + hoso)
+
 # 2004 
 diaban04 <- m123a_04 %>% 
   select(tinh, huyen, xa, diaban) %>% 
