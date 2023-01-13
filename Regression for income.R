@@ -177,7 +177,6 @@ etable(list(
 # 2002 - 2004 - 2006  
 
 ## Log-transformed 
-### All women 
 etable(list(
   feols(
     log(finc_ratio) ~ provtariff | hhid02 + year,
