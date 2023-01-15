@@ -198,6 +198,27 @@ etable(list(
         weights = ~hhwt)),
   tex = TRUE)
 
+etable(list(
+  feols(
+    log(finc_ratio) ~ provtariff | hhid02 + year,
+    subset(inc_spouse_0402, wage_work == 1),
+    vcov = ~tinh,
+    weights = ~hhwt),
+  feols(log(finc_ratio) ~ provtariff_k | hhid02 + year,
+        subset(inc_spouse_0402, wage_work == 1),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(log(finc_ratio) ~ provtariff | ivid02 + year,
+        subset(inc_spouse_0402, wage_work == 1),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  
+  feols(log(finc_ratio) ~ provtariff_k | ivid02 + year,
+        subset(inc_spouse_0402, wage_work == 1),
+        vcov = ~tinh,
+        weights = ~hhwt)),
+  tex = TRUE)
+
 ## Level 
 etable(list(
   feols(
