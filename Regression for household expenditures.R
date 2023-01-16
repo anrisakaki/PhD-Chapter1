@@ -65,7 +65,7 @@ y_exp <- c("log(food_share)", "log(tobac_share)", "log(educ_share)", "log(health
 exp_finc_0204_hhfe_p_summary <- list()
 
 for (i in y_exp){
-  formula <- as.formula(paste(i, " ~ finc_ratio + finc_ratio/provtariff | hhid02 + year"))
+  formula <- as.formula(paste(i, " ~ finc_ratio + provtariff | hhid02 + year"))
   model <- feols(formula,
                  data = exp_0402_p,
                  vcov = ~tinh,
@@ -78,7 +78,7 @@ for (i in y_exp){
 exp_finc_0206_hhfe_p_summary <- list()
 
 for (i in y_exp){
-  formula <- as.formula(paste(i, " ~ finc_ratio + finc_ratio/provtariff | hhid02 + yearint"))
+  formula <- as.formula(paste(i, " ~ finc_ratio | hhid02 + yearint"))
   model <- feols(formula,
                  data = exp_0206_p,
                  vcov = ~tinh,
