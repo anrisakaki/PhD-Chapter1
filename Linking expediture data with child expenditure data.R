@@ -15,7 +15,8 @@ schooling_02 <- m2_02 %>%
   select(hhid, ivid, m2c4, m2c5h) %>% 
   rename(enrolled = m2c4) %>% 
   rename(educ_exp = m2c5h) %>% 
-  mutate(enrolled = as.numeric(enrolled == 1))
+  mutate(enrolled = as.numeric(enrolled == 1)) %>% 
+  replace(is.na(.), 0)
 
 schooling_02 <- merge(juniors_02, schooling_02, by = c("hhid", "ivid"))
 
@@ -29,7 +30,8 @@ schooling_04 <- m123a_04 %>%
   filter(age > 5,
          age <= 18) %>% 
   mutate(Female = as.numeric(Female == 2),
-         enrolled = as.numeric(enrolled < 3))
+         enrolled = as.numeric(enrolled < 3),
+         educ_exp = ifelse(is.na(educ_exp), 0 , educ_exp))
 
 # 2006 
 juniors_06 <- m1a_06 %>% 
@@ -42,9 +44,10 @@ juniors_06 <- m1a_06 %>%
 
 schooling_06 <- m2a_06 %>% 
   select(hhid, ivid, m2ac5, m2ac13k) %>% 
-  rename(Female = m2ac5, 
-         enrolled = m2ac13k) %>% 
-  mutate(Female = as.numeric(Female == 2),
-         enrolled = as.numeric(enrolled < 3))
+  rename(enrolled = m2ac5,
+         educ_exp = m2ac13k) %>% 
+  mutate(enrolled = as.numeric(enrolled < 3),
+         educ_exp = ifelse(is.na(educ_exp), 0 , educ_exp))
 
 schooling_06 <- merge(juniors_06, schooling_06, by = c("hhid", "ivid"))
+
