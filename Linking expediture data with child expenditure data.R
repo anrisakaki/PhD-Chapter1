@@ -4,7 +4,7 @@
 
 # 2002 
 juniors_02 <- m1_02 %>% 
-  select(hhid, ivid, m1c2, m1c5) %>% 
+  select(tinh02, xa02, diaban02, huyen02, hhid, ivid, m1c2, m1c5) %>% 
   rename(Female = m1c2,
          age = m1c5) %>% 
   mutate(Female = as.numeric(Female == 2)) %>% 
@@ -22,7 +22,7 @@ schooling_02 <- merge(juniors_02, schooling_02, by = c("hhid", "ivid"))
 
 # 2004 
 schooling_04 <- m123a_04 %>% 
-  select(hhid, ivid, m1ac2, m1ac5, m2c4, m2c11h) %>% 
+  select(tinh, huyen, xa, hhid, ivid, m1ac2, m1ac5, m2c4, m2c11h) %>% 
   rename(Female = m1ac2,
          age = m1ac5, 
          enrolled = m2c4,
@@ -35,7 +35,7 @@ schooling_04 <- m123a_04 %>%
 
 # 2006 
 juniors_06 <- m1a_06 %>% 
-  select(hhid, ivid, m1ac2, m1ac5) %>% 
+  select(tinh, huyen, xa, hhid, ivid, m1ac2, m1ac5) %>% 
   rename(Female = m1ac2,
          age = m1ac5) %>% 
   mutate(Female = as.numeric(Female == 2)) %>% 
