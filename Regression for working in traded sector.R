@@ -10,19 +10,19 @@ employment0206_p <- employment0206_p %>%
 
 etable(list(
   feols(
-    traded_manu ~ factor(sex)/provtariff | year + ivid,
+    traded_manu ~ i(sex, provtariff) | year + ivid,
     employment0204_p,
     vcov = ~tinh,
     weights = ~hhwt),
-  feols(traded_manu ~ factor(sex)/provtariff_k | year + ivid,
+  feols(traded_manu ~ i(sex, provtariff_k) | year + ivid,
         employment0204_p,
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(traded_manu ~ factor(sex)/provtariff | year + ivid02,
+  feols(traded_manu ~ i(sex, provtariff) | year + ivid02,
         employment0206_p,
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(traded_manu ~ factor(sex)/provtariff_k | year + ivid02,
+  feols(traded_manu ~ i(sex, provtariff_k) | year + ivid02,
         employment0206_p,
         vcov = ~tinh,
         weights = ~hhwt)
