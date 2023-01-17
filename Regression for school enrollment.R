@@ -65,19 +65,19 @@ schooling_0206_p <- bind_rows(schooling_0206, schooling_0602)
 ############################################################################
 
 etable(list(
-  feols(enrolled ~ provtariff/Female| ivid02 + year,
+  feols(enrolled ~ i(Female, provtariff) | ivid02 + year,
         schooling_0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ provtariff_k/Female | ivid02 + year,
+  feols(enrolled ~ i(Female, provtariff_k) | ivid02 + year,
         schooling_0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ provtariff/Female | ivid02 + year,
+  feols(enrolled ~ i(Female, provtariff) | ivid02 + year,
         schooling_0206_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ provtariff_k/Female | ivid02 + year,
+  feols(enrolled ~ i(Female, provtariff_k) | ivid02 + year,
         schooling_0206_p,
         weights = ~hhwt,
         vcov = ~tinh)),
