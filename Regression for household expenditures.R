@@ -28,14 +28,14 @@ exp_06 <- left_join(exp_06, fspouse_06, by = "hhid06") %>%
 
 # Panel data
 exp_02_p <- exp_02 %>% 
-  select(tinh, xa02, hhid02, foodreal, educex_2, hlthex_2, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt, finc_ratio)
+  select(tinh, xa02, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt, finc_ratio)
 
 exp_02_p <- merge(hhid02, exp_02_p, by = c("xa02", "hhid02")) %>% 
   mutate(year = 2002)
 
 exp_04_p <- merge(hhid0204, exp_04, by = c("tinh", "xa", "hoso", "hhid")) %>% 
   mutate(across(tinh, as.factor)) %>% 
-  select(tinh, hhid02, foodreal, educex_2, hlthex_2, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt, finc_ratio) %>% 
+  select(tinh, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt, finc_ratio) %>% 
   mutate(year = 2004)
 
 exp_0206 <- exp_02
@@ -59,13 +59,16 @@ exp_0602 <- bind_rows(exp_02, exp_06)
 
 y_exp <- c("log(food_share)", "log(tobac_share)", "log(educ_share)", "log(health_share)")
 
+y_exp_nom <- c("log(foodreal)", "log(tobac12m)", "log(educex_2)", "log(hlthex_2)")
+
 # With female share of household income as RHS
 ## 2002 - 2004
 
 exp_finc_0204_hhfe_p_summary <- list()
+exp_finc_0204_nom_hhfe_p_summary <- list()
 
 for (i in y_exp){
-  formula <- as.formula(paste(i, " ~ finc_ratio + provtariff | hhid02 + year"))
+  formula <- as.formula(paste(i, " ~ finc_ratio | hhid02 + year"))
   model <- feols(formula,
                  data = exp_0402_p,
                  vcov = ~tinh,
@@ -74,8 +77,19 @@ for (i in y_exp){
   exp_finc_0204_hhfe_p_summary[[i]] <- model
 }
 
+for (i in y_exp_nom){
+  formula <- as.formula(paste(i, " ~ finc_ratio | hhid02 + year"))
+  model <- feols(formula,
+                 data = exp_0402_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  exp_finc_0204_nom_hhfe_p_summary[[i]] <- model
+}
+
 # 2002 - 2006 
 exp_finc_0206_hhfe_p_summary <- list()
+exp_finc_0206_nom_hhfe_p_summary <- list()
 
 for (i in y_exp){
   formula <- as.formula(paste(i, " ~ finc_ratio | hhid02 + yearint"))
@@ -87,10 +101,23 @@ for (i in y_exp){
   exp_finc_0206_hhfe_p_summary[[i]] <- model
 }
 
+for (i in y_exp_nom){
+  formula <- as.formula(paste(i, " ~ finc_ratio | hhid02 + yearint"))
+  model <- feols(formula,
+                 data = exp_0206_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  exp_finc_0206_nom_hhfe_p_summary[[i]] <- model
+}
+
 # With province-level tariff as RHS 
 ## 2002 - 2004 
 exp_tce_0204_hhfe_p_summary <- list()
 exp_tce_k_0204_hhfe_p_summary <- list()
+
+exp_tce_0204_nom_hhfe_p_summary <- list()
+exp_tce_k_0204_nom_hhfe_p_summary <- list()
 
 for (i in y_exp){
   formula <- as.formula(paste(i, " ~ provtariff | hhid02 + year"))
@@ -112,9 +139,31 @@ for (i in y_exp){
   exp_tce_k_0204_hhfe_p_summary[[i]] <- model
 }
 
+for (i in y_exp_nom){
+  formula <- as.formula(paste(i, " ~ provtariff | hhid02 + year"))
+  model <- feols(formula,
+                 data = exp_0402_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  exp_tce_0204_nom_hhfe_p_summary[[i]] <- model
+}
+
+for (i in y_exp_nom){
+  formula <- as.formula(paste(i, " ~ provtariff_k | hhid02 + year"))
+  model <- feols(formula,
+                 data = exp_0402_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  exp_tce_k_0204_nom_hhfe_p_summary[[i]] <- model
+}
+
 ## 2002 - 2006 
 exp_tce_0206_hhfe_p_summary <- list()
 exp_tce_k_0206_hhfe_p_summary <- list()
+exp_tce_0206_nom_hhfe_p_summary <- list()
+exp_tce_k_0206_nom_hhfe_p_summary <- list()
 
 for (i in y_exp){
   formula <- as.formula(paste(i, " ~ provtariff | hhid02 + yearint"))
@@ -134,6 +183,26 @@ for (i in y_exp){
                  weights = ~hhwt)
   
   exp_tce_k_0206_hhfe_p_summary[[i]] <- model
+}
+
+for (i in y_exp_nom){
+  formula <- as.formula(paste(i, " ~ provtariff | hhid02 + yearint"))
+  model <- feols(formula,
+                 data = exp_0206_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  exp_tce_0206_nom_hhfe_p_summary[[i]] <- model
+}
+
+for (i in y_exp_nom){
+  formula <- as.formula(paste(i, " ~ provtariff_k | hhid02 + yearint"))
+  model <- feols(formula,
+                 data = exp_0206_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  exp_tce_k_0206_nom_hhfe_p_summary[[i]] <- model
 }
 
 ##################################################################################
@@ -217,12 +286,88 @@ for (i in y_exp){
 ##########################################################
 # SUMMARY TABLES FOR REGRESSIONS ON HOUEHOLD EXPENDITURE #
 ##########################################################
+# Female share of income 
+etable(list(
+  # Food
+  exp_finc_0204_hhfe_p_summary[[1]],
+  exp_finc_0206_hhfe_p_summary[[1]],
+  # Education
+  exp_finc_0204_hhfe_p_summary[[3]],
+  exp_finc_0206_hhfe_p_summary[[3]],
+  # Health
+  exp_finc_0204_hhfe_p_summary[[4]],
+  exp_finc_0206_hhfe_p_summary[[4]]  
+), tex = TRUE)
 
-etable(list(dur_exp_tce_0206[[1]],
-            dur_exp_tce_k_0206[[1]],
-       dur_exp_tce_0206[[2]],
-       dur_exp_tce_k_0206[[2]],
-       dur_exp_tce_0206[[3]],
-       dur_exp_tce_k_0206[[3]]),
-       tex = TRUE)
+etable(list(
+  # Food
+  exp_finc_0204_nom_hhfe_p_summary[[1]],
+  exp_finc_0206_nom_hhfe_p_summary[[1]],
+  # Education
+  exp_finc_0204_nom_hhfe_p_summary[[3]],
+  exp_finc_0206_nom_hhfe_p_summary[[3]],
+  # Health
+  exp_finc_0204_nom_hhfe_p_summary[[4]],
+  exp_finc_0206_nom_hhfe_p_summary[[4]]  
+), tex = TRUE)
 
+## Tobacco 
+
+etable(list(
+  exp_finc_0204_nom_hhfe_p_summary[[2]],
+  exp_finc_0206_nom_hhfe_p_summary[[2]]
+), tex = TRUE)
+
+# TCE 
+etable(list(
+  # Food 
+  exp_tce_0204_hhfe_p_summary[[1]],
+  exp_tce_k_0204_hhfe_p_summary[[1]],
+  exp_tce_0206_hhfe_p_summary[[1]],
+  exp_tce_k_0206_hhfe_p_summary[[1]],
+  # Education 
+  exp_tce_0204_hhfe_p_summary[[3]],
+  exp_tce_k_0204_hhfe_p_summary[[3]],
+  exp_tce_0206_hhfe_p_summary[[3]],
+  exp_tce_k_0206_hhfe_p_summary[[3]],
+  #Health
+  exp_tce_0204_hhfe_p_summary[[4]],
+  exp_tce_k_0204_hhfe_p_summary[[4]],
+  exp_tce_0206_hhfe_p_summary[[4]],
+  exp_tce_k_0206_hhfe_p_summary[[4]]  
+), tex = TRUE)
+
+
+etable(list(
+  # Food 
+  exp_tce_0204_nom_hhfe_p_summary[[1]],
+  exp_tce_k_0204_nom_hhfe_p_summary[[1]],
+  exp_tce_0206_nom_hhfe_p_summary[[1]],
+  exp_tce_k_0206_nom_hhfe_p_summary[[1]],
+  # Education 
+  exp_tce_0204_nom_hhfe_p_summary[[3]],
+  exp_tce_k_0204_nom_hhfe_p_summary[[3]],
+  exp_tce_0206_nom_hhfe_p_summary[[3]],
+  exp_tce_k_0206_nom_hhfe_p_summary[[3]],
+  #Health
+  exp_tce_0204_nom_hhfe_p_summary[[4]],
+  exp_tce_k_0204_nom_hhfe_p_summary[[4]],
+  exp_tce_0206_nom_hhfe_p_summary[[4]],
+  exp_tce_k_0206_nom_hhfe_p_summary[[4]]  
+), tex = TRUE)
+
+# Tobacco 
+etable(list(
+  exp_tce_0204_hhfe_p_summary[[2]],
+  exp_tce_k_0204_hhfe_p_summary[[2]],
+  exp_tce_0206_hhfe_p_summary[[2]],
+  exp_tce_k_0206_hhfe_p_summary[[2]]  
+), tex = TRUE)
+
+etable(list(
+  # Food 
+  exp_tce_0204_nom_hhfe_p_summary[[2]],
+  exp_tce_k_0204_nom_hhfe_p_summary[[2]],
+  exp_tce_0206_nom_hhfe_p_summary[[2]],
+  exp_tce_k_0206_nom_hhfe_p_summary[[2]]),
+  tex = TRUE)
