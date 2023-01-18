@@ -37,7 +37,7 @@ inc0602_p <- bind_rows(ivid0206p, inc06_p)
 # SETING UP FOR REGRESSION ON INCOME OF WOMEN AS A SHARE OF HER TOTAL HOUSEHOLD INCOME #
 ########################################################################################
 
-inc_02_fspouse <- inc02 %>%
+inc_02_spouse <- inc02 %>%
   select(hhid02, ivid02,tinh, hhwt, sex, m1c3, provtariff, provtariff_k, year, totalinc, tal, agri_work, wage_work)
 
 m5aho_02 <- m5aho_02 %>% 
@@ -48,14 +48,19 @@ m5d_02 <- m5d_02 %>%
   rename(hhid02 = hhid) %>%
   mutate(across(tinh, as.factor))
 
-inc_02_fspouse <- list(inc_02_fspouse, m5d_02, m5aho_02) %>% 
-  reduce(full_join, by = c("tinh", "hhid02")) %>%   
+inc_02_spouse <- list(inc_02_spouse, m5aho_02, m5d_02) %>% 
+  reduce(full_join, by = c("tinh", "hhid02")) %>% 
   distinct() %>% 
+  mutate(totalinc_hh = m5ac7e + m5ac9 + m5ac10 + m5d1cong + m5d2cong,
+         inc_ratio = totalinc/totalinc_hh) %>%
+  select(-ends_with(".x")) %>% 
+  select(-ends_with(".y"))
+
+inc_02_fspouse <- inc_02_spouse %>% 
     filter(m1c3 == 1 | m1c3 == 2) %>%
     filter(sex == "Female") %>%
   replace(is.na(.), 0) %>% 
-  mutate(totalinc_hh = m5ac7e + m5ac9 + m5ac10 + m5d1cong + m5d2cong,
-         finc_ratio = totalinc/totalinc_hh)
+  rename(finc_ratio = inc_ratio)
 
 #2004
 id_04 <- m123a_04 %>%
@@ -68,11 +73,14 @@ hhinc_04 <- ho1_04 %>%
   select(hhid, thunhap) %>% 
   rename(totalinc_hh = thunhap)
 
-inc_04_fspouse <- merge(inc04, hhinc_04, by = "hhid") %>% 
+inc_04_spouse <- merge(inc04, hhinc_04, by  = "hhid") %>% 
+  mutate(inc_ratio = totalinc/totalinc_hh)
+
+inc_04_fspouse <- inc_04_spouse %>% 
   filter(m1ac3 == 1 | m1ac3 == 2,
          married == 2,
          sex == "Female") %>%         
-  mutate(finc_ratio = totalinc/totalinc_hh) %>% 
+  rename(finc_ratio = inc_ratio) %>% 
   select(hhid, ivid, tinh, hhwt, provtariff, provtariff_k, year, totalinc, finc_ratio, tal, wage_work)
 
 # 2006
@@ -84,162 +92,184 @@ hhinc_06 <- ttchung_06 %>%
 inc06 <- inc06 %>% 
   rename(hhid06 = hhid)
 
-inc_06_fspouse <- merge(inc06, hhinc_06, by = "hhid06") %>% 
+inc_06_spouse <- merge(inc06, hhinc_06, by = "hhid06") %>% 
+  mutate(inc_ratio = totalinc/totalinc_hh) %>% 
+  rename(ivid06 = ivid)
+
+inc_06_fspouse <- inc_06_spouse %>% 
   filter(m1ac6 == 2,
          m1ac3 == 1 | m1ac3 == 2,
          sex == "Female") %>%  
-  mutate(finc_ratio = totalinc/totalinc_hh) %>%   
-  select(hhid06, ivid, tinh, hhwt, provtariff, provtariff_k, year, totalinc, tal, agri_work, wage_work, finc_ratio) %>%
-  rename(totalinc_wife = totalinc,
-         ivid06 = ivid)
+  rename(finc_ratio = inc_ratio) %>%   
+  select(hhid06, ivid06, tinh, hhwt, provtariff, provtariff_k, year, totalinc, tal, agri_work, wage_work, finc_ratio)
 
-# 2002 - 2004 
-inc_hhid0204 <- hhid0204 %>% 
-  select(hhid02, hhid)
+# Constructing panel data 
+## 2002 - 2004 
+### Household 
+inc_02_spouse_p <- merge(hhid0204, inc_02_spouse, by = "hhid02") %>% 
+  rename(tinh = tinh.x) %>% 
+  select(-c("tinh.y")) %>% 
+  distinct() %>% 
+  mutate(across(tinh, as.factor)) %>% 
+  mutate(year = 2002)
 
-inc_spouse_0204_p <- merge(inc_hhid0204, inc_02_fspouse, by = "hhid02") %>% 
+inc_04_spouse_p <- merge(hhid0204, inc_04_spouse, by = c("tinh", "huyen", "xa", "hoso", "hhid")) %>% 
+  distinct() %>% 
+  mutate(year = 2004) %>% 
+  mutate(across(tinh, as.factor))
+
+inc_0204_spouse_p <- bind_rows(inc_02_spouse_p, inc_04_spouse_p)
+
+### Wife 
+inc_fspouse_0204_p <- merge(inc_hhid0204, inc_02_fspouse, by = "hhid02") %>% 
   distinct()
-inc_spouse_0402_p <- merge(inc_hhid0204, inc_04_fspouse, by = "hhid") %>% 
+
+inc_fspouse_0402_p <- merge(inc_hhid0204, inc_04_fspouse, by = "hhid") %>% 
   distinct()
 
-inc_spouse_0402 <- bind_rows(inc_spouse_0204_p, inc_spouse_0402_p)
+inc_fspouse0204_p <- bind_rows(inc_fspouse_0204_p, inc_fspouse_0402_p)
 
-# 2002 - 2006 
+## 2002 - 2006 
+### Household 
+inc_0602_spouse_p <- merge(hhid020406, inc_02_spouse, by = "hhid02") %>% 
+  mutate(year = 2002)
 
-inc_spouse_0206_p <- merge(ivid020406, inc_02_fspouse, by = "ivid02")
-inc_spouse_0602_p <- merge(ivid020406, inc_06_fspouse, by = "ivid06")
+inc_06_spouse_p <- merge(hhid020406, inc_06_spouse, by = "hhid06") %>% 
+  mutate(year = 2006)
 
-inc_spouse_0602 <- bind_rows(inc_spouse_0206_p, inc_spouse_0602_p)
+inc_0206_spouse_p <- bind_rows(inc_0602_spouse_p, inc_06_spouse_p)
+
+### Individual
+inc_fspouse_0206_p <- merge(ivid020406, inc_02_fspouse, by = "ivid02")
+
+inc_fspouse_0602_p <- merge(ivid020406, inc_06_fspouse, by = "ivid06")
+
+inc_fspouse_0602 <- bind_rows(inc_fspouse_0206_p, inc_fspouse_0602_p)
 
 #################################################################
 # REGRESSION ON TARIFF CUT EXPOSURE AND INCOME USING PANEL DATA #
 #################################################################
 
-# Topalova tariffs 
-## 2002 - 2004 
+# Household fixed effects 
 etable(list(
-  feols(log(totalinc) ~ factor(sex)*provtariff | ivid02 + year,
-                           data = inc0402_p,
-                           weights = ~hhwt,
-                           vcov = ~tinh),
   feols(log(totalinc) ~ factor(sex)*provtariff | hhid02 + year,
         data = inc0402_p,
         weights = ~hhwt, 
-        vcov = ~tinh)),
-  tex = TRUE) 
-
-## 2002 - 2006 
-etable(list(
-  feols(log(totalinc) ~ factor(sex)*provtariff | hhid06 + year,
-        data = inc0602_p,
-        weights = ~hhwt, 
         vcov = ~tinh),
-  
-  feols(log(totalinc) ~ factor(sex)*provtariff | ivid02 + year,
-        data = inc0602_p,
-        weights = ~hhwt,
-        vcov = ~tinh)
-),
-tex = TRUE)
-
-# Kovak tariffs
-## 2002 - 2004 
-etable(list(
   feols(log(totalinc) ~ factor(sex)*provtariff_k | hhid02 + year,
         data = inc0402_p,
         weights = ~hhwt, 
         vcov = ~tinh),
-  
-  feols(log(totalinc) ~ factor(sex)*provtariff_k | ivid02 + year,
-                             data = inc0402_p,
-                             weights = ~hhwt,
-                             vcov = ~tinh)
-),
-tex = TRUE)
-
-# 2002 - 2006 
-etable(list(
-  feols(log(totalinc) ~ factor(sex)/provtariff_k | hhid06 + year,
+  feols(log(totalinc) ~ factor(sex)*provtariff | hhid06 + year,
         data = inc0602_p,
         weights = ~hhwt, 
         vcov = ~tinh),
-  
+  feols(log(totalinc) ~ factor(sex)*provtariff_k | hhid06 + year,
+        data = inc0602_p,
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+))
+
+etable(list(
+  feols(log(totalinc) ~ i(sex, provtariff) | hhid02 + year,
+        data = inc0402_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ i(sex, provtariff_k) | hhid02 + year,
+        data = inc0402_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ i(sex, provtariff) | hhid06 + year,
+        data = inc0602_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ i(sex, provtariff_k) | hhid06 + year,
+        data = inc0602_p,
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+))
+
+# Individual fixed effects 
+etable(list(
+  feols(log(totalinc) ~ factor(sex)*provtariff | ivid02 + year,
+        data = inc0402_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ factor(sex)*provtariff_k | ivid02 + year,
+        data = inc0402_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ factor(sex)*provtariff | ivid02 + year,
+        data = inc0602_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
   feols(log(totalinc) ~ factor(sex)*provtariff_k | ivid02 + year,
         data = inc0602_p,
-        weights = ~hhwt,
-        vcov = ~tinh)),
-  tex = TRUE)
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+))
+
+etable(list(
+  feols(log(totalinc) ~ i(sex, provtariff) | ivid02 + year,
+        data = inc0402_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ i(sex, provtariff_k) | ivid02 + year,
+        data = inc0402_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ i(sex, provtariff) | ivid02 + year,
+        data = inc0602_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ i(sex, provtariff_k) | ivid02 + year,
+        data = inc0602_p,
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+), tex = TRUE)
 
 #####################################################################################
 # REGRESSION ON WOMENS INCOME AS A SHARE OF TOTAL HOUSEHOLD INCOME USING PANEL DATA #
 #####################################################################################
 
-# 2002 - 2004 - 2006  
-
-## Log-transformed 
+# Household fixed effects 
 etable(list(
-  feols(
-    log(finc_ratio) ~ provtariff | hhid02 + year,
-                  inc_spouse_0402,
-                  vcov = ~tinh,
-                  weights = ~hhwt),
-  feols(log(finc_ratio) ~ provtariff_k | hhid02 + year,
-            inc_spouse_0402,
-            vcov = ~tinh,
-            weights = ~hhwt),
-  feols(log(finc_ratio) ~ provtariff | ivid02 + year,
-        inc_spouse_0602,
-        vcov = ~tinh,
-        weights = ~hhwt),
-  
-  feols(log(finc_ratio) ~ provtariff_k | ivid02 + year,
-        inc_spouse_0602,
-        vcov = ~tinh,
-        weights = ~hhwt)),
-  tex = TRUE)
+  feols(inc_ratio ~ sex*provtariff | hhid02 + year,
+        inc_0204_spouse_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ sex*provtariff_k | hhid02 + year,
+        inc_0204_spouse_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ sex*provtariff| hhid06 + year,
+        inc_0206_spouse_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ sex*provtariff_k | hhid06 + year,
+        inc_0206_spouse_p,
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+), tex = TRUE)
 
 etable(list(
-  feols(
-    log(finc_ratio) ~ provtariff | hhid02 + year,
-    subset(inc_spouse_0402, wage_work == 1),
-    vcov = ~tinh,
-    weights = ~hhwt),
-  feols(log(finc_ratio) ~ provtariff_k | hhid02 + year,
-        subset(inc_spouse_0402, wage_work == 1),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(log(finc_ratio) ~ provtariff | ivid02 + year,
-        subset(inc_spouse_0402, wage_work == 1),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  
-  feols(log(finc_ratio) ~ provtariff_k | ivid02 + year,
-        subset(inc_spouse_0402, wage_work == 1),
-        vcov = ~tinh,
-        weights = ~hhwt)),
-  tex = TRUE)
-
-## Level 
-etable(list(
-  feols(
-    (finc_ratio) ~ provtariff | hhid02 + year,
-    inc_spouse_0402,
-    vcov = ~tinh,
-    weights = ~hhwt),
-  feols((finc_ratio) ~ provtariff_k | hhid02 + year,
-        inc_spouse_0402,
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols((finc_ratio) ~ provtariff | ivid02 + year,
-        inc_spouse_0602,
-        vcov = ~tinh,
-        weights = ~hhwt),
-  
-  feols((finc_ratio) ~ provtariff_k | ivid02 + year,
-        inc_spouse_0602,
-        vcov = ~tinh,
-        weights = ~hhwt)),
-  tex = TRUE)
+  feols(inc_ratio ~ i(sex, provtariff) | hhid02 + year,
+        inc_0204_spouse_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ i(sex, provtariff_k) | hhid02 + year,
+        inc_0204_spouse_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ i(sex, provtariff) | hhid06 + year,
+        inc_0206_spouse_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ i(sex, provtariff_k) | hhid06 + year,
+        inc_0206_spouse_p,
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+), tex = TRUE)
 
 ###############################################################################################
 # REGRESSION ON WOMENS INCOME AS A SHARE OF TOTAL HOUSEHOLD INCOME USING CROSS-SECTIONAL DATA #
