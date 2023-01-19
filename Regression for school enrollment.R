@@ -146,20 +146,20 @@ etable(list(
   tex = TRUE)
 
 etable(list(
-  feols(log(educ_exp) ~ i(Female, provtariff) | ivid02 + year,
-        subset(schooling_0204_p, enrolled == 1),
+  feols(log(educ_exp) ~ provtariff*Female | ivid02 + year,
+        schooling_0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(educ_exp) ~ i(Female, provtariff_k) | ivid02 + year,
-        subset(schooling_0204_p, enrolled == 1),
+  feols(log(educ_exp) ~ Female*provtariff_k | ivid02 + year,
+        schooling_0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(educ_exp) ~ i(Female, provtariff) | ivid02 + year,
-        subset(schooling_0206_p, enrolled == 1),
+  feols(log(educ_exp) ~ Female*provtariff | ivid02 + year,
+        schooling_0206_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(educ_exp) ~ i(Female, provtariff_k) | ivid02 + year,
-        subset(schooling_0206_p, enrolled == 1),
+  feols(log(educ_exp) ~ Female*provtariff_k | ivid02 + year,
+        schooling_0206_p,
         weights = ~hhwt,
         vcov = ~tinh)),
   tex = TRUE)
