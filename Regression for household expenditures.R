@@ -57,7 +57,7 @@ exp_0602 <- bind_rows(exp_02, exp_06)
 # REGRESSION ON EXPENDITURE ON HOUSEHOLD PUBLIC GOODS USING PANEL DATA #
 ########################################################################
 
-y_exp <- c("log(food_share)", "log(tobac_share)", "log(educ_share)", "log(health_share)")
+y_exp <- c("food_share", "tobac_share", "educ_share", "health_share")
 
 y_exp_nom <- c("log(foodreal)", "log(tobac12m)", "log(educex_2)", "log(hlthex_2)")
 
@@ -365,7 +365,6 @@ etable(list(
 ), tex = TRUE)
 
 etable(list(
-  # Food 
   exp_tce_0204_nom_hhfe_p_summary[[2]],
   exp_tce_k_0204_nom_hhfe_p_summary[[2]],
   exp_tce_0206_nom_hhfe_p_summary[[2]],
