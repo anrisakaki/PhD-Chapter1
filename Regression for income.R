@@ -234,7 +234,7 @@ etable(list(
 
 # Household fixed effects 
 etable(list(
-  feols(inc_ratio ~ sex*provtariff | hhid02 + year,
+  feols(inc_ratio ~ provtariff/sex | hhid02 + year,
         inc_0204_spouse_p,
         weights = ~hhwt, 
         vcov = ~tinh),
