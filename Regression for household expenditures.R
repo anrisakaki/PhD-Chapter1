@@ -286,55 +286,19 @@ for (i in y_exp){
 ##########################################################
 # SUMMARY TABLES FOR REGRESSIONS ON HOUEHOLD EXPENDITURE #
 ##########################################################
-# Female share of income 
-etable(list(
-  # Food
-  exp_finc_0204_hhfe_p_summary[[1]],
-  exp_finc_0206_hhfe_p_summary[[1]],
-  # Education
-  exp_finc_0204_hhfe_p_summary[[3]],
-  exp_finc_0206_hhfe_p_summary[[3]],
-  # Health
-  exp_finc_0204_hhfe_p_summary[[4]],
-  exp_finc_0206_hhfe_p_summary[[4]]  
-), tex = TRUE)
-
-etable(list(
-  # Food
-  exp_finc_0204_nom_hhfe_p_summary[[1]],
-  exp_finc_0206_nom_hhfe_p_summary[[1]],
-  # Education
-  exp_finc_0204_nom_hhfe_p_summary[[3]],
-  exp_finc_0206_nom_hhfe_p_summary[[3]],
-  # Health
-  exp_finc_0204_nom_hhfe_p_summary[[4]],
-  exp_finc_0206_nom_hhfe_p_summary[[4]]  
-), tex = TRUE)
-
-## Tobacco 
-
-etable(list(
-  exp_finc_0204_nom_hhfe_p_summary[[2]],
-  exp_finc_0206_nom_hhfe_p_summary[[2]]
-), tex = TRUE)
 
 # TCE 
+## 2002 - 2004 
 etable(list(
   # Food 
   exp_tce_0204_hhfe_p_summary[[1]],
   exp_tce_k_0204_hhfe_p_summary[[1]],
-  exp_tce_0206_hhfe_p_summary[[1]],
-  exp_tce_k_0206_hhfe_p_summary[[1]],
   # Education 
   exp_tce_0204_hhfe_p_summary[[3]],
   exp_tce_k_0204_hhfe_p_summary[[3]],
-  exp_tce_0206_hhfe_p_summary[[3]],
-  exp_tce_k_0206_hhfe_p_summary[[3]],
   #Health
   exp_tce_0204_hhfe_p_summary[[4]],
-  exp_tce_k_0204_hhfe_p_summary[[4]],
-  exp_tce_0206_hhfe_p_summary[[4]],
-  exp_tce_k_0206_hhfe_p_summary[[4]]  
+  exp_tce_k_0204_hhfe_p_summary[[4]]
 ), tex = TRUE)
 
 
@@ -342,31 +306,55 @@ etable(list(
   # Food 
   exp_tce_0204_nom_hhfe_p_summary[[1]],
   exp_tce_k_0204_nom_hhfe_p_summary[[1]],
-  exp_tce_0206_nom_hhfe_p_summary[[1]],
-  exp_tce_k_0206_nom_hhfe_p_summary[[1]],
   # Education 
   exp_tce_0204_nom_hhfe_p_summary[[3]],
   exp_tce_k_0204_nom_hhfe_p_summary[[3]],
+  #Health
+  exp_tce_0204_nom_hhfe_p_summary[[4]],
+  exp_tce_k_0204_nom_hhfe_p_summary[[4]]
+), tex = TRUE)
+
+etable(list(
+  exp_tce_0204_hhfe_p_summary[[2]],
+  exp_tce_k_0204_hhfe_p_summary[[2]]
+), tex = TRUE)
+
+etable(list(
+  exp_tce_0204_nom_hhfe_p_summary[[2]],
+  exp_tce_k_0204_nom_hhfe_p_summary[[2]]),
+  tex = TRUE)
+
+# 2002 - 2006 
+etable(list(
+  # Food 
+  exp_tce_0206_hhfe_p_summary[[1]],
+  exp_tce_k_0206_hhfe_p_summary[[1]],
+  # Education 
+  exp_tce_0206_hhfe_p_summary[[3]],
+  exp_tce_k_0206_hhfe_p_summary[[3]],
+  #Health
+  exp_tce_0206_hhfe_p_summary[[4]],
+  exp_tce_k_0206_hhfe_p_summary[[4]]  
+), tex = TRUE)
+
+etable(list(
+  # Food 
+  exp_tce_0206_nom_hhfe_p_summary[[1]],
+  exp_tce_k_0206_nom_hhfe_p_summary[[1]],
+  # Education 
   exp_tce_0206_nom_hhfe_p_summary[[3]],
   exp_tce_k_0206_nom_hhfe_p_summary[[3]],
   #Health
-  exp_tce_0204_nom_hhfe_p_summary[[4]],
-  exp_tce_k_0204_nom_hhfe_p_summary[[4]],
   exp_tce_0206_nom_hhfe_p_summary[[4]],
   exp_tce_k_0206_nom_hhfe_p_summary[[4]]  
 ), tex = TRUE)
 
-# Tobacco 
 etable(list(
-  exp_tce_0204_hhfe_p_summary[[2]],
-  exp_tce_k_0204_hhfe_p_summary[[2]],
   exp_tce_0206_hhfe_p_summary[[2]],
   exp_tce_k_0206_hhfe_p_summary[[2]]  
 ), tex = TRUE)
 
 etable(list(
-  exp_tce_0204_nom_hhfe_p_summary[[2]],
-  exp_tce_k_0204_nom_hhfe_p_summary[[2]],
   exp_tce_0206_nom_hhfe_p_summary[[2]],
   exp_tce_k_0206_nom_hhfe_p_summary[[2]]),
   tex = TRUE)
