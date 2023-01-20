@@ -118,19 +118,23 @@ for (i in emp0406){
              age5 = as.numeric(age > 55 & age < 66)))
 }
 
-employment0204_p <- bind_rows(employment_mf_02p, employment_mf_04p)
+employment0204_p <- bind_rows(employment_mf_02p, employment_mf_04p) %>% 
+  mutate(Female = as.numeric(sex == "Female"))
 
 employment_mf_0206_p <- merge(ivid020406, employment_mf_02, by = "ivid02")
 
-employment0206_p <- bind_rows(employment_mf_0206_p, employment_mf_06p)
+employment0206_p <- bind_rows(employment_mf_0206_p, employment_mf_06p) %>% 
+  mutate(Female = as.numeric(sex == "Female"))
 
-employment0204 <- bind_rows(employment_mf_02, employment_mf_04)
+employment0204 <- bind_rows(employment_mf_02, employment_mf_04) %>% 
+  mutate(Female = as.numeric(sex == "Female"))
 
 employment_mf_06 <- employment_mf_06 %>% 
   mutate(across(c(huyen, diaban, xa, hoso, matv), as.numeric)) %>% 
   mutate(across(tinh, as.factor))
 
-employment0206 <- bind_rows(employment_mf_02, employment_mf_06)
+employment0206 <- bind_rows(employment_mf_02, employment_mf_06) %>% 
+  mutate(Female = as.numeric(sex == "Female"))
 
 y <- c("agri_work", "manu", "tal", "construction", "traded_manu")
 
@@ -143,7 +147,7 @@ y <- c("agri_work", "manu", "tal", "construction", "traded_manu")
 models_0204_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ factor(sex)/provtariff | year + ivid"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff | year + ivid"))
   model <- feols(formula,
                  data = employment0204_p,
                  vcov = ~tinh,
