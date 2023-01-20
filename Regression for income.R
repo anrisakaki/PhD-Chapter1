@@ -158,81 +158,103 @@ inc_fspouse_0602 <- bind_rows(inc_fspouse_0206_p, inc_fspouse_0602_p) %>%
 
 # Household fixed effects 
 etable(list(
-  feols(log(totalinc) ~ Female*provtariff | hhid02 + year,
+  feols(log(totalinc) ~ as.factor(Female)*provtariff | hhid02 + year,
         data = inc0402_p,
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ Female*provtariff_k | hhid02 + year,
+  feols(log(totalinc) ~ as.factor(Female)*provtariff_k | hhid02 + year,
         data = inc0402_p,
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ Female*provtariff | hhid06 + year,
+  feols(log(totalinc) ~ as.factor(Female)*provtariff | hhid06 + year,
         data = inc0602_p,
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ Female*provtariff_k | hhid06 + year,
+  feols(log(totalinc) ~ as.factor(Female)*provtariff_k | hhid06 + year,
         data = inc0602_p,
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
 
 etable(list(
-  feols(log(totalinc) ~ i(Female, provtariff) | hhid02 + year,
+  feols(log(totalinc) ~ as.factor(Female)/provtariff | hhid02 + year,
         data = inc0402_p,
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ i(Female, provtariff_k) | hhid02 + year,
+  feols(log(totalinc) ~ as.factor(Female)/provtariff_k | hhid02 + year,
         data = inc0402_p,
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ i(Female, provtariff) | hhid06 + year,
+  feols(log(totalinc) ~ as.factor(Female)/provtariff | hhid06 + year,
         data = inc0602_p,
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ i(Female, provtariff_k) | hhid06 + year,
+  feols(log(totalinc) ~ as.factor(Female)/provtariff_k | hhid06 + year,
         data = inc0602_p,
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
+
+## Rural
+etable(list(
+  feols(log(totalinc) ~ as.factor(Female)/provtariff | hhid02 + year,
+        subset(inc0402_p, urban == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ as.factor(Female)/provtariff_k | hhid02 + year,
+        subset(inc0402_p, urban == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ as.factor(Female)/provtariff | hhid06 + year,
+        subset(inc0602_p, urban == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ as.factor(Female)/provtariff_k | hhid06 + year,
+        subset(inc0602_p, urban == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+), tex = TRUE)
+
 
 # Individual fixed effects 
 etable(list(
-  feols(log(totalinc) ~ factor(sex)/provtariff | ivid02 + year,
+  feols(log(totalinc) ~ as.factor(sex)/provtariff | ivid02 + year,
         data = inc0402_p,
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ factor(sex)/provtariff_k | ivid02 + year,
+  feols(log(totalinc) ~ as.factor(sex)/provtariff_k | ivid02 + year,
         data = inc0402_p,
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ factor(sex)/provtariff | ivid02 + year,
+  feols(log(totalinc) ~ as.factor(sex)/provtariff | ivid02 + year,
         data = inc0602_p,
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ factor(sex)/provtariff_k | ivid02 + year,
+  feols(log(totalinc) ~ as.factor(sex)/provtariff_k | ivid02 + year,
         data = inc0602_p,
         weights = ~hhwt, 
         vcov = ~tinh)  
 ))
 
+## Rural 
 etable(list(
-  feols(log(totalinc) ~ i(sex, provtariff) | ivid02 + year,
-        data = inc0402_p,
+  feols(log(totalinc) ~ as.factor(Female)*provtariff | ivid02 + year,
+        subset(inc0402_p, urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ i(sex, provtariff_k) | ivid02 + year,
-        data = inc0402_p,
+  feols(log(totalinc) ~ as.factor(Female)*provtariff_k | ivid02 + year,
+        subset(inc0402_p, urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ i(sex, provtariff) | ivid02 + year,
-        data = inc0602_p,
+  feols(log(totalinc) ~ as.factor(Female)*provtariff | ivid02 + year,
+        subset(inc0602_p, urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ i(sex, provtariff_k) | ivid02 + year,
-        data = inc0602_p,
+  feols(log(totalinc) ~ as.factor(Female)*provtariff_k | ivid02 + year,
+        subset(inc0602_p, urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh)  
-), tex = TRUE)
+))
 
 #####################################################################################
 # REGRESSION ON WOMENS INCOME AS A SHARE OF TOTAL HOUSEHOLD INCOME USING PANEL DATA #
