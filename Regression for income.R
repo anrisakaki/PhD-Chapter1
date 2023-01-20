@@ -215,7 +215,6 @@ etable(list(
         vcov = ~tinh)  
 ), tex = TRUE)
 
-<<<<<<< HEAD
 etable(list(
   feols(log(totalinc) ~ as.factor(Female)*provtariff | hhid02 + year,
         subset(inc0402_p, urban == 2),
@@ -235,8 +234,6 @@ etable(list(
         vcov = ~tinh)  
 ), tex = TRUE)
 
-=======
->>>>>>> 7e88934e15b7ebdf3b9b8e586dfa265ac7c29062
 # Individual fixed effects 
 etable(list(
   feols(log(totalinc) ~ as.factor(sex)*provtariff | ivid02 + year,
