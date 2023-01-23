@@ -196,9 +196,13 @@ for (i in y){
   models_0206_p_k_summary[[i]] <- model
 }
 
-######################################################################
-# PLOTTING COEFFICIENTS FOR REGRESSIONS ON STRUCTURAL TRANSFORMATION #
-######################################################################
+#############################################
+# REGRESSION FOR LABOUR FORCE PARTICIPATION #
+#############################################
+
+etable(list(
+  feols()
+))
 
 ######################################################################
 # REGRESSION ON STRUCTURAL TRANSFORMATION USING CROSS SECTIONAL DATA #
