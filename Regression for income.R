@@ -40,7 +40,7 @@ inc0602_p <- bind_rows(ivid0206p, inc06_p) %>%
 ########################################################################################
 
 inc_02_spouse <- inc02 %>%
-  select(hhid02, ivid02,tinh, hhwt, sex, m1c3, provtariff, provtariff_k, year, totalinc, tal, agri_work, wage_work, urban)
+  select(hhid02, ivid02,tinh, hhwt, sex, m1c3, provtariff, provtariff_k, year, totalinc, tal, agri_work, wage_work, urban, educ)
 
 m5aho_02 <- m5aho_02 %>% 
   rename(hhid02 = hhid) %>%
@@ -83,7 +83,7 @@ inc_04_fspouse <- inc_04_spouse %>%
          married == 2,
          sex == "Female") %>%         
   rename(finc_ratio = inc_ratio) %>% 
-  select(hhid, ivid, tinh, hhwt, provtariff, provtariff_k, year, totalinc, finc_ratio, tal, wage_work, urban)
+  select(hhid, ivid, tinh, hhwt, provtariff, provtariff_k, year, totalinc, finc_ratio, tal, wage_work, urban, educ)
 
 # 2006
 hhinc_06 <- ttchung_06 %>% 
@@ -103,7 +103,7 @@ inc_06_fspouse <- inc_06_spouse %>%
          m1ac3 == 1 | m1ac3 == 2,
          sex == "Female") %>%  
   rename(finc_ratio = inc_ratio) %>%   
-  select(hhid06, ivid06, tinh, hhwt, provtariff, provtariff_k, year, totalinc, tal, agri_work, wage_work, finc_ratio, urban)
+  select(hhid06, ivid06, tinh, hhwt, provtariff, provtariff_k, year, totalinc, tal, agri_work, wage_work, finc_ratio, urban, educ)
 
 # Constructing panel data 
 ## 2002 - 2004 
@@ -254,6 +254,45 @@ etable(list(
         vcov = ~tinh)  
 ), tex = TRUE)
 
+# Education 
+etable(list(
+  feols(log(totalinc) ~ as.factor(sex)/provtariff | ivid02 + year,
+        subset(inc0402_p, wage_work == 1 & educ < 10),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ as.factor(sex)/provtariff_k | ivid02 + year,
+        subset(inc0402_p, wage_work == 1 & educ < 10),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ as.factor(sex)/provtariff | ivid02 + year,
+        subset(inc0602_p, wage_work == 1 & educ < 10),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ as.factor(sex)/provtariff_k | ivid02 + year,
+        subset(inc0602_p, wage_work == 1 & educ < 10),
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+), tex = TRUE)
+
+etable(list(
+  feols(log(totalinc) ~ as.factor(sex)*provtariff | ivid02 + year,
+        subset(inc0402_p, wage_work == 1 & educ < 10),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ as.factor(sex)*provtariff_k | ivid02 + year,
+        subset(inc0402_p, wage_work == 1 & educ < 10),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ as.factor(sex)*provtariff | ivid02 + year,
+        subset(inc0602_p, wage_work == 1 & educ < 10),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ as.factor(sex)*provtariff_k | ivid02 + year,
+        subset(inc0602_p, wage_work == 1 & educ < 10),
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+), tex = TRUE)
+
 #####################################################################################
 # REGRESSION ON WOMENS INCOME AS A SHARE OF TOTAL HOUSEHOLD INCOME USING PANEL DATA #
 #####################################################################################
@@ -293,6 +332,26 @@ etable(list(
         vcov = ~tinh),
   feols(inc_ratio ~ provtariff_k | hhid06 + year,
         subset(inc_0206_spouse_p, Female == 1 & urban == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+), tex = TRUE)
+
+# Education 
+etable(list(
+  feols(inc_ratio ~ provtariff | hhid02 + year,
+        subset(inc_0204_spouse_p, Female == 1 & educ < 10),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff_k | hhid02 + year,
+        subset(inc_0204_spouse_p, Female == 1 & educ < 10),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff| hhid06 + year,
+        subset(inc_0206_spouse_p, Female == 1 & educ < 10),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff_k | hhid06 + year,
+        subset(inc_0206_spouse_p, Female == 1 & educ < 10),
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
