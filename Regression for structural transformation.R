@@ -20,10 +20,11 @@ for(i in emp02){
              married = m1c6,
              age = m1c5,
              provtariff = preprov_tariff,
-             industry2 = industry
+             industry2 = industry,
+             work = m3c2
            ) %>%
-           filter(m3c2 == 1) %>%
-           mutate(year = 2002))
+           mutate(year = 2002,
+                  work = as.numeric(work == 1)))
   
   if (i %in% c("employment_mf_02p")){
     assign(i, get(i) %>%
@@ -82,9 +83,10 @@ for (i in emp0406){
                     "educ" = m2c1,
                     "married" = "m1ac6",
                     "age" = "m1ac5",
-                    "provtariff" = "postprov_tariff") %>%
-             mutate(year = 2004) %>%
-             filter(m4ac2 == 1))
+                    "provtariff" = "postprov_tariff",
+                    work = m4ac2) %>%
+             mutate(year = 2004,
+                    work = as.numeric(work == 1)))
   }
   
   if(i %in% c("employment_mf_06", "employment_mf_06p")){
@@ -99,9 +101,10 @@ for (i in emp0406){
              rename("educ" = m2ac1,
                     "industry2" = industry,
                     "age" = "m1ac5",
-                    "provtariff" = "postprov_tariff") %>% 
-             mutate(year = 2006) %>%
-             filter(m4ac2 == 1))
+                    "provtariff" = "postprov_tariff",
+                    work = m4ac2) %>% 
+             mutate(year = 2006,
+                    work = as.numeric(work == 1)))
   }
   
   assign(i,get(i) %>%
@@ -136,20 +139,83 @@ employment_mf_06 <- employment_mf_06 %>%
 employment0206 <- bind_rows(employment_mf_02, employment_mf_06) %>% 
   mutate(Female = as.numeric(sex == "Female"))
 
-y <- c("agri_work", "manu", "tal", "construction", "traded_manu")
+#############################################################
+# REGRESSION ON LABOUR FORCE PARTICIPATION USING PANEL DATA #
+#############################################################
+
+etable(list(
+  feols(work ~ as.factor(Female)/provtariff | ivid + year,
+        employment0204_p,
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(work ~ as.factor(Female)/provtariff_k | ivid + year,
+        employment0204_p,
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(work ~ as.factor(Female)/provtariff | ivid02 + year,
+        employment0206_p,
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(work ~ as.factor(Female)/provtariff_k | ivid02 + year,
+        employment0206_p,
+        vcov = ~tinh,
+        weights = ~hhwt)  
+), tex = TRUE)
+
+# Rural 
+etable(list(
+  feols(work ~ as.factor(Female)/provtariff | ivid + year,
+        subset(employment0204_p, urban == 2),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(work ~ as.factor(Female)/provtariff_k | ivid + year,
+        subset(employment0204_p, urban == 2),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(work ~ as.factor(Female)/provtariff | ivid02 + year,
+        subset(employment0206_p, urban == 2),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(work ~ as.factor(Female)/provtariff_k | ivid02 + year,
+        subset(employment0206_p, urban == 2),
+        vcov = ~tinh,
+        weights = ~hhwt)  
+), tex = TRUE)
+
+# Education 
+etable(list(
+  feols(work ~ as.factor(Female)/provtariff | ivid + year,
+        subset(employment0204_p, educ < 10),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(work ~ as.factor(Female)/provtariff_k | ivid + year,
+        subset(employment0204_p, educ < 10),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(work ~ as.factor(Female)/provtariff | ivid02 + year,
+        subset(employment0206_p, educ < 10),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(work ~ as.factor(Female)/provtariff_k | ivid02 + year,
+        subset(employment0206_p, educ < 10),
+        vcov = ~tinh,
+        weights = ~hhwt)  
+), tex = TRUE)
 
 ############################################################
 # REGRESSION ON STRUCTURAL TRANSFORMATION USING PANEL DATA #
 ############################################################
+
+y <- c("agri_work", "manu", "tal", "construction", "traded_manu")
 
 # 2002 - 2004 
 ## Topalova tariffs
 models_0204_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff | year + ivid"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff | year + ivid"))
   model <- feols(formula,
-                 data = employment0204_p,
+                 subset(employment0204_p, work == 1),
                  vcov = ~tinh,
                  weights = ~hhwt)
   
@@ -160,9 +226,9 @@ for (i in y){
 models_0204_p_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ factor(sex)/provtariff_k | year + ivid"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff_k | year + ivid"))
   model <- feols(formula,
-                 data = employment0204_p,
+                 subset(employment0204_p, work == 1),
                  vcov = ~tinh,
                  weights = ~hhwt)
   
@@ -174,9 +240,9 @@ for (i in y){
 models_0206_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ factor(sex)/provtariff | year + ivid02"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff | year + ivid02"))
   model <- feols(formula,
-                 data = employment0206_p,
+                 subset(employment0206_p, work == 1),
                  vcov = ~tinh,
                  weights = ~hhwt)
   
@@ -187,13 +253,123 @@ for (i in y){
 models_0206_p_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ factor(sex)/provtariff_k | year + ivid02"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff_k | year + ivid02"))
   model <- feols(formula,
-                 data = employment0206_p,
+                 subset(employment0206_p, work == 1),
                  vcov = ~tinh,
                  weights = ~hhwt)
   
   models_0206_p_k_summary[[i]] <- model
+}
+
+# Rural 
+## 2002 - 2004 
+models_0204_rural_p_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff | year + ivid"))
+  model <- feols(formula,
+                 subset(employment0204_p, urban == 2 & work == 1),
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0204_rural_p_summary[[i]] <- model
+}
+
+### Kovak tariffs 
+models_0204_rural_p_k_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff_k | year + ivid"))
+  model <- feols(formula,
+                 subset(employment0204_p, urban == 2 & work == 1),
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0204_rural_p_k_summary[[i]] <- model
+}
+
+## 2002 - 2006 
+### Topalova tariffs
+models_0206_rural_p_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff | year + ivid02"))
+  model <- feols(formula,
+                 subset(employment0206_p, urban == 2 & work == 1),
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0206_rural_p_summary[[i]] <- model
+}
+
+### Kovak tariffs 
+models_0206_rural_p_k_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff_k | year + ivid02"))
+  model <- feols(formula,
+                 subset(employment0206_p, urban == 2 & work == 1),
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0206_rural_p_k_summary[[i]] <- model
+}
+
+# Education level 
+
+## 2002 - 2004 
+### Topalova tariffs
+models_0204_educ_p_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff | year + ivid"))
+  model <- feols(formula,
+                 subset(employment0204_p, educ < 10),
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0204_educ_p_summary[[i]] <- model
+}
+
+## Kovak tariffs 
+models_0204_educ_p_k_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff_k | year + ivid"))
+  model <- feols(formula,
+                 subset(employment0204_p, educ < 10),
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0204_educ_p_k_summary[[i]] <- model
+}
+
+# 2002 - 2006 
+## Topalova tariffs
+models_0206_educ_p_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff | year + ivid02"))
+  model <- feols(formula,
+                 subset(employment0206_p, educ < 10),
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0206_educ_p_summary[[i]] <- model
+}
+
+## Kovak tariffs 
+models_0206_educ_p_k_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff_k | year + ivid02"))
+  model <- feols(formula,
+                 subset(employment0206_p, educ < 10),
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0206_educ_p_k_summary[[i]] <- model
 }
 
 ######################################################################
@@ -296,4 +472,14 @@ etable(list(
   models_0206_p_k_summary[[4]]
   ),
   tex = TRUE
+)
+
+## Work 
+etable(list(
+  models_0204_p_summary[[5]],
+  models_0204_p_k_summary[[5]],
+  models_0206_p_summary[[5]],
+  models_0206_p_k_summary[[5]]
+),
+tex = TRUE
 )
