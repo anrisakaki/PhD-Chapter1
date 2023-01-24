@@ -104,8 +104,7 @@ for(i in emp020406) {
              service = as.numeric(industry > 50),
              manu = as.numeric(industry > 14 & industry < 38),
              wage_work = as.numeric(wage_work < 2),
-             construction = as.numeric(industry == 45),
-             work = as.numeric(industry > 0)
+             construction = as.numeric(industry == 45)
            ))
   
   assign(i,get(i) %>%
