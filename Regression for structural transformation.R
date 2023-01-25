@@ -267,7 +267,7 @@ for (i in y){
 models_0204_rural_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff | year + ivid"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female) * provtariff | year + ivid"))
   model <- feols(formula,
                  subset(employment0204_p, urban == 2 & work == 1),
                  vcov = ~tinh,
@@ -280,7 +280,7 @@ for (i in y){
 models_0204_rural_p_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff_k | year + ivid"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female) * provtariff_k | year + ivid"))
   model <- feols(formula,
                  subset(employment0204_p, urban == 2 & work == 1),
                  vcov = ~tinh,
@@ -294,7 +294,7 @@ for (i in y){
 models_0206_rural_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff | year + ivid02"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female) * provtariff | year + ivid02"))
   model <- feols(formula,
                  subset(employment0206_p, urban == 2 & work == 1),
                  vcov = ~tinh,
@@ -307,7 +307,7 @@ for (i in y){
 models_0206_rural_p_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff_k | year + ivid02"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female) * provtariff_k | year + ivid02"))
   model <- feols(formula,
                  subset(employment0206_p, urban == 2 & work == 1),
                  vcov = ~tinh,
@@ -323,7 +323,7 @@ for (i in y){
 models_0204_educ_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff | year + ivid"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female) * provtariff | year + ivid"))
   model <- feols(formula,
                  subset(employment0204_p, educ < 10),
                  vcov = ~tinh,
@@ -336,7 +336,7 @@ for (i in y){
 models_0204_educ_p_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff_k | year + ivid"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female) * provtariff_k | year + ivid"))
   model <- feols(formula,
                  subset(employment0204_p, educ < 10),
                  vcov = ~tinh,
@@ -350,7 +350,7 @@ for (i in y){
 models_0206_educ_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff | year + ivid02"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female) * provtariff | year + ivid02"))
   model <- feols(formula,
                  subset(employment0206_p, educ < 10),
                  vcov = ~tinh,
@@ -363,7 +363,7 @@ for (i in y){
 models_0206_educ_p_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female) / provtariff_k | year + ivid02"))
+  formula <- as.formula(paste(i, " ~ as.factor(Female) * provtariff_k | year + ivid02"))
   model <- feols(formula,
                  subset(employment0206_p, educ < 10),
                  vcov = ~tinh,
