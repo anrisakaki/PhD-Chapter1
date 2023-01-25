@@ -464,6 +464,26 @@ etable(list(
 tex = TRUE
 )
 
+### Rural 
+etable(list(
+  models_0204_rural_p_summary[[3]],
+  models_0204_rural_p_k_summary[[3]],
+  models_0206_rural_p_summary[[3]],
+  models_0206_rural_p_k_summary[[3]]
+),
+tex = TRUE
+)
+
+### Education
+etable(list(
+  models_0204_educ_p_summary[[3]],
+  models_0204_educ_p_k_summary[[3]],
+  models_0206_educ_p_summary[[3]],
+  models_0206_educ_p_k_summary[[3]]
+),
+tex = TRUE
+)
+
 ## Construction 
 etable(list(
   models_0204_p_summary[[4]],
