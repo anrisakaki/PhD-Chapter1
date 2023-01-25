@@ -65,81 +65,62 @@ schooling_0206_p <- bind_rows(schooling_0206, schooling_0602)
 ############################################################################
 
 etable(list(
-  feols(enrolled ~ i(Female, provtariff) | ivid02 + year,
+  feols(enrolled ~ provtariff*Female| ivid02 + year,
         schooling_0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ i(Female, provtariff_k) | ivid02 + year,
+  feols(enrolled ~ provtariff_k*Female | ivid02 + year,
         schooling_0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ i(Female, provtariff) | ivid02 + year,
+  feols(enrolled ~ provtariff*Female | ivid02 + year,
         schooling_0206_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ i(Female, provtariff_k) | ivid02 + year,
+  feols(enrolled ~ provtariff_k*Female| ivid02 + year,
         schooling_0206_p,
         weights = ~hhwt,
         vcov = ~tinh)),
   tex = TRUE)
+
 
 etable(list(
-  feols(enrolled ~ i(Female, provtariff)| ivid02 + year,
+  feols(enrolled ~ as.factor(Female) / provtariff | ivid02 + year,
         schooling_0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ i(Female, provtariff_k) | ivid02 + year,
+  feols(enrolled ~ as.factor(Female) / provtariff_k | ivid02 + year,
         schooling_0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ i(Female, provtariff) | ivid02 + year,
+  feols(enrolled ~ as.factor(Female) / provtariff | ivid02 + year,
         schooling_0206_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ i(Female, provtariff_k) | ivid02 + year,
-        schooling_0206_p,
-        weights = ~hhwt,
-        vcov = ~tinh)),
-  tex = TRUE)
-
-etable(list(
-  feols(enrolled ~ i(Female, provtariff)| hhid + year,
-        schooling_0204_p,
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(enrolled ~ i(Female, provtariff_k) | hhid + year,
-        schooling_0204_p,
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(enrolled ~ i(Female, provtariff) | hhid06 + year,
-        schooling_0206_p,
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(enrolled ~ i(Female, provtariff_k) | hhid06 + year,
+  feols(enrolled ~ as.factor(Female) / provtariff_k| ivid02 + year,
         schooling_0206_p,
         weights = ~hhwt,
         vcov = ~tinh)),
   tex = TRUE)
-
 
 #################################################################
 # REGRESSION ON TARIFF-CUT EXPOSURE AND EDUCATIONAL EXPENDITURE #
 #################################################################
 
 etable(list(
-  feols(log(educ_exp) ~ i(Female, provtariff) | ivid02 + year,
+  feols(log(educ_exp) ~ provtariff/Female | ivid02 + year,
         schooling_0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(educ_exp) ~ i(Female, provtariff_k) | ivid02 + year,
+  feols(log(educ_exp) ~ provtariff_k/Female | ivid02 + year,
         schooling_0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(educ_exp) ~ i(Female, provtariff) | ivid02 + year,
+  feols(log(educ_exp) ~ provtariff/Female | ivid02 + year,
         schooling_0206_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(educ_exp) ~ i(Female, provtariff_k) | ivid02 + year,
+  feols(log(educ_exp) ~ provtariff_k/Female | ivid02 + year,
         schooling_0206_p,
         weights = ~hhwt,
         vcov = ~tinh)),
@@ -165,24 +146,23 @@ etable(list(
   tex = TRUE)
 
 etable(list(
-  feols(log(educ_exp) ~ i(Female, provtariff) | hhid + year,
-        schooling_0204_p,
+  feols(log(educ_exp) ~ provtariff/Female | ivid02 + year,
+        subset(schooling_0204_p, enrolled == 1),
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(educ_exp) ~ i(Female, provtariff_k)  | hhid + year,
-        schooling_0204_p,
+  feols(log(educ_exp) ~ provtariff_k/Female | ivid02 + year,
+        subset(schooling_0204_p, enrolled == 1),
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(educ_exp) ~ i(Female, provtariff)  | hhid06 + year,
-        schooling_0206_p,
+  feols(log(educ_exp) ~ provtariff/Female | ivid02 + year,
+        subset(schooling_0206_p, enrolled == 1),
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(educ_exp) ~ i(Female, provtariff_k)  | hhid06 + year,
-        schooling_0206_p,
+  feols(log(educ_exp) ~ provtariff_k/Female | ivid02 + year,
+        subset(schooling_0206_p, enrolled == 1),
         weights = ~hhwt,
         vcov = ~tinh)),
   tex = TRUE)
-
 
 ######################################################################################
 # REGRESSION ON TARIFF-CUT EXPOSURE AND SCHOOL ENROLLMENT USING CROSS-SECTIONAL DATA #
