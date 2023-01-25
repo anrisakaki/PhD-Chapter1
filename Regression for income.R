@@ -319,19 +319,19 @@ etable(list(
 # Rural 
 etable(list(
   feols(inc_ratio ~ provtariff | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & urban == 2),
+        subset(inc_0204_spouse_p, Female == 1 & urban == 2 & wage_work == 1),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & urban == 2),
+        subset(inc_0204_spouse_p, Female == 1 & urban == 2 & wage_work == 1),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(inc_ratio ~ provtariff| hhid06 + year,
-        subset(inc_0206_spouse_p, Female == 1 & urban == 2),
+        subset(inc_0206_spouse_p, Female == 1 & urban == 2 & wage_work == 1),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(inc_ratio ~ provtariff_k | hhid06 + year,
-        subset(inc_0206_spouse_p, Female == 1 & urban == 2),
+        subset(inc_0206_spouse_p, Female == 1 & urban == 2 & wage_work == 1),
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
@@ -339,19 +339,38 @@ etable(list(
 # Education 
 etable(list(
   feols(inc_ratio ~ provtariff | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & educ < 10),
+        subset(inc_0204_spouse_p, Female == 1 & educ < 10 & wage_work == 1),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & educ < 10),
+        subset(inc_0204_spouse_p, Female == 1 & educ < 10 & wage_work == 1),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(inc_ratio ~ provtariff| hhid06 + year,
-        subset(inc_0206_spouse_p, Female == 1 & educ < 10),
+        subset(inc_0206_spouse_p, Female == 1 & educ < 10 & wage_work == 1),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(inc_ratio ~ provtariff_k | hhid06 + year,
-        subset(inc_0206_spouse_p, Female == 1 & educ < 10),
+        subset(inc_0206_spouse_p, Female == 1 & educ < 10 & wage_work == 1),
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+), tex = TRUE)
+
+etable(list(
+  feols(inc_ratio ~ provtariff | hhid02 + year,
+        subset(inc_0204_spouse_p, Female == 1 & educ > 9 & wage_work == 1),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff_k | hhid02 + year,
+        subset(inc_0204_spouse_p, Female == 1 & educ > 9 & wage_work == 1),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff| hhid06 + year,
+        subset(inc_0206_spouse_p, Female == 1 & educ > 9 & wage_work == 1),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff_k | hhid06 + year,
+        subset(inc_0206_spouse_p, Female == 1 & educ > 9 & wage_work == 1),
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
