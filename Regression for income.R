@@ -124,10 +124,12 @@ inc_0204_spouse_p <- bind_rows(inc_02_spouse_p, inc_04_spouse_p) %>%
   mutate(Female = as.numeric(sex == "Female"))
 
 ### Wife 
-inc_fspouse_0204_p <- merge(inc_hhid0204, inc_02_fspouse, by = "hhid02") %>% 
-  distinct()
+inc_fspouse_0204_p <- merge(hhid0204, inc_02_fspouse, by = "hhid02") %>% 
+  distinct() %>% 
+  rename(tinh = tinh.x) %>% 
+  select(-"tinh.y")
 
-inc_fspouse_0402_p <- merge(inc_hhid0204, inc_04_fspouse, by = "hhid") %>% 
+inc_fspouse_0402_p <- merge(hhid0204, inc_04_fspouse, by = "hhid") %>% 
   distinct()
 
 inc_fspouse0204_p <- bind_rows(inc_fspouse_0204_p, inc_fspouse_0402_p) %>% 
