@@ -12,6 +12,8 @@ library(kableExtra)
 library(ggeffects)
 library(xtable)
 
+rm(list=ls())
+
 # Opening up relevant dataframes
 setwd("C:/Users/Anri Sakakibara/OneDrive/PhD Political Economy/VHLSS Data/")
 
@@ -81,3 +83,7 @@ m5b2_06 <- read_dta(file = "Full VHLSS/2006/muc5b2.dta") #DF containing hh consu
 m6a_06 <- read_dta(file = "Full VHLSS/2006/muc6a.dta")
 m6b_06 <- read_dta(file = "Full VHLSS/2006/muc6b.dta")
 ttchung_06 <- read_dta(file = "Full VHLSS/2006/ttchung.dta")
+
+# WVS
+WVS_01 <- read_dta(file = "Full VHLSS/WVS/WVS_Wave_4.dta")
+WVS_05 <- read_dta(file = "Full VHLSS/WVS/WVS_Wave_5.dta")
