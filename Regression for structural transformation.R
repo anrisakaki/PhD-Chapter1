@@ -372,6 +372,50 @@ for (i in y){
   models_0206_educ_p_k_summary[[i]] <- model
 }
 
+###################################################################################
+# REGRESSION ON STRUCTURAL TRANSFORMATION FROM THE AGRICULTURE INTO OTHER SECTORS #
+###################################################################################
+
+# Manufacturing 
+etable(list(
+  feols(manu ~ as.factor(Female)/provtariff | year + ivid,
+        subset(employment0204_p, agri_work == 1 & year == 2002 | year == 2004),
+        vcov = ~tinh,
+        weights = ~hhwt),  
+  feols(manu ~ as.factor(Female)/provtariff_k | year + ivid,
+        subset(employment0204_p, agri_work == 1 & year == 2002 | year == 2004),
+        vcov = ~tinh,
+        weights = ~hhwt),   
+  feols(manu ~ as.factor(Female)/provtariff | year + ivid02,
+        subset(employment0206_p, agri_work == 1 & year == 2002 | year == 2006),
+               vcov = ~tinh,
+               weights = ~hhwt),
+  feols(manu ~ as.factor(Female)/provtariff_k | year + ivid02,
+        subset(employment0206_p, agri_work == 1 & year == 2002 | year == 2006),
+        vcov = ~tinh,
+        weights = ~hhwt))
+)
+
+# Wearing apparel and leather 
+etable(list(
+  feols(tal ~ as.factor(Female)/provtariff | year + ivid,
+        subset(employment0204_p, agri_work == 1 & year == 2002 | year == 2004),
+        vcov = ~tinh,
+        weights = ~hhwt),  
+  feols(tal ~ as.factor(Female)/provtariff_k | year + ivid,
+        subset(employment0204_p, agri_work == 1 & year == 2002 | year == 2004),
+        vcov = ~tinh,
+        weights = ~hhwt),   
+  feols(tal ~ as.factor(Female)/provtariff | year + ivid02,
+        subset(employment0206_p, agri_work == 1 & year == 2002 | year == 2006),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(tal ~ as.factor(Female)/provtariff_k | year + ivid02,
+        subset(employment0206_p, agri_work == 1 & year == 2002 | year == 2006),
+        vcov = ~tinh,
+        weights = ~hhwt))
+)
+
 ######################################################################
 # REGRESSION ON STRUCTURAL TRANSFORMATION USING CROSS SECTIONAL DATA #
 ######################################################################
