@@ -123,6 +123,25 @@ etable(list(
 # Manufacturing 
 
 etable(list(
+  feols(manu ~ as.factor(Female)/provtariff | year + ivid,
+        subset(employment0204_p, age >18 & age < 31 & year == 2002 | year == 2004),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(manu ~ as.factor(Female)/provtariff_k | year + ivid,
+        subset(employment0204_p, age >18 & age < 31 & year == 2002 | year == 2004),
+        vcov = ~tinh,
+        weights = ~hhwt),  
+  feols(manu ~ as.factor(Female)/provtariff | year + ivid02,
+        subset(employment0206_p, age >18 & age < 31 & year == 2002 | year == 2006),
+        vcov = ~tinh,
+        weights = ~hhwt),   
+  feols(manu ~ as.factor(Female)/provtariff_k | year + ivid02,
+        subset(employment0206_p, age >18 & age < 31 & year == 2002 | year == 2006),
+        vcov = ~tinh,
+        weights = ~hhwt)  
+))
+
+etable(list(
   feols(traded_manu ~ as.factor(Female)/provtariff | year + ivid,
         subset(employment0204_p, age >18 & age < 31 & year == 2002 | year == 2004),
         vcov = ~tinh,
