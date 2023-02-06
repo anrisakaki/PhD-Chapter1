@@ -63,4 +63,21 @@ etable(list(
 # REGRESSION FOR THE EFFECT OF THE BTA ON THE SPOUSAL WAGE GAP, BY AGE #
 ########################################################################
 
-
+etable(list(
+  feols(inc_ratio ~ provtariff | hhid + year,
+        subset(inc_0204_spouse_p, Female == 1 & wage_work == 1 & age > 17 & age < 31 & year == 2002 | year == 2004),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff_k | hhid02 + year,
+        subset(inc_0204_spouse_p, Female == 1 & wage_work == 1 & age > 17 & age < 31 & year == 2002 | year == 2004),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff| hhid06 + year,
+        subset(inc_0206_spouse_p, Female == 1 & wage_work == 1 & age > 17 & age < 31 & year == 2002 | year == 2006),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff_k | hhid06 + year,
+        subset(inc_0206_spouse_p, Female == 1 & wage_work == 1 & age > 17 & age < 31 & year == 2002 | year == 2006),
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+), tex = TRUE)
