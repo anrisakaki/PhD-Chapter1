@@ -202,9 +202,9 @@ etable(list(
         weights = ~hhwt)  
 ), tex = TRUE)
 
-############################################################
-# REGRESSION ON STRUCTURAL TRANSFORMATION USING PANEL DATA #
-############################################################
+###############################################################################
+# REGRESSION ON STRUCTURAL TRANSFORMATION USING PANEL DATA - EXTENSIVE MARGIN #
+###############################################################################
 
 y <- c("agri_work", "manu", "tal", "construction", "traded_manu")
 
