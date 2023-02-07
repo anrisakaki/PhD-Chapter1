@@ -139,69 +139,6 @@ employment_mf_06 <- employment_mf_06 %>%
 employment0206 <- bind_rows(employment_mf_02, employment_mf_06) %>% 
   mutate(Female = as.numeric(sex == "Female"))
 
-#############################################################
-# REGRESSION ON LABOUR FORCE PARTICIPATION USING PANEL DATA #
-#############################################################
-
-etable(list(
-  feols(work ~ as.factor(Female)/provtariff | ivid + year,
-        employment0204_p,
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(work ~ as.factor(Female)/provtariff_k | ivid + year,
-        employment0204_p,
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(work ~ as.factor(Female)/provtariff | ivid02 + year,
-        employment0206_p,
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(work ~ as.factor(Female)/provtariff_k | ivid02 + year,
-        employment0206_p,
-        vcov = ~tinh,
-        weights = ~hhwt)  
-), tex = TRUE)
-
-# Rural 
-etable(list(
-  feols(work ~ as.factor(Female)/provtariff | ivid + year,
-        subset(employment0204_p, urban == 2),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(work ~ as.factor(Female)/provtariff_k | ivid + year,
-        subset(employment0204_p, urban == 2),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(work ~ as.factor(Female)/provtariff | ivid02 + year,
-        subset(employment0206_p, urban == 2),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(work ~ as.factor(Female)/provtariff_k | ivid02 + year,
-        subset(employment0206_p, urban == 2),
-        vcov = ~tinh,
-        weights = ~hhwt)  
-), tex = TRUE)
-
-# Education 
-etable(list(
-  feols(work ~ as.factor(Female)/provtariff | ivid + year,
-        subset(employment0204_p, educ < 10 & year == 2002 | year == 2004),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(work ~ as.factor(Female)/provtariff_k | ivid + year,
-        subset(employment0204_p, educ < 10 & year == 2002 | year == 2004),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(work ~ as.factor(Female)/provtariff | ivid02 + year,
-        subset(employment0206_p, educ < 10 & year == 2002 | year == 2006),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(work ~ as.factor(Female)/provtariff_k | ivid02 + year,
-        subset(employment0206_p, educ < 10 & year == 2002 | year == 2006),
-        vcov = ~tinh,
-        weights = ~hhwt)  
-), tex = TRUE)
-
 ###############################################################################
 # REGRESSION ON STRUCTURAL TRANSFORMATION USING PANEL DATA - EXTENSIVE MARGIN #
 ###############################################################################
@@ -371,50 +308,6 @@ for (i in y){
   
   models_0206_educ_p_k_summary[[i]] <- model
 }
-
-###################################################################################
-# REGRESSION ON STRUCTURAL TRANSFORMATION FROM THE AGRICULTURE INTO OTHER SECTORS #
-###################################################################################
-
-# Manufacturing 
-etable(list(
-  feols(manu ~ as.factor(Female)/provtariff | year + ivid,
-        subset(employment0204_p, agri_work == 1 & year == 2002 | year == 2004),
-        vcov = ~tinh,
-        weights = ~hhwt),  
-  feols(manu ~ as.factor(Female)/provtariff_k | year + ivid,
-        subset(employment0204_p, agri_work == 1 & year == 2002 | year == 2004),
-        vcov = ~tinh,
-        weights = ~hhwt),   
-  feols(manu ~ as.factor(Female)/provtariff | year + ivid02,
-        subset(employment0206_p, agri_work == 1 & year == 2002 | year == 2006),
-               vcov = ~tinh,
-               weights = ~hhwt),
-  feols(manu ~ as.factor(Female)/provtariff_k | year + ivid02,
-        subset(employment0206_p, agri_work == 1 & year == 2002 | year == 2006),
-        vcov = ~tinh,
-        weights = ~hhwt)), tex = TRUE
-)
-
-# Wearing apparel and leather 
-etable(list(
-  feols(tal ~ as.factor(Female)/provtariff | year + ivid,
-        subset(employment0204_p, agri_work == 1 & year == 2002 | year == 2004),
-        vcov = ~tinh,
-        weights = ~hhwt),  
-  feols(tal ~ as.factor(Female)/provtariff_k | year + ivid,
-        subset(employment0204_p, agri_work == 1 & year == 2002 | year == 2004),
-        vcov = ~tinh,
-        weights = ~hhwt),   
-  feols(tal ~ as.factor(Female)/provtariff | year + ivid02,
-        subset(employment0206_p, agri_work == 1 & year == 2002 | year == 2006),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(tal ~ as.factor(Female)/provtariff_k | year + ivid02,
-        subset(employment0206_p, agri_work == 1 & year == 2002 | year == 2006),
-        vcov = ~tinh,
-        weights = ~hhwt), tex = TRUE)
-)
 
 ######################################################################
 # REGRESSION ON STRUCTURAL TRANSFORMATION USING CROSS SECTIONAL DATA #
