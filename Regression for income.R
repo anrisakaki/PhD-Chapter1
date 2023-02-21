@@ -135,46 +135,6 @@ etable(list(
         vcov = ~tinh)  
 ), tex = TRUE)
 
-# Rural 
-etable(list(
-  feols(inc_ratio ~ provtariff | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & urban == 2),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & urban == 2),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff| hhid06 + year,
-        subset(inc_0206_spouse_p, Female == 1 & urban == 2),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k | hhid06 + year,
-        subset(inc_0206_spouse_p, Female == 1 & urban == 2),
-        weights = ~hhwt, 
-        vcov = ~tinh)  
-), tex = TRUE)
-
-# Education 
-etable(list(
-  feols(inc_ratio ~ provtariff | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & educ < 10 & year == 2002 | year == 2004 & Female == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & educ < 10 & year == 2002 | year == 2004 & Female == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff| hhid06 + year,
-        subset(inc_0206_spouse_p, Female == 1 & educ < 10 & year == 2002 | year == 2006 & Female == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k | hhid06 + year,
-        subset(inc_0206_spouse_p, Female == 1 & educ < 10 & year == 2002 | year == 2006 & Female == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh)  
-), tex = TRUE)
-
 #################################################################
 # REGRESSION ON SPOUSAL WAGE GAP - BY SECTOR - USING PANEL DATA #
 #################################################################
