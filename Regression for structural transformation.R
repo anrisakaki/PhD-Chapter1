@@ -226,6 +226,7 @@ for (i in y){
   models_0204_rural_p_k_summary[[i]] <- model
 }
 
+
 ## 2002 - 2006 
 ### Topalova tariffs
 models_0206_rural_p_summary <- list()
@@ -251,6 +252,61 @@ for (i in y){
                  weights = ~hhwt)
   
   models_0206_rural_p_k_summary[[i]] <- model
+}
+
+# Urban 
+## 2002 - 2004 
+models_0204_urban_p_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff | year + ivid"))
+  model <- feols(formula,
+                 subset(employment0204_p, urban == 1 & year == 2002 | year == 2004),
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0204_urban_p_summary[[i]] <- model
+}
+
+### Kovak tariffs 
+models_0204_urban_p_k_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff_k | year + ivid"))
+  model <- feols(formula,
+                 subset(employment0204_p, urban == 1 & year == 2002 | year == 2004),
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0204_urban_p_k_summary[[i]] <- model
+}
+
+
+## 2002 - 2006 
+### Topalova tariffs
+models_0206_urban_p_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff | year + ivid02"))
+  model <- feols(formula,
+                 subset(employment0206_p, urban == 1 & year == 2002 | year == 2006),
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0206_urban_p_summary[[i]] <- model
+}
+
+### Kovak tariffs 
+models_0206_urban_p_k_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff_k | year + ivid02"))
+  model <- feols(formula,
+                 subset(employment0206_p, urban == 1 & year == 2002 | year == 2006),
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0206_urban_p_k_summary[[i]] <- model
 }
 
 # Education level 
