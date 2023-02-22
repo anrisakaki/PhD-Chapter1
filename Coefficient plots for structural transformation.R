@@ -1,23 +1,4 @@
-coefplot_reallocation_lpm_0204 <- data.frame(
-  "names" = as.factor(c("Female")),
-  "coefs" = coef(models_0204_p_summary[[3]])[2:3],
-  "lower" = confint(models_0204_p_summary[[3]])[2:3, 1],
-  "upper" = confint(models_0204_p_summary[[3]])[2:3, 2]
-)
-
-coefplot_reallocation_lpm_0204 <- data.frame(
-  "names" = as.factor(c("Female")),
-  "coefs" = coef(models_0204_p_summary[[3]])[2:3],
-  "lower" = confint(models_0204_p_summary[[3]])[2:3, 1],
-  "upper" = confint(models_0204_p_summary[[3]])[2:3, 2]
-)
-
-ggplot(coefplot_reallocation_lpm_0204, aes(x = coefs, y = names)) +
-  geom_point(col="red", size=3) + 
-  geom_errorbar(aes(xmin=lower, xmax=upper),
-                col="red", width =0.1, size=1)
-
-ggcoef_model(list(
+iplot(list(
   feols(tal ~ i(Female, provtariff) | year + ivid,
         employment0204_p,
         vcov = ~tinh,
@@ -27,12 +8,42 @@ ggcoef_model(list(
         vcov = ~tinh,
         weights = ~hhwt)))
 
-coefplot(list(
+iplot(list(
   feols(tal ~ i(Female, provtariff) | year + ivid,
-        employment0204_p,
+        subset(employment0204_p, age > 17 & age < 31 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt),
   feols(tal ~ i(Female, provtariff) | year + ivid02,
-        employment0206_p,
+        subset(employment0206_p, age > 17 & age < 31 & year == 2002 | year == 2006),
+        vcov = ~tinh,
+        weights = ~hhwt)))
+
+iplot(list(
+  feols(tal ~ i(Female, provtariff) | year + ivid,
+        subset(employment0204_p, educ > 9 & year == 2002 | year == 2004),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(tal ~ i(Female, provtariff) | year + ivid02,
+        subset(employment0206_p, educ > 9 & year == 2002 | year == 2006),
+        vcov = ~tinh,
+        weights = ~hhwt)))
+
+iplot(list(
+  feols(tal ~ i(Female, provtariff) | year + ivid,
+        subset(employment0204_p, educ > 5 & educ < 10 & year == 2002 | year == 2004),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(tal ~ i(Female, provtariff) | year + ivid02,
+        subset(employment0206_p, educ > 5 & educ < 10 & year == 2002 | year == 2006),
+        vcov = ~tinh,
+        weights = ~hhwt)))
+
+iplot(list(
+  feols(tal ~ i(Female, provtariff) | year + ivid,
+        subset(employment0204_p, educ < 6 & year == 2002 | year == 2004),
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(tal ~ i(Female, provtariff) | year + ivid02,
+        subset(employment0206_p, educ < 6 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt)))
