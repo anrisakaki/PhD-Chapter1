@@ -11,6 +11,7 @@ library(bookdown)
 library(kableExtra)
 library(ggeffects)
 library(xtable)
+library(ggstats)
 
 rm(list=ls())
 
