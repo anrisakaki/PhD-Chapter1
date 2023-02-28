@@ -143,6 +143,18 @@ employment0206 <- bind_rows(employment_mf_02, employment_mf_06) %>%
 # REGRESSION ON STRUCTURAL TRANSFORMATION USING PANEL DATA - EXTENSIVE MARGIN #
 ###############################################################################
 
+setFixest_dict(c("as.factor(Female)" = "Female",
+                 "provtariff" = "Tariff_{pt}^k",
+                 "provtariff_k" = "Tariff_{pt}^k",
+                 "as.factor(Female)0" = "",
+                 "as.factor(Female)1" = "Female",
+                 "year" = "Year",
+                 "ivid" = "Individual",
+                 "hhid" = "Household",
+                 "ivid02" = "Individual",
+                 "hhid02" = "Household",
+                 "tal" = "Wearing apparel and leather"))
+
 y <- c("agri_work", "manu", "tal", "construction", "traded_manu")
 
 # 2002 - 2004 
