@@ -1,41 +1,18 @@
 ###############################################################
 # SETTING UP FOR REGRESSION ON EXPENDITURE ON HOUSEHOLD GOODS #
 ###############################################################
-
-# Merging household public goods data with data on female income as share of total HH income 
-
-fspouse_02 <- inc_02_fspouse %>% 
-  select(hhid02, finc_ratio)
-
-fspouse_04 <- inc_04_fspouse %>% 
-  select(hhid, finc_ratio)
-
-fspouse_06 <- inc_06_fspouse %>% 
-  select(hhid06, finc_ratio)
-
+# Panel data
 exp_02 <- exp_02 %>% 
   rename(hhid02 = hhid) 
-exp_02 <- left_join(exp_02, fspouse_02, by = "hhid02") %>% 
-  distinct()
-
-exp_04 <- left_join(exp_04, fspouse_04, by = "hhid") %>% 
-  distinct()
-
-exp_06 <- exp_06 %>% 
-  rename(hhid06 = hhid)
-exp_06 <- left_join(exp_06, fspouse_06, by = "hhid06") %>% 
-  distinct()
-
-# Panel data
 exp_02_p <- exp_02 %>% 
-  select(tinh, xa02, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt, finc_ratio)
+  select(tinh, xa02, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt)
 
 exp_02_p <- merge(hhid02, exp_02_p, by = c("xa02", "hhid02")) %>% 
   mutate(year = 2002)
 
 exp_04_p <- merge(hhid0204, exp_04, by = c("tinh", "xa", "hoso", "hhid")) %>% 
   mutate(across(tinh, as.factor)) %>% 
-  select(tinh, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt, finc_ratio) %>% 
+  select(tinh, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt) %>% 
   mutate(year = 2004)
 
 exp_0206 <- exp_02
