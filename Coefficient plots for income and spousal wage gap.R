@@ -51,3 +51,32 @@ coefplot(list(
         subset(inc_0206_spouse_p, Female == 1 & educ < 6 & year == 2002 | year == 2006),
         weights = ~hhwt, 
         vcov = ~tinh)), main = "Effect of BTA on women's relative income \n(by eduction level)")
+
+coefplot(list(
+  feols(inc_ratio ~ provtariff | hhid02 + year,
+        subset(inc_0204_spouse_p, Female == 1 & agri_work == 1),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff | hhid02 + year,
+        subset(inc_0204_spouse_p, Female == 1 & tal == 1),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff | hhid02 + year,
+        subset(inc_0204_spouse_p, Female == 1 & manu == 1),
+        weights = ~hhwt, 
+        vcov = ~tinh)), main = "Effect of BTA on women's relative income \n(by sector of employment)")
+
+
+coefplot(list(
+  feols(inc_ratio ~ provtariff | hhid02 + year,
+        subset(inc_0206_spouse_p, Female == 1 & agri_work == 1),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff | hhid02 + year,
+        subset(inc_0206_spouse_p, Female == 1 & tal == 1),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff | hhid02 + year,
+        subset(inc_0206_spouse_p, Female == 1 & manu == 1),
+        weights = ~hhwt, 
+        vcov = ~tinh)), main = "Effect of BTA on women's relative income \n(by sector of employment)")
