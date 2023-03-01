@@ -200,7 +200,85 @@ iplot(list(feols(
   subset(employment0204_p, urban == 1),
   vcov = ~tinh,
   weights = ~hhwt),
+  feols(traded_manu ~ i(as.factor(Female), provtariff) | year + ivid,
+        subset(employment0204_p, urban == 2),
+        vcov = ~tinh,
+        weights = ~hhwt)))
+
+iplot(list(feols(
+  traded_manu ~ i(as.factor(Female), provtariff) | year + ivid02,
+  subset(employment0206_p, urban == 1),
+  vcov = ~tinh,
+  weights = ~hhwt),
   feols(traded_manu ~ i(as.factor(Female), provtariff) | year + ivid02,
         subset(employment0206_p, urban == 2),
+        vcov = ~tinh,
+        weights = ~hhwt)))
+
+# Age 
+iplot(list(feols(
+  traded_manu ~ i(as.factor(Female), provtariff) | year + ivid,
+  subset(employment0204_p, age > 17 & age < 31 & year == 2002 | year == 2004),
+  vcov = ~tinh,
+  weights = ~hhwt),
+  feols(traded_manu ~ i(as.factor(Female), provtariff) | year + ivid,
+        subset(employment0204_p, age > 30 & year == 2002 | year == 2004),
+        vcov = ~tinh,
+        weights = ~hhwt)))
+
+iplot(list(feols(
+  traded_manu ~ i(as.factor(Female), provtariff) | year + ivid02,
+  subset(employment0206_p, age > 17 & age < 31 & year == 2002 | year == 2006),
+  vcov = ~tinh,
+  weights = ~hhwt),
+  feols(traded_manu ~ i(as.factor(Female), provtariff) | year + ivid02,
+        subset(employment0206_p, age > 30 & year == 2002 | year == 2006),
+        vcov = ~tinh,
+        weights = ~hhwt)))
+
+################################################
+# PLOTTING REALLOCATION INTO THE TRADED SECTOR # 
+################################################
+
+iplot(list(feols(
+  traded ~ i(as.factor(Female), provtariff_k) | year + ivid,
+  employment0204_p,
+  vcov = ~tinh,
+  weights = ~hhwt),
+  feols(
+    traded ~ i(as.factor(Female), provtariff_k) | year + ivid02,
+    employment0206_p,
+    vcov = ~tinh,
+    weights = ~hhwt)))
+
+# Urban - rural
+iplot(list(feols(
+  traded ~ i(as.factor(Female), provtariff) | year + ivid,
+  subset(employment0204_p, urban == 1),
+  vcov = ~tinh,
+  weights = ~hhwt),
+  feols(traded ~ i(as.factor(Female), provtariff) | year + ivid,
+        subset(employment0204_p, urban == 2),
+        vcov = ~tinh,
+        weights = ~hhwt)))
+
+# Age 
+iplot(list(feols(
+  traded ~ i(as.factor(Female), provtariff) | year + ivid,
+  subset(employment0204_p, age > 17 & age < 31 & year == 2002 | year == 2004),
+  vcov = ~tinh,
+  weights = ~hhwt),
+  feols(traded ~ i(as.factor(Female), provtariff) | year + ivid,
+        subset(employment0204_p, age > 30 & year == 2002 | year == 2004),
+        vcov = ~tinh,
+        weights = ~hhwt)))
+
+iplot(list(feols(
+  traded~ i(as.factor(Female), provtariff) | year + ivid02,
+  subset(employment0206_p, age > 17 & age < 31 & year == 2002 | year == 2006),
+  vcov = ~tinh,
+  weights = ~hhwt),
+  feols(traded ~ i(as.factor(Female), provtariff) | year + ivid02,
+        subset(employment0206_p, age > 30 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt)))
