@@ -2,6 +2,21 @@ dict = c("as.factor(Female)" = "Female", "provtariff" = "Province-level tariff",
 
 setFixest_coefplot(dict = dict, grid = F)
 
+png("tce_finc_020406.png")
+coefplot(list(
+  feols(inc_ratio ~ provtariff_k | hhid02 + year,
+        subset(inc_0204_spouse_p, Female == 1),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff_k | hhid06 + year,
+        subset(inc_0206_spouse_p, Female == 1),
+        weights = ~hhwt, 
+        vcov = ~tinh)   
+), main = "")
+legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 1, bty = "n", 
+       legend = c("2001-2003", "2001-2005"))
+dev.off()
+
 # Urban - rural
 
 png("tce_finc_urban_0204.png")
@@ -14,7 +29,7 @@ coefplot(list(
         subset(inc_0204_spouse_p, Female == 1 & urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh)
-), main = "Effect of BTA on women's relative income")
+), main = "")
 legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 1, bty = "n", 
        legend = c("Urban", "Rural"))
 dev.off()
@@ -29,7 +44,7 @@ coefplot(list(
         subset(inc_0206_spouse_p, Female == 1 & urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh)
-), main = "Effect of BTA on women's relative income")
+), main = "")
 legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 1, bty = "n", 
        legend = c("Urban", "Rural"))
 dev.off()
@@ -48,9 +63,9 @@ coefplot(list(
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
         subset(inc_0204_spouse_p, Female == 1 & educ < 6 & year == 2002 | year == 2004),
         weights = ~hhwt, 
-        vcov = ~tinh)), main = "Effect of BTA on women's relative income")
-legend("bottomleft", col = 1:3, pch = 1, lwd = 2, cex = 1, bty = "n", 
-       legend = c("Tertiary", "Secondary", "Primary"))
+        vcov = ~tinh)), main = "")
+legend("bottomleft", col = 1:3, pch = 16, lwd = 2, bty = "n", cex = 0.9,
+       legend = c("High school and above", "Secondary", "Primary"))
 dev.off()
 
 png("tce_finc_educ_0206.png")
@@ -66,9 +81,9 @@ coefplot(list(
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
         subset(inc_0206_spouse_p, Female == 1 & educ < 6 & year == 2002 | year == 2006),
         weights = ~hhwt, 
-        vcov = ~tinh)), main = "Effect of BTA on women's relative income")
-legend("bottomleft", col = 1:3, pch = 1, lwd = 2, cex = 1, bty = "n", 
-       legend = c("Tertiary", "Secondary", "Primary"))
+        vcov = ~tinh)), main = "")
+legend("bottomleft", col = 1:3, pch = 16, lwd = 2, bty = "n", cex = 0.9,
+       legend = c("High school and above", "Secondary", "Primary"))
 dev.off()
 
 # Age 
@@ -82,7 +97,7 @@ coefplot(list(
         subset(inc_0204_spouse_p, age > 30 & year == 2002 | year == 2004),
         weights = ~hhwt, 
         vcov = ~tinh)
-), main = "Effect of BTA on women's relative income")
+), main = "")
 legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 1, bty = "n", 
        legend = c("18-30", "> 30"))
 dev.off()
@@ -97,7 +112,7 @@ coefplot(list(
         subset(inc_0206_spouse_p, age > 30 & year == 2002 | year == 2006),
         weights = ~hhwt, 
         vcov = ~tinh)
-), main = "Effect of BTA on women's relative income")
+), main = "")
 legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 1, bty = "n", 
        legend = c("18-30", "> 30"))
 dev.off()
@@ -116,7 +131,7 @@ coefplot(list(
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
         subset(inc_0204_spouse_p, Female == 1 & manu == 1),
         weights = ~hhwt, 
-        vcov = ~tinh)), main = "Effect of BTA on women's relative income")
+        vcov = ~tinh)), main = "")
 legend("bottomleft", col = 1:3, pch = 1, lwd = 2, cex = 0.7, bty = "n", 
        legend = c("Agriculture", "Wearing apparel and leather", "Manufacturing"))
 dev.off()
@@ -135,7 +150,7 @@ coefplot(list(
         subset(inc_0206_spouse_p, Female == 1 & manu == 1),
         weights = ~hhwt, 
         vcov = ~tinh)), zero.par = list(col = "black", lwd = 1),
-  main = "Effect of BTA on women's relative income")
+  main = "")
 legend("bottomleft", col = 1:3, pch = 1, lwd = 2, cex = 0.7, bty = "n", 
        legend = c("Agriculture", "Wearing apparel and leather", "Manufacturing"))
 dev.off()
@@ -153,7 +168,7 @@ coefplot(list(
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
         subset(inc_0204_spouse_p, Female == 1 & agri_work == 1 & year == 2002 | Female == 1 & manu == 1 & year == 2004),
         weights = ~hhwt, 
-        vcov = ~tinh)), main = "Effect of BTA on women's relative income")
+        vcov = ~tinh)), main = "")
 legend("bottomleft", col = 1:3, pch = 1, lwd = 2, cex = 0.7, bty = "n", 
        legend = c("Agriculture", "Wearing apparel and leather", "Manufacturing"))
 dev.off()
@@ -171,7 +186,7 @@ coefplot(list(
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
         subset(inc_0206_spouse_p, Female == 1 & agri_work == 1 & year == 2002 | Female == 1 & manu == 1 & year == 2006),
         weights = ~hhwt, 
-        vcov = ~tinh)), main = "Effect of BTA on women's relative income")
+        vcov = ~tinh)), main = "")
 legend("bottomleft", col = 1:3, pch = 1, lwd = 2, cex = 0.7, bty = "n", 
        legend = c("Agriculture", "Wearing apparel and leather", "Manufacturing"))
 dev.off()
