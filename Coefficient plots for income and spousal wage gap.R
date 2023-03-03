@@ -29,7 +29,7 @@ coefplot(list(
         subset(inc_0204_spouse_p, Female == 1 & urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh)
-), main = "")
+), main = "", zero.par = list( type="dotted", lty=2))
 legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 1, bty = "n", 
        legend = c("Urban", "Rural"))
 dev.off()
@@ -44,7 +44,7 @@ coefplot(list(
         subset(inc_0206_spouse_p, Female == 1 & urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh)
-), main = "")
+), main = "", zero.par = list( type="dotted", lty=2))
 legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 1, bty = "n", 
        legend = c("Urban", "Rural"))
 dev.off()
@@ -63,7 +63,7 @@ coefplot(list(
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
         subset(inc_0204_spouse_p, Female == 1 & educ < 6 & year == 2002 | year == 2004),
         weights = ~hhwt, 
-        vcov = ~tinh)), main = "")
+        vcov = ~tinh)), main = "", zero.par = list( type="dotted", lty=2))
 legend("bottomleft", col = 1:3, pch = 16, lwd = 2, bty = "n", cex = 0.9,
        legend = c("High school and above", "Secondary", "Primary"))
 dev.off()
@@ -97,7 +97,7 @@ coefplot(list(
         subset(inc_0204_spouse_p, age > 30 & year == 2002 | year == 2004),
         weights = ~hhwt, 
         vcov = ~tinh)
-), main = "")
+), main = "", zero.par = list( type="dotted", lty=2))
 legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 1, bty = "n", 
        legend = c("18-30", "> 30"))
 dev.off()
@@ -112,7 +112,7 @@ coefplot(list(
         subset(inc_0206_spouse_p, age > 30 & year == 2002 | year == 2006),
         weights = ~hhwt, 
         vcov = ~tinh)
-), main = "")
+), main = "", zero.par = list( type="dotted", lty=2))
 legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 1, bty = "n", 
        legend = c("18-30", "> 30"))
 dev.off()
@@ -131,7 +131,7 @@ coefplot(list(
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
         subset(inc_0204_spouse_p, Female == 1 & manu == 1),
         weights = ~hhwt, 
-        vcov = ~tinh)), main = "")
+        vcov = ~tinh)), main = "", zero.par = list( type="dotted", lty=2))
 legend("bottomleft", col = 1:3, pch = 1, lwd = 2, cex = 0.7, bty = "n", 
        legend = c("Agriculture", "Wearing apparel and leather", "Manufacturing"))
 dev.off()
@@ -149,8 +149,8 @@ coefplot(list(
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
         subset(inc_0206_spouse_p, Female == 1 & manu == 1),
         weights = ~hhwt, 
-        vcov = ~tinh)), zero.par = list(col = "black", lwd = 1),
-  main = "")
+        vcov = ~tinh)),
+  main = "", zero.par = list( type="dotted", lty=2))
 legend("bottomleft", col = 1:3, pch = 1, lwd = 2, cex = 0.7, bty = "n", 
        legend = c("Agriculture", "Wearing apparel and leather", "Manufacturing"))
 dev.off()
@@ -168,7 +168,7 @@ coefplot(list(
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
         subset(inc_0204_spouse_p, Female == 1 & agri_work == 1 & year == 2002 | Female == 1 & manu == 1 & year == 2004),
         weights = ~hhwt, 
-        vcov = ~tinh)), main = "")
+        vcov = ~tinh)), main = "", zero.par = list( type="dotted", lty=2))
 legend("bottomleft", col = 1:3, pch = 1, lwd = 2, cex = 0.7, bty = "n", 
        legend = c("Agriculture", "Wearing apparel and leather", "Manufacturing"))
 dev.off()
@@ -186,7 +186,7 @@ coefplot(list(
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
         subset(inc_0206_spouse_p, Female == 1 & agri_work == 1 & year == 2002 | Female == 1 & manu == 1 & year == 2006),
         weights = ~hhwt, 
-        vcov = ~tinh)), main = "")
+        vcov = ~tinh)), main = "", zero.par = list( type="dotted", lty=2))
 legend("bottomleft", col = 1:3, pch = 1, lwd = 2, cex = 0.7, bty = "n", 
        legend = c("Agriculture", "Wearing apparel and leather", "Manufacturing"))
 dev.off()
