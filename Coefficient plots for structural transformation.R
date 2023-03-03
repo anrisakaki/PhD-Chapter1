@@ -4,7 +4,7 @@
 
 dict = c("as.factor(Female)" = "Female")
 
-setFixest_coefplot(dict = dict, grid = F, zero.par = list( type="dotted", lty=2))
+setFixest_coefplot(dict = dict, grid = F, zero.par = list( type="dotted", lty=2), main = "")
 
 png("reallocation_lpm_020406.png")
 iplot(list(
