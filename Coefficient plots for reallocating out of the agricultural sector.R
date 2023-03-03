@@ -11,7 +11,7 @@ iplot(list
                  subset(employment0206_p, agri_work == 1 & year == 2002 | year == 2006),
                  vcov = ~tinh,
                  weights = ~hhwt)),
-      main = "Effect of BTA on reallocating agricultural workers \ninto the wearing apparel and leather sector")
+      main = "")
 legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.75,
        legend = c("2001-2003", "2001-2005"))
 dev.off()
@@ -31,7 +31,7 @@ iplot(list(
         subset(employment0204_p, agri_work == 1 & educ < 6 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt)),
-  main = "Effect of BTA on reallocating agricultural workers \ninto the wearing apparel and leather sector")
+  main = "")
 legend("bottomleft", col = 1:3, pch = 16, bty = "n", cex = 0.75,
        legend = c("High school and above", "Secondary", "Primary"))
 dev.off()
@@ -50,7 +50,7 @@ iplot(list(
         subset(employment0206_p, agri_work == 1 & educ < 6 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt)),
-  main = "Effect of BTA on reallocating agricultural workers \ninto the wearing apparel and leather sector")
+  main = "")
 legend("bottomleft", col = 1:3, pch = 16, bty = "n", cex = 0.75,
        legend = c("High school and above", "Secondary", "Primary"))
 dev.off()
@@ -66,7 +66,7 @@ iplot(list
               subset(employment0204_p, agri_work == 1 & urban == 2 & year == 2002 | year == 2004),
               vcov = ~tinh,
               weights = ~hhwt)),
-      main = "Effect of BTA on reallocating agricultural workers \ninto the wearing apparel and leather sector")
+      main = "")
 legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9,
        legend = c("Urban", "Rural"))
 dev.off()
@@ -81,7 +81,7 @@ iplot(list
               subset(employment0206_p, agri_work == 1 & urban == 2 & year == 2002 | year == 2006),
               vcov = ~tinh,
               weights = ~hhwt)),
-      main = "Effect of BTA on reallocating agricultural workers \ninto the wearing apparel and leather sector")
+      main = "")
 legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9,
        legend = c("Urban", "Rural"))
 dev.off()
@@ -97,7 +97,7 @@ iplot(list
               subset(employment0204_p, agri_work == 1 & age > 30 & year == 2002 | year == 2004),
               vcov = ~tinh,
               weights = ~hhwt)),
-      main = "Effect of BTA on reallocating agricultural workers \ninto the wearing apparel and leather sector")
+      main = "")
 legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9,
        legend = c("18-30", "> 30"))
 dev.off()
@@ -112,7 +112,7 @@ iplot(list
               subset(employment0206_p, agri_work == 1 & age > 30 & year == 2002 | year == 2006),
               vcov = ~tinh,
               weights = ~hhwt)),
-      main = "Effect of BTA on reallocating agricultural workers \ninto the wearing apparel and leather sector")
+      main = "")
 legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9,
        legend = c("18-30", "> 30"))
 dev.off()
