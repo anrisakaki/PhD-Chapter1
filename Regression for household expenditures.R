@@ -3,22 +3,25 @@
 ###############################################################
 # Panel data
 exp_02 <- exp_02 %>% 
-  rename(hhid02 = hhid) 
+  rename(hhid02 = hhid,
+         urban = urban02) 
 exp_02_p <- exp_02 %>% 
-  select(tinh, xa02, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt)
+  select(tinh, xa02, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt, urban)
 
 exp_02_p <- merge(hhid02, exp_02_p, by = c("xa02", "hhid02")) %>% 
   mutate(year = 2002)
 
 exp_04_p <- merge(hhid0204, exp_04, by = c("tinh", "xa", "hoso", "hhid")) %>% 
   mutate(across(tinh, as.factor)) %>% 
-  select(tinh, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt) %>% 
-  mutate(year = 2004)
+  select(tinh, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt, urban04) %>% 
+  mutate(year = 2004) %>% 
+  rename(urban = urban04)
 
 exp_0206 <- exp_02
 exp_06_p <- exp_06
 exp_0206 <- merge(hhid020406, exp_0206, by = "hhid02")
-exp_06_p <- merge(hhid020406, exp_06_p, by = "hhid06")
+exp_06_p <- merge(hhid020406, exp_06_p, by = "hhid06") %>% 
+  rename(urban = urban06)
 
 # Panel data 
 
