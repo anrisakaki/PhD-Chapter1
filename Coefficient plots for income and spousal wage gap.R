@@ -1,4 +1,4 @@
-dict = c("as.factor(Female)" = "Female", "provtariff" = "Province-level tariff", "provtariff_k" = "Province-level tariff")
+dict = c("as.factor(Female)" = "Female", "provtariff" = "Marginal effect of province-level tariff", "provtariff_k" = "Province-level tariff")
 
 setFixest_coefplot(dict = dict, grid = F)
 
