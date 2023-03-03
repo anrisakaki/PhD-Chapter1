@@ -13,15 +13,13 @@ exp_02_p <- merge(hhid02, exp_02_p, by = c("xa02", "hhid02")) %>%
 
 exp_04_p <- merge(hhid0204, exp_04, by = c("tinh", "xa", "hoso", "hhid")) %>% 
   mutate(across(tinh, as.factor)) %>% 
-  select(tinh, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt, urban04) %>% 
-  mutate(year = 2004) %>% 
-  rename(urban = urban04)
+  select(tinh, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt, urban) %>% 
+  mutate(year = 2004)
 
 exp_0206 <- exp_02
 exp_06_p <- exp_06
 exp_0206 <- merge(hhid020406, exp_0206, by = "hhid02")
-exp_06_p <- merge(hhid020406, exp_06_p, by = "hhid06") %>% 
-  rename(urban = urban06)
+exp_06_p <- merge(hhid020406, exp_06_p, by = "hhid06")
 
 # Panel data 
 
@@ -41,58 +39,7 @@ y_exp <- c("food_share", "tobac_share", "educ_share", "health_share")
 
 y_exp_nom <- c("log(foodreal)", "log(tobac12m)", "log(educex_2)", "log(hlthex_2)")
 
-# With female share of household income as RHS
-## 2002 - 2004
-
-exp_finc_0204_hhfe_p_summary <- list()
-exp_finc_0204_nom_hhfe_p_summary <- list()
-
-for (i in y_exp){
-  formula <- as.formula(paste(i, " ~ finc_ratio | hhid02 + year"))
-  model <- feols(formula,
-                 data = exp_0402_p,
-                 vcov = ~tinh,
-                 weights = ~hhwt)
-  
-  exp_finc_0204_hhfe_p_summary[[i]] <- model
-}
-
-for (i in y_exp_nom){
-  formula <- as.formula(paste(i, " ~ finc_ratio | hhid02 + year"))
-  model <- feols(formula,
-                 data = exp_0402_p,
-                 vcov = ~tinh,
-                 weights = ~hhwt)
-  
-  exp_finc_0204_nom_hhfe_p_summary[[i]] <- model
-}
-
-# 2002 - 2006 
-exp_finc_0206_hhfe_p_summary <- list()
-exp_finc_0206_nom_hhfe_p_summary <- list()
-
-for (i in y_exp){
-  formula <- as.formula(paste(i, " ~ finc_ratio | hhid02 + yearint"))
-  model <- feols(formula,
-                 data = exp_0206_p,
-                 vcov = ~tinh,
-                 weights = ~hhwt)
-  
-  exp_finc_0206_hhfe_p_summary[[i]] <- model
-}
-
-for (i in y_exp_nom){
-  formula <- as.formula(paste(i, " ~ finc_ratio | hhid02 + yearint"))
-  model <- feols(formula,
-                 data = exp_0206_p,
-                 vcov = ~tinh,
-                 weights = ~hhwt)
-  
-  exp_finc_0206_nom_hhfe_p_summary[[i]] <- model
-}
-
-# With province-level tariff as RHS 
-## 2002 - 2004 
+# 2002 - 2004 
 exp_tce_0204_hhfe_p_summary <- list()
 exp_tce_k_0204_hhfe_p_summary <- list()
 
@@ -188,31 +135,6 @@ for (i in y_exp_nom){
 ##################################################################################
 # REGRESSION ON EXPENDITURE ON HOUSEHOLD PUBLIC GOODS USING CROSS SECTIONAL DATA #
 ##################################################################################
-
-# With female share of household income as RHS
-
-exp_finc_0204_summary <- list()
-exp_finc_0206_summary <- list()
-
-for (i in y_exp){
-  formula <- as.formula(paste(i, " ~ finc_ratio + hhexp2rl | yearint + tinh"))
-  model <- feols(formula,
-                 data = exp_0402,
-                 vcov = ~tinh,
-                 weights = ~hhwt)
-  
-  exp_finc_0204_summary[[i]] <- model
-}
-
-for (i in y_exp){
-  formula <- as.formula(paste(i, " ~ finc_ratio + hhexp2rl | yearint + tinh"))
-  model <- feols(formula,
-                 data = exp_0602,
-                 vcov = ~tinh,
-                 weights = ~hhwt)
-  
-  exp_finc_0206_summary[[i]] <- model
-}
 
 # With province-level tariff as RHS 
 ## 2002 - 2004 
