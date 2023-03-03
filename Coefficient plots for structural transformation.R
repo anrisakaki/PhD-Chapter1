@@ -15,7 +15,7 @@ iplot(list(
   feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
         employment0206_p,
         vcov = ~tinh,
-        weights = ~hhwt)), zero = F, main = "Effect of BTA on reallocation into \nthe wearing apparel and leather sector")
+        weights = ~hhwt)), zero = F, main = "")
 legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 0.7, bty = "n", 
        legend = c("2001 - 2003", "2001 - 2003"))
 dev.off()
@@ -30,7 +30,7 @@ iplot(list(
   feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
         subset(employment0204_p, age > 30 & year == 2002 | year == 2004),
         vcov = ~tinh,
-        weights = ~hhwt)), zero = F, main = "Effect of BTA on reallocation into \nthe wearing apparel and leather sector")
+        weights = ~hhwt)), zero = F, main = "")
 legend("bottomleft", col = 1:2, pch = 16, cex = 0.9, bty = "n",
        legend = c("18-30", "31-65"))
 dev.off()
@@ -44,7 +44,7 @@ iplot(list(
   feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
         subset(employment0206_p, age > 30 & year == 2002 | year == 2006),
         vcov = ~tinh,
-        weights = ~hhwt)), main = "Effect of BTA on reallocation into \nwearing apparel and leather sector")
+        weights = ~hhwt)), main = "")
 legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9, 
        legend = c("18-30", "31-65"))
 dev.off()
@@ -63,7 +63,7 @@ iplot(list(
   feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
         subset(employment0204_p, educ < 6 & year == 2002 | year == 2004),
         vcov = ~tinh,
-        weights = ~hhwt)), main = "Effect of BTA on reallocation into \n the wearing apparel and leather sector")
+        weights = ~hhwt)), main = "")
 legend("bottomleft", col = 1:3, pch = 16, bty = "n", cex = 0.9,
        legend = c("High school and above", "Secondary", "Primary"))
 dev.off()
@@ -81,7 +81,7 @@ iplot(list(
   feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
         subset(employment0206_p, educ < 6 & year == 2002 | year == 2006),
         vcov = ~tinh,
-        weights = ~hhwt)), main = "Effect of BTA on reallocation into \nthe wearing apparel and leather sector")
+        weights = ~hhwt)), main = "")
 legend("bottomleft", col = 1:3, pch = 16, bty = "n", cex = 0.9,
        legend = c("High school and above", "Secondary", "Primary"))
 dev.off()
@@ -95,7 +95,7 @@ iplot(list(
         weights = ~hhwt),
   feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
         subset(employment0204_p, urban == 2))),
-  main = "Effect of BTA on reallocation into \nthe wearing apparel and leather sector")
+  main = "")
 legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9,
        legend = c("Urban", "Rural"))
 dev.off()
@@ -108,7 +108,7 @@ iplot(list(
         weights = ~hhwt),
   feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
         subset(employment0206_p, urban == 2))),
-  main = "Effect of BTA on reallocation into \nthe wearing apparel and leather sector")
+  main = "")
 legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9,
        legend = c("Urban", "Rural"))
 dev.off()
