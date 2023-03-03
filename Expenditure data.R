@@ -37,8 +37,10 @@ for(i in exp_020406){
 
 exp_06 <- exp_06 %>% 
   mutate(across(xa, as.character)) %>% 
-  rename(hhwt = wt9) %>%
+  rename(hhwt = wt9,
+         urban = urban06) %>%
   mutate(across(c(xa, hoso, hhid, huyen), as.double))  
 
 exp_04 <- exp_04 %>% 
-  select(-huyen)
+  select(-huyen) %>% 
+  rename(urban = urban04)
