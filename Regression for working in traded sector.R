@@ -1,12 +1,6 @@
-##########################################################################
-# REGRESSION FOR WORKING IN TRADED MANUFACTURING SECTOR USING PANEL DATA #
-##########################################################################
-
-employment0204_p <- employment0204_p %>% 
-  mutate(traded_manu = as.numeric(traded == 1 & manu == 1))
-
-employment0206_p <- employment0206_p %>% 
-  mutate(traded_manu = as.numeric(traded == 1 & manu == 1))
+############################################################
+# REGRESSION FOR WORKING IN TRADED SECTOR USING PANEL DATA #
+############################################################
 
 etable(list(
   feols(
@@ -29,26 +23,15 @@ etable(list(
 ),
 tex = TRUE)
 
-etable(list(
-  feols(
-    traded ~ as.factor(Female)*provtariff | year + ivid,
-    employment0204_p,
-    vcov = ~tinh,
-    weights = ~hhwt),
-  feols(traded ~ as.factor(Female)*provtariff_k | year + ivid,
-        employment0204_p,
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(traded ~ as.factor(Female)*provtariff | year + ivid02,
-        employment0206_p,
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(traded ~ as.factor(Female)*provtariff_k | year + ivid02,
-        employment0206_p,
-        vcov = ~tinh,
-        weights = ~hhwt)
-),
-tex = TRUE)
+##########################################################################
+# REGRESSION FOR WORKING IN TRADED MANUFACTURING SECTOR USING PANEL DATA #
+##########################################################################
+
+employment0204_p <- employment0204_p %>% 
+  mutate(traded_manu = as.numeric(traded == 1 & manu == 1))
+
+employment0206_p <- employment0206_p %>% 
+  mutate(traded_manu = as.numeric(traded == 1 & manu == 1))
 
 etable(list(
   feols(
@@ -67,8 +50,7 @@ etable(list(
   feols(traded_manu ~ as.factor(Female)/provtariff_k | year + ivid02,
         employment0206_p,
         vcov = ~tinh,
-        weights = ~hhwt)
-),
+        weights = ~hhwt)),
 tex = TRUE)
 
 # Switching from agriculture pre-BTA to traded manufacturing post-BTA 
