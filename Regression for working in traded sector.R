@@ -53,28 +53,25 @@ etable(list(
         weights = ~hhwt)),
 tex = TRUE)
 
-# Switching from agriculture pre-BTA to traded manufacturing post-BTA 
-
 etable(list(
   feols(
-    traded_manu ~ as.factor(Female)/provtariff | year + ivid,
-    subset(employment0204_p, agri_work == 1 & year == 2002 | year == 2004),
+    traded_manu ~ as.factor(Female)*provtariff | year + ivid,
+    employment0204_p,
     vcov = ~tinh,
     weights = ~hhwt),
-  feols(traded_manu ~ as.factor(Female)/provtariff_k | year + ivid,
-        subset(employment0204_p, agri_work == 1 & year == 2002 | year == 2004),
+  feols(traded_manu ~ as.factor(Female)*provtariff_k | year + ivid,
+        employment0204_p,
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(traded_manu ~ as.factor(Female)/provtariff | year + ivid02,
-        subset(employment0206_p, agri_work == 1 & year == 2002 | year == 2006),
+  feols(traded_manu ~ as.factor(Female)*provtariff | year + ivid02,
+        employment0206_p,
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(traded_manu ~ as.factor(Female)/provtariff_k | year + ivid02,
-        subset(employment0206_p, agri_work == 1 & year == 2002 | year == 2006),
+  feols(traded_manu ~ as.factor(Female)*provtariff_k | year + ivid02,
+        employment0206_p,
         vcov = ~tinh,
-        weights = ~hhwt)
-),
-tex = TRUE)
+        weights = ~hhwt)),
+  tex = TRUE)
 
 # Rural 
 etable(list(
