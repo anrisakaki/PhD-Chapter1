@@ -3,55 +3,55 @@
 ########################################################### ###########
 
 etable(list(
-  feols(tal ~ as.factor(Female)*provtariff | year + ivid,
+  feols(tal ~ i(as.factor(Female), provtariff) | year + ivid,
         subset(employment0204_p, educ < 6 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ as.factor(Female)*provtariff_k | year + ivid,
+  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
         subset(employment0204_p, educ < 6 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ as.factor(Female)*provtariff | year + ivid02,
+  feols(tal ~ i(as.factor(Female), provtariff) | year + ivid02,
         subset(employment0206_p, educ < 6 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt),  
-  feols(tal ~ as.factor(Female)*provtariff_k | year + ivid02,
+  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
         subset(employment0206_p, educ < 6 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt)), tex = TRUE)
 
 etable(list(
-  feols(tal ~ as.factor(Female)*provtariff | year + ivid,
+  feols(tal ~ i(as.factor(Female), provtariff) | year + ivid,
         subset(employment0204_p, educ > 6 & educ < 10 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ as.factor(Female)*provtariff_k | year + ivid,
+  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
         subset(employment0204_p, educ > 6 & educ < 10 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ as.factor(Female)*provtariff | year + ivid02,
+  feols(tal ~ i(as.factor(Female), provtariff) | year + ivid02,
         subset(employment0206_p, educ > 6 & educ < 10 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt),  
-  feols(tal ~ as.factor(Female)*provtariff_k | year + ivid02,
+  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
         subset(employment0206_p, educ > 6 & educ < 10 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt)), tex = TRUE)
 
 etable(list(
-  feols(tal ~ as.factor(Female)*provtariff | year + ivid,
+  feols(tal ~ i(as.factor(Female), provtariff) | year + ivid,
         subset(employment0204_p, educ > 9 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ as.factor(Female)*provtariff_k | year + ivid,
+  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
         subset(employment0204_p, educ > 9 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ as.factor(Female)*provtariff | year + ivid02,
+  feols(tal ~ i(as.factor(Female), provtariff) | year + ivid02,
         subset(employment0206_p, educ > 9 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt),  
-  feols(tal ~ as.factor(Female)*provtariff_k | year + ivid02,
+  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
         subset(employment0206_p, educ > 9 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt)), tex = TRUE)
@@ -118,9 +118,9 @@ for (i in y){
 models_0204_rural_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)*provtariff | year + ivid"))
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff) | year + ivid"))
   model <- feols(formula,
-                 subset(employment0204_p, urban == 2 & year == 2002 | year == 2004),
+                 subset(employment0204_p, urban == 2),
                  vcov = ~tinh,
                  weights = ~hhwt)
   
@@ -131,9 +131,9 @@ for (i in y){
 models_0204_rural_p_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)*provtariff_k | year + ivid"))
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff_k) | year + ivid"))
   model <- feols(formula,
-                 subset(employment0204_p, urban == 2 & year == 2002 | year == 2004),
+                 subset(employment0204_p, urban == 2),
                  vcov = ~tinh,
                  weights = ~hhwt)
   
@@ -146,9 +146,9 @@ for (i in y){
 models_0206_rural_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)*provtariff | year + ivid02"))
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff) | year + ivid02"))
   model <- feols(formula,
-                 subset(employment0206_p, urban == 2 & year == 2002 | year == 2006),
+                 subset(employment0206_p, urban == 2),
                  vcov = ~tinh,
                  weights = ~hhwt)
   
@@ -159,9 +159,9 @@ for (i in y){
 models_0206_rural_p_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)*provtariff_k | year + ivid02"))
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff_k) | year + ivid02"))
   model <- feols(formula,
-                 subset(employment0206_p, urban == 2 & year == 2002 | year == 2006),
+                 subset(employment0206_p, urban == 2),
                  vcov = ~tinh,
                  weights = ~hhwt)
   
@@ -173,9 +173,9 @@ for (i in y){
 models_0204_urban_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff | year + ivid"))
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff) | year + ivid"))
   model <- feols(formula,
-                 subset(employment0204_p, urban == 1 & year == 2002 | year == 2004),
+                 subset(employment0204_p, urban == 1),
                  vcov = ~tinh,
                  weights = ~hhwt)
   
@@ -186,9 +186,9 @@ for (i in y){
 models_0204_urban_p_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff_k | year + ivid"))
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff_k) | year + ivid"))
   model <- feols(formula,
-                 subset(employment0204_p, urban == 1 & year == 2002 | year == 2004),
+                 subset(employment0204_p, urban == 1),
                  vcov = ~tinh,
                  weights = ~hhwt)
   
@@ -201,9 +201,9 @@ for (i in y){
 models_0206_urban_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff | year + ivid02"))
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff) | year + ivid02"))
   model <- feols(formula,
-                 subset(employment0206_p, urban == 1 & year == 2002 | year == 2006),
+                 subset(employment0206_p, urban == 1),
                  vcov = ~tinh,
                  weights = ~hhwt)
   
@@ -214,9 +214,9 @@ for (i in y){
 models_0206_urban_p_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff_k | year + ivid02"))
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff_k) | year + ivid02"))
   model <- feols(formula,
-                 subset(employment0206_p, urban == 1 & year == 2002 | year == 2006),
+                 subset(employment0206_p, urban == 1),
                  vcov = ~tinh,
                  weights = ~hhwt)
   
