@@ -162,7 +162,7 @@ y <- c("agri_work", "manu", "tal", "construction", "traded_manu")
 models_0204_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff | year + ivid"))
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff) | year + ivid"))
   model <- feols(formula,
                  employment0204_p,
                  vcov = ~tinh,
@@ -175,7 +175,7 @@ for (i in y){
 models_0204_p_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff_k | year + ivid"))
+  formula <- as.formula(paste(i, " ~  i(as.factor(Female), provtariff_k) | year + ivid"))
   model <- feols(formula,
                  employment0204_p,
                  vcov = ~tinh,
