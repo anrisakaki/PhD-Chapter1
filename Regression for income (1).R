@@ -2,158 +2,98 @@
 # REGRESSION ON TARIFF CUT EXPOSURE AND INCOME USING PANEL DATA #
 #################################################################
 
-# Household fixed effects 
 etable(list(
-  feols(log(totalinc) ~ as.factor(Female)*provtariff | hhid02 + year,
-        subset(inc0402_p, wage_work == 1),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff) | ivid02 + year,
+        subset(inc0402_p),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)*provtariff_k | hhid02 + year,
-        subset(inc0402_p, wage_work == 1),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff_k) | ivid02 + year,
+        subset(inc0402_p),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)*provtariff | hhid06 + year,
-        subset(inc0602_p, wage_work == 1),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff) | ivid02 + year,
+        subset(inc0602_p),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)*provtariff_k | hhid06 + year,
-        subset(inc0602_p, wage_work == 1),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff_k) | ivid02 + year,
+        subset(inc0602_p),
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
 
 etable(list(
-  feols(log(totalinc) ~ as.factor(Female)/provtariff | hhid02 + year,
-        subset(inc0402_p, wage_work == 1),
+  feols(log(totalinc) ~ as.factor(Female)*provtariff | ivid02 + year,
+        subset(inc0402_p),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)/provtariff_k | hhid02 + year,
-        subset(inc0402_p, wage_work == 1),
+  feols(log(totalinc) ~ as.factor(Female)*provtariff_k | ivid02 + year,
+        subset(inc0402_p),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)/provtariff | hhid06 + year,
-        subset(inc0602_p, wage_work == 1),
+  feols(log(totalinc) ~ as.factor(Female)*provtariff | ivid02 + year,
+        subset(inc0602_p),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)/provtariff_k | hhid06 + year,
-        subset(inc0602_p, wage_work == 1),
+  feols(log(totalinc) ~ as.factor(Female)*provtariff_k | ivid02 + year,
+        subset(inc0602_p),
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
 
 ## Rural
 etable(list(
-  feols(log(totalinc) ~ as.factor(Female)/provtariff | hhid02 + year,
-        subset(inc0402_p, urban == 2 & wage_work == 1),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff) | ivid02 + year,
+        subset(inc0402_p, urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)/provtariff_k | hhid02 + year,
-        subset(inc0402_p, urban == 2 & wage_work == 1),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff_k) | ivid02 + year,
+        subset(inc0402_p, urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)/provtariff | hhid06 + year,
-        subset(inc0602_p, urban == 2 & wage_work == 1),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff) | ivid02 + year,
+        subset(inc0602_p, urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)/provtariff_k | hhid06 + year,
-        subset(inc0602_p, urban == 2 & wage_work == 1),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff_k) | ivid02 + year,
+        subset(inc0602_p, urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
 
 etable(list(
-  feols(log(totalinc) ~ as.factor(Female)*provtariff | hhid02 + year,
-        subset(inc0402_p, urban == 2 & wage_work == 1),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff) | ivid02 + year,
+        subset(inc0402_p, urban == 1),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)*provtariff_k | hhid02 + year,
-        subset(inc0402_p, urban == 2 & wage_work == 1),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff_k) | ivid02 + year,
+        subset(inc0402_p, urban == 1),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)*provtariff | hhid06 + year,
-        subset(inc0602_p, urban == 2 & wage_work == 1),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff) | ivid02 + year,
+        subset(inc0602_p, urban == 1),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)*provtariff_k | hhid06 + year,
-        subset(inc0602_p, urban == 2 & wage_work == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh)  
-), tex = TRUE)
-
-# Individual fixed effects 
-etable(list(
-  feols(log(totalinc) ~ as.factor(Female)*provtariff | ivid02 + year,
-        subset(inc0402_p, wage_work == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)*provtariff_k | ivid02 + year,
-        subset(inc0402_p, wage_work == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)*provtariff | ivid02 + year,
-        subset(inc0602_p, wage_work == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)*provtariff_k | ivid02 + year,
-        subset(inc0602_p, wage_work == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh)  
-), tex = TRUE)
-
-etable(list(
-  feols(log(totalinc) ~ as.factor(Female)/provtariff | ivid02 + year,
-        subset(inc0402_p, wage_work == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)/provtariff_k | ivid02 + year,
-        subset(inc0402_p, wage_work == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)/provtariff | ivid02 + year,
-        subset(inc0602_p, wage_work == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)/provtariff_k | ivid02 + year,
-        subset(inc0602_p, wage_work == 1),
-        weights = ~hhwt, 
-        vcov = ~tinh)  
-), tex = TRUE)
-
-# Rural 
-etable(list(
-  feols(log(totalinc) ~ as.factor(Female)/provtariff | ivid02 + year,
-        subset(inc0402_p, wage_work == 1 & urban == 2),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)/provtariff_k | ivid02 + year,
-        subset(inc0402_p, wage_work == 1 & urban == 2),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)/provtariff | ivid02 + year,
-        subset(inc0602_p, wage_work == 1 & urban == 2),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(log(totalinc) ~ as.factor(Female)/provtariff_k | ivid02 + year,
-        subset(inc0602_p, wage_work == 1 & urban == 2),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff_k) | ivid02 + year,
+        subset(inc0602_p, urban == 1),
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
 
 etable(list(
   feols(log(totalinc) ~ as.factor(Female)*provtariff | ivid02 + year,
-        subset(inc0402_p, wage_work == 1 & urban == 2),
+        subset(inc0402_p, urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(log(totalinc) ~ as.factor(Female)*provtariff_k | ivid02 + year,
-        subset(inc0402_p, wage_work == 1 & urban == 2),
+        subset(inc0402_p, urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(log(totalinc) ~ as.factor(Female)*provtariff | ivid02 + year,
-        subset(inc0602_p, wage_work == 1 & urban == 2),
+        subset(inc0602_p, urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(log(totalinc) ~ as.factor(Female)*provtariff_k | ivid02 + year,
-        subset(inc0602_p, wage_work == 1 & urban == 2),
+        subset(inc0602_p, urban == 2),
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
