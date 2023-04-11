@@ -13,8 +13,10 @@ exp_04_p <- merge(hhid0204, exp_04, by = c("tinh", "xa", "hoso", "hhid")) %>%
   select(tinh, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt, urban) %>% 
   mutate(year = 2004)
 
+
 exp_0206 <- exp_02
-exp_06_p <- exp_06
+exp_06_p <- exp_06 %>% 
+  rename(hhid06 = hhid)
 exp_0206 <- merge(hhid020406, exp_0206, by = "hhid02")
 exp_06_p <- merge(hhid020406, exp_06_p, by = "hhid06")
 
