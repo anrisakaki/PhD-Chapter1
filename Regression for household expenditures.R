@@ -2,9 +2,6 @@
 # SETTING UP FOR REGRESSION ON EXPENDITURE ON HOUSEHOLD GOODS #
 ###############################################################
 # Panel data
-exp_02 <- exp_02 %>% 
-  rename(hhid02 = hhid,
-         urban = urban02) 
 exp_02_p <- exp_02 %>% 
   select(tinh, xa02, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, provtariff, provtariff_k, hhwt, urban)
 
