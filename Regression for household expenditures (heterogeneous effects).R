@@ -2,8 +2,6 @@
 # HETEROGENOUS EFFECTS OF BTA ON HOUSEHOLD EXPENDITURE #
 ########################################################
 
-y_exp <- c("food_share", "tobac_share", "educ_share", "health_share")
-
 # 2002 - 2004 
 ## Urban-rural 
 etable(list(
