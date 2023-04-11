@@ -42,7 +42,6 @@ exp_02 <- exp_02 %>%
 exp_06 <- exp_06 %>% 
   mutate(across(xa, as.character)) %>% 
   rename(hhwt = wt9,
-         hhid = hhid06,
          urban = urban06) %>%
   mutate(across(c(xa, hoso, hhid, huyen), as.double))  
 
