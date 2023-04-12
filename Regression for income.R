@@ -40,12 +40,14 @@ inc0602_p <- bind_rows(ivid0206p, inc06_p) %>%
 ########################################################################################
 
 inc_02_spouse <- inc02 %>%
-  select(hhid02, ivid02,tinh, hhwt, sex, m1c3, provtariff, provtariff_k, year, totalinc, tal, agri_work, manu, traded_manu, wage_work, urban, educ, age)
+  select(hhid02, ivid02,tinh, hhwt, sex, m1c3, provtariff, provtariff_k, year, totalinc, tal, agri_work, manu, traded_manu, wage_work, urban, educ, age, married)
 
 m5aho_02 <- m5aho_02 %>% 
+  rename(hhid02 = hhid)
   mutate(across(tinh, as.factor))
 
 m5d_02 <- m5d_02 %>% 
+  rename(hhid02 = hhid) %>% 
   mutate(across(tinh, as.factor))
 
 inc_02_spouse <- list(inc_02_spouse, m5aho_02, m5d_02) %>% 
@@ -116,19 +118,19 @@ inc_0206_spouse_p <- bind_rows(inc_0602_spouse_p, inc_06_spouse_p) %>%
 
 etable(list(
   feols(inc_ratio ~ provtariff | hhid + year,
-        subset(inc_0204_spouse_p, Female == 1),
+        subset(inc_0204_spouse_p, Female == 1 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1),
+        subset(inc_0204_spouse_p, Female == 1 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(inc_ratio ~ provtariff| hhid06 + year,
-        subset(inc_0206_spouse_p, Female == 1),
+        subset(inc_0206_spouse_p, Female == 1 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(inc_ratio ~ provtariff_k | hhid06 + year,
-        subset(inc_0206_spouse_p, Female == 1),
+        subset(inc_0206_spouse_p, Female == 1 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
