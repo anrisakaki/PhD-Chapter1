@@ -70,7 +70,8 @@ inc06 <- merge(employment_mf_06, inc06, by = c("tinh", "huyen", "xa", "hoso", "m
 
 inc06 <- merge(inc06, rcpi_06, by = c("tinh", "huyen", "xa")) %>% 
   distinct() %>% 
-  mutate(totalinc = totalinc * rcpi)
+  mutate(totalinc = totalinc * rcpi) %>% 
+  rename(married = m1ac6)
 
 ##############################################################
 # DESCRIPTIVE STATISTICS FOR INCOME AND SECTOR OF EMPLOYMENT #
