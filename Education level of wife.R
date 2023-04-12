@@ -3,32 +3,20 @@
 ###########################
 
 # 2002 
-married02 <- m1_02 %>% 
-  filter(m1c2 == 2 & m1c6 == 2) %>% 
-  select(hhid, ivid)
-
 educ02 <- m2_02 %>% 
-  select(hhid, ivid, m2c1)
-
-educ02 <- merge(married02, educ02, by = c("hhid", "ivid")) %>% 
-  rename(hhid02 = hhid)
+  select(hhid, ivid, m2c1) %>% 
+  rename(educ = m2c1,
+         hhid02 = hhid)
 
 # 2004 
 educ04 <- m123a_04 %>% 
-  filter(m1ac6 == 2 & m1ac2 == 2) %>% 
   select(hhid, ivid, m2c1) %>% 
   rename(educ = m2c1)
 
-# 2006 
-married06 <- m1a_06 %>% 
-  filter(m1ac6 == 2 & m1ac2 == 2) %>% 
-  select(hhid, ivid)
-
+# 2006
 educ06 <- m2a_06 %>% 
   select(hhid, ivid, m2ac1) %>% 
   rename(educ = m2ac1)
-
-educ06 <- merge(married06, educ06, by = c("hhid", "ivid"))
 
 #######################################################################
 # MERGING EDUCATION AND MARRIAGE DATA WITH HOUSEHOLD EXPENDITURE DATA #
