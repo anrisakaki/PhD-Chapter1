@@ -23,10 +23,12 @@ WVS_01 <- WVS_01 %>%
          provtariff_k = preprov_tariff_k, 
          sex = V223,
          age = V225, 
-         educ = V226) %>% 
+         educ = V226,
+         emp = V230,
+         divorce = V211) %>% 
   mutate(female = as.numeric(sex > 1),
          year = 2001) %>% 
-  select(tinh, provtariff, provtariff_k, female, age, educ, housewife, job_scarce, year)
+  select(tinh, provtariff, provtariff_k, female, emp, age, educ, housewife, job_scarce, divorce, year)
 
 WVS_05 <- WVS_05 %>% 
   rename(job_scarce = V44,
@@ -35,14 +37,17 @@ WVS_05 <- WVS_05 %>%
          provtariff_k = postprov_tariff_k,
          sex = V235,
          educ = V238,
-         age = V237) %>% 
+         age = V237,
+         emp = V242,
+         divorce = V205) %>% 
   mutate(female = as.numeric(sex > 1),
          year = 2005) %>% 
-  select(tinh, provtariff, provtariff_k, female, age, educ, housewife, job_scarce, year)  
+  select(tinh, provtariff, provtariff_k, female, emp, age, educ, housewife, job_scarce, divorce, year)  
 
 WVS_0105 <- bind_rows(WVS_01, WVS_05) %>% 
   mutate(housewife = as.numeric(housewife < 3),
-         job_scarce = as.numeric(job_scarce < 2))
+         job_scarce = as.numeric(job_scarce < 2)) %>% 
+  filter(divorce > 0)
 
 #####################
 # REGRESSION OF WVS #
@@ -51,77 +56,87 @@ WVS_0105 <- bind_rows(WVS_01, WVS_05) %>%
 # Housewife 
 
 etable(list(
-  feols(housewife ~ provtariff + as.factor(female) + age + as.factor(educ) | year + tinh,
+  feols(housewife ~ provtariff + as.factor(female) + age + as.factor(educ) + as.factor(emp) | year + tinh,
         WVS_0105, 
         vcov = ~tinh),
-  feols(housewife ~ provtariff_k + as.factor(female) + age + as.factor(educ) | year + tinh,
+  feols(housewife ~ provtariff_k + as.factor(female) + age + as.factor(educ) + as.factor(emp) | year + tinh,
         WVS_0105, 
         vcov = ~tinh)
 ), tex = TRUE)
 
 
 etable(list(
-  feols(housewife ~ provtariff + age + as.factor(educ) | year + tinh,
+  feols(housewife ~ provtariff + age + as.factor(educ) + as.factor(emp) | year + tinh,
         subset(WVS_0105, female == 1), 
         vcov = ~tinh),
-  feols(housewife ~ provtariff_k + age + as.factor(educ) | year + tinh,
+  feols(housewife ~ provtariff_k + age + as.factor(educ) + as.factor(emp) | year + tinh,
         subset(WVS_0105, female == 1), 
-        vcov = ~tinh),
+        vcov = ~tinh)
 ), tex = TRUE)
 
 etable(list(
-  feols(housewife ~ provtariff + as.factor(female) + age + as.factor(educ) | year + tinh,
-        subset(WVS_0105, educ <= 5), 
+  feols(housewife ~ provtariff + age + as.factor(educ) + as.factor(emp) | year + tinh,
+        subset(WVS_0105, female == 0), 
         vcov = ~tinh),
-  feols(housewife ~ provtariff_k + as.factor(female) + age + as.factor(educ) | year + tinh,
-        subset(WVS_0105, educ <= 5), 
-        vcov = ~tinh)  
-  ), tex = TRUE)
-
-etable(list(
-  feols(housewife ~ provtariff + as.factor(female) + age + as.factor(educ) | year + tinh,
-        subset(WVS_0105, educ > 5), 
-        vcov = ~tinh),
-  feols(housewife ~ provtariff_k + as.factor(female) + age + as.factor(educ) | year + tinh,
-        subset(WVS_0105, educ > 5), 
-        vcov = ~tinh)  
+  feols(housewife ~ provtariff_k + age + as.factor(educ) + as.factor(emp) | year + tinh,
+        subset(WVS_0105, female == 0), 
+        vcov = ~tinh)
 ), tex = TRUE)
 
 # Job scarcity 
 
 etable(list(
-  feols(job_scarce ~ provtariff + as.factor(female) + age + as.factor(educ) | year + tinh,
+  feols(job_scarce ~ provtariff + as.factor(female) + age + as.factor(educ) + as.factor(emp) | year + tinh,
         WVS_0105, 
         vcov = ~tinh),
-  feols(job_scarce ~ provtariff_k + as.factor(female) + age + as.factor(educ) | year + tinh,
+  feols(job_scarce ~ provtariff_k + as.factor(female) + age + as.factor(educ) + as.factor(emp) | year + tinh,
         WVS_0105, 
         vcov = ~tinh)
 ), tex = TRUE)
 
 etable(list(
-  feols(job_scarce ~ provtariff + as.factor(female) + age + as.factor(educ) | year + tinh,
-        subset(WVS_0105, educ > 5), 
-        vcov = ~tinh),
-  feols(job_scarce ~ provtariff_k + as.factor(female) + age + as.factor(educ) | year + tinh,
-        subset(WVS_0105, educ > 5), 
-        vcov = ~tinh)
-), tex = TRUE)
-
-etable(list(
-  feols(job_scarce ~ provtariff + age + as.factor(educ) | year + tinh,
+  feols(job_scarce ~ provtariff + age + as.factor(educ) + as.factor(emp) | year + tinh,
         subset(WVS_0105, female == 1), 
         vcov = ~tinh),
-  feols(job_scarce ~ provtariff_k + age + as.factor(educ) | year + tinh,
+  feols(job_scarce ~ provtariff_k + age + as.factor(educ) + as.factor(emp) | year + tinh,
         subset(WVS_0105, female == 1), 
         vcov = ~tinh)
 ), tex = TRUE)
 
 etable(list(
-  feols(job_scarce ~ provtariff + age + as.factor(educ) | year + tinh,
+  feols(job_scarce ~ provtariff + age + as.factor(educ) + as.factor(emp) | year + tinh,
         subset(WVS_0105, female == 0), 
         vcov = ~tinh),
-  feols(job_scarce ~ provtariff_k + age + as.factor(educ) | year + tinh,
+  feols(job_scarce ~ provtariff_k + age + as.factor(educ) + as.factor(emp) | year + tinh,
         subset(WVS_0105, female == 0), 
         vcov = ~tinh)
 ), tex = TRUE)
 
+# Divorce 
+
+etable(list(
+  feols(divorce ~ provtariff + as.factor(female) + age + as.factor(educ) + as.factor(emp) | year + tinh,
+        WVS_0105, 
+        vcov = ~tinh),
+  feols(divorce ~ provtariff_k + as.factor(female) + age + as.factor(educ) + as.factor(emp) | year + tinh,
+        WVS_0105, 
+        vcov = ~tinh)
+), tex = TRUE)
+
+etable(list(
+  feols(divorce ~ provtariff + age + as.factor(educ) + as.factor(emp) | year + tinh,
+        subset(WVS_0105, female == 1), 
+        vcov = ~tinh),
+  feols(divorce ~ provtariff_k + age + as.factor(educ) + as.factor(emp) | year + tinh,
+        subset(WVS_0105, female == 1), 
+        vcov = ~tinh)
+), tex = TRUE)
+
+etable(list(
+  feols(divorce ~ provtariff + age + as.factor(educ) + as.factor(emp) | year + tinh,
+        subset(WVS_0105, female == 0), 
+        vcov = ~tinh),
+  feols(divorce ~ provtariff_k + age + as.factor(educ) + as.factor(emp) | year + tinh,
+        subset(WVS_0105, female == 0), 
+        vcov = ~tinh)
+), tex = TRUE)
