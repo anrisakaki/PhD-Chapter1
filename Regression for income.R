@@ -43,8 +43,8 @@ inc_02_spouse <- inc02 %>%
   select(hhid02, ivid02,tinh, hhwt, sex, m1c3, provtariff, provtariff_k, year, totalinc, tal, agri_work, manu, traded_manu, wage_work, urban, educ, age, married)
 
 m5aho_02 <- m5aho_02 %>% 
-  rename(hhid02 = hhid)
-  mutate(across(tinh, as.factor))
+  rename(hhid02 = hhid) %>%
+  mutate(tinh = factor(tinh))
 
 m5d_02 <- m5d_02 %>% 
   rename(hhid02 = hhid) %>% 
