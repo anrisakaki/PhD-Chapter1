@@ -47,7 +47,7 @@ WVS_05 <- WVS_05 %>%
 WVS_0105 <- bind_rows(WVS_01, WVS_05) %>% 
   mutate(housewife = as.numeric(housewife < 3),
          job_scarce = as.numeric(job_scarce < 2)) %>% 
-  filter(divorce > 0)
+  filter(divorce = as.numeric(divorce == 1, 1, 0))
 
 #####################
 # REGRESSION OF WVS #
