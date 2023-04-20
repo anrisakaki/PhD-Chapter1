@@ -97,4 +97,4 @@ etable(list(
         div_0206_p,
         vcov = ~tinh,
         weights = ~hhwt)  
-))
+), tex = T)
