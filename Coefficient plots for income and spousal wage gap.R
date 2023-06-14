@@ -2,19 +2,25 @@ dict = c("as.factor(Female)" = "Female", "provtariff" = "Marginal effect of prov
 
 setFixest_coefplot(dict = dict, grid = F)
 
+inc_0204_spouse_p <- inc_0204_spouse_p %>% 
+  mutate(provtariff_k = provtariff_k*-1)
+
+inc_0206_spouse_p <- inc_0206_spouse_p %>% 
+  mutate(provtariff_k = provtariff_k*-1)
+
 png("tce_finc_020406.png")
 coefplot(list(
   feols(inc_ratio ~ provtariff_k | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & married == 2),
+        subset(inc_0204_spouse_p, Female == 1  & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(inc_ratio ~ provtariff_k | hhid06 + year,
-        subset(inc_0206_spouse_p, Female == 1 & married == 2),
+        subset(inc_0206_spouse_p, Female == 1  & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh)   
 ), main = "")
 legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 1, bty = "n", 
-       legend = c("2001-2003", "2001-2005"))
+       legend = c("2 years", "4 years"))
 dev.off()
 
 # Urban - rural
