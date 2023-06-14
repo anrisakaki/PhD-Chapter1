@@ -3,17 +3,20 @@ coefplot(list(
         exp_0402_p,
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(educ_share ~ provtariff_k | hhid02 + year,
+  feols(educ_share ~ -provtariff_k | hhid02 + year,
         exp_0402_p,
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(health_share ~ provtariff_k | hhid02 + year,
+  feols(health_share ~ -provtariff_k | hhid02 + year,
         exp_0402_p,
         vcov = ~tinh,
         weights = ~hhwt)  
 ), main = "", zero.par = list( type="dotted", lty=2))
 legend("bottomleft", col = 1:3, pch = 1, lwd = 2, cex = 1, bty = "n", 
        legend = c("Food", "Education", "Health"))
+
+exp_0206_p <- exp_0206_p %>% 
+  mutate(provtariff_k = provtariff_k*-1)
 
 png("tce_hhexp_0206.png")
 coefplot(list(
