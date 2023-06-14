@@ -11,7 +11,7 @@ provtariff_weights_prov <- provtariff_weights %>%
   group_by(tinh) %>% 
   summarise(nworkers = sum(n))
 
-provtariff_weights <- merge(provtariff_weights, provtariff_weights_prov, by = "tinh") %>% 
+provtariff_weights <- left_join(provtariff_weights, provtariff_weights_prov, by = "tinh") %>% 
   mutate(weight_02 = n / nworkers) %>% 
   rename(isic2 = industry)
 
@@ -74,3 +74,72 @@ for(i in preBTA_tariffs){
   assign(i, get(i) %>% 
            mutate(across(tinh, as.factor)))
 }
+
+####################################################
+# PROVINCE-LEVEL TARIFFS USING AUTOR ET AL. METHOD #
+####################################################
+
+## Calculating the female-intensiveness of each sector 
+
+provtariff_weights_a <- provtariff_weights %>% 
+  select(tinh, isic2, n) %>% 
+  mutate(tinh = as.factor(tinh))
+
+tariff_f_weights <- employment_mf_02 %>% 
+  filter(m3c2 == 1) %>% 
+  select(tinh, industry, hhwt, sex) %>% 
+  group_by(tinh, industry, sex) %>% 
+  count(industry, sex, tinh, wt = hhwt) %>% 
+  filter(sex == "Female") %>% 
+  rename(isic2 = industry,
+    fintensity = n) %>% 
+  mutate(tinh = as.factor(tinh),
+         isic2 = as.factor(isic2))
+
+tariff_f_weights <- left_join(provtariff_weights_a, tariff_f_weights, by = c("tinh", "isic2"))
+
+tariff_f_weights <- tariff_f_weights %>% 
+  mutate(fweights = fintensity/n) %>% 
+  mutate(fweights = ifelse(is.na(fweights), 0, fweights)) %>% 
+  select(tinh, isic2, fweights)
+
+# Using Topalova's measure 
+
+provtariff_weights <- provtariff_weights %>% mutate(tinh = as.factor(tinh))
+
+provtariff_weights_f <- left_join(provtariff_weights, tariff_f_weights, by = c("tinh", "isic2"))
+
+provtariff_weights_f <- provtariff_weights_f %>% mutate(fweights_02 = fweights*weight_02)
+
+preBTA_provtariff_f <- provtariff_weights_f %>% 
+  group_by(tinh) %>% 
+  summarise(preprov_tariff_f = weighted.mean(col2_ave_all, fweights_02))
+
+postBTA_provtariff_f <- provtariff_weights_f %>% 
+  group_by(tinh) %>% 
+  summarise(postprov_tariff_f = weighted.mean(mfn_ave_all, fweights_02))
+
+# Applying new weights onto Kovak's measure of exposure to trade shock 
+
+provtariff_weights_k <- provtariff_weights_k %>%
+  mutate(tinh = as.factor(tinh),
+         isic2 = as.factor(isic2))
+
+provtariff_weights_fk <- left_join(provtariff_weights_k, tariff_f_weights, by = c("tinh", "isic2")) 
+
+provtariff_weights_fk <- provtariff_weights_fk %>% mutate(fweights_02 = fweights*weight_02_k)
+
+preBTA_provtariff_fk <- provtariff_weights_fk %>% 
+  group_by(tinh) %>% 
+  summarise(preprov_tariff_fk = weighted.mean(col2_ave_all, fweights_02))
+
+postBTA_provtariff_fk <- provtariff_weights_fk %>% 
+  group_by(tinh) %>% 
+  summarise(postprov_tariff_fk = weighted.mean(mfn_ave_all, fweights_02))
+
+# Merging all into single dataframe 
+
+provtariffs <- list(preBTA_provtariff_f, preBTA_provtariff_fk, postBTA_provtariff_f, postBTA_provtariff_fk) %>% 
+  reduce(full_join, by = "tinh")
+
+save(provtariffs, file = "provtariffs.rda")
