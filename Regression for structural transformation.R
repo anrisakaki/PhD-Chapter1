@@ -39,6 +39,7 @@ for(i in emp02){
   
   assign(i, left_join(get(i), preBTA_provtariff_k, by = "tinh")) # Province-level tariffs created per Kovak
   
+  
   assign(i, get(i) %>% rename(provtariff_k = preprov_tariff_k))
   
   assign(i, get(i) %>%
@@ -54,7 +55,7 @@ for(i in emp02){
 }
 
 
-postBTA_tariffs <- c("postBTA_provtariff", "postBTA_provtariff_k")
+postBTA_tariffs <- c("postBTA_provtariff", "postBTA_provtariff_k", "postBTA_provtariff_fk")
 
 for(i in postBTA_tariffs){
   
@@ -121,6 +122,34 @@ for (i in emp0406){
              age5 = as.numeric(age > 55 & age < 66)))
 }
 
+preprovtariffs_f <- provtariffs %>%
+  select(tinh, preprov_tariff_f, preprov_tariff_fk)
+
+postprovtariffs_f <- provtariffs %>%
+  select(tinh, postprov_tariff_f, postprov_tariff_fk)
+
+emp02 <- c("employment_mf_02", "employment_mf_02p")
+
+for(i in emp02){
+  
+  assign(i, left_join(get(i), preprovtariffs_f, by = "tinh"))
+  
+  assign(i, get(i) %>% 
+           rename(provtariff_f = preprov_tariff_f,
+                  provtariff_fk = preprov_tariff_fk))
+}
+
+emp0406 <- c("employment_mf_04", "employment_mf_04p", "employment_mf_06", "employment_mf_06p")
+
+for(i in emp0406){
+  
+  assign(i, left_join(get(i), postprovtariffs_f, by = "tinh"))
+  
+  assign(i, get(i) %>% 
+           rename(provtariff_f = postprov_tariff_f,
+                  provtariff_fk = postprov_tariff_fk))
+}
+
 employment0204_p <- bind_rows(employment_mf_02p, employment_mf_04p) %>% 
   mutate(Female = as.numeric(sex == "Female"))
 
@@ -139,9 +168,20 @@ employment_mf_06 <- employment_mf_06 %>%
 employment0206 <- bind_rows(employment_mf_02, employment_mf_06) %>% 
   mutate(Female = as.numeric(sex == "Female"))
 
-###############################################################################
-# REGRESSION ON STRUCTURAL TRANSFORMATION USING PANEL DATA - EXTENSIVE MARGIN #
-###############################################################################
+# write .rda files 
+save(employment0204, file='employment0204.rda')
+save(employment0204_p, file='employment0204_p.rda')
+save(employment0206, file = 'employment0206.rda')
+save(employment0206_p, file = 'employment0206_p.rda')
+
+############################################################
+# REGRESSION ON STRUCTURAL TRANSFORMATION USING PANEL DATA #
+############################################################
+
+load("employment0204.rda")
+load("employment0204_p.rda")
+load("employment0206.rda")
+load("employment0206_p.rda")
 
 setFixest_dict(c("as.factor(Female)" = "Female",
                  "provtariff" = "Tariff_{pt}^k",
@@ -209,6 +249,65 @@ for (i in y){
                  weights = ~hhwt)
   
   models_0206_p_k_summary[[i]] <- model
+}
+
+
+#################################################################################
+# REGRESSION ON STRUCTURAL TRANSFORMATION USING FEMALE-INTENSIVE SECTOR WEIGHTS #
+#################################################################################
+
+# 2002 - 2004 
+## Topalova tariffs
+models_0204_p_f_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff_f) | year + ivid"))
+  model <- feols(formula,
+                 employment0204_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0204_p_f_summary[[i]] <- model
+}
+
+## Kovak tariffs 
+models_0204_p_fk_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~  i(as.factor(Female), provtariff_fk) | year + ivid"))
+  model <- feols(formula,
+                 employment0204_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0204_p_fk_summary[[i]] <- model
+}
+
+# 2002 - 2006 
+## Topalova tariffs
+models_0206_p_f_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff_f) | year + ivid02"))
+  model <- feols(formula,
+                 employment0206_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0206_p_f_summary[[i]] <- model
+}
+
+## Kovak tariffs 
+models_0206_p_fk_summary <- list()
+
+for (i in y){
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff_fk) | year + ivid02"))
+  model <- feols(formula,
+                 employment0206_p,
+                 vcov = ~tinh,
+                 weights = ~hhwt)
+  
+  models_0206_p_fk_summary[[i]] <- model
 }
 
 ######################################################################
