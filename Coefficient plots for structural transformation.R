@@ -8,26 +8,26 @@ setFixest_coefplot(dict = dict, grid = F, zero.par = list( type="dotted", lty=2)
 
 png("reallocation_lpm_020406.png")
 iplot(list(
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
+  feols(tal ~ i(as.factor(Female), -provtariff_k) | year + ivid,
         employment0204_p,
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
+  feols(tal ~ i(as.factor(Female), -provtariff_k) | year + ivid02,
         employment0206_p,
         vcov = ~tinh,
         weights = ~hhwt)), zero = F, main = "")
 legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 0.7, bty = "n", 
-       legend = c("2001 - 2003", "2001 - 2003"))
+       legend = c("2 years", "4 years"))
 dev.off()
 
 # Age 
 png("reallocation_lpm_age_0204.png")
 iplot(list(
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
+  feols(tal ~ i(as.factor(Female), -provtariff_k) | year + ivid,
         subset(employment0204_p, age > 17 & age < 31 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
+  feols(tal ~ i(as.factor(Female), -provtariff_k) | year + ivid,
         subset(employment0204_p, age > 30 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt)), zero = F, main = "")
