@@ -35,12 +35,15 @@ inc0402_p <- bind_rows(inc02_p, inc04_p) %>%
 inc0602_p <- bind_rows(ivid0206p, inc06_p) %>% 
   mutate(Female = as.numeric(sex == "Female"))
 
+save(inc0402_p, file = "inc0402_p.rda")
+save(inc0602_p, file = "inc0602_p.rda")
+
 ########################################################################################
 # SETING UP FOR REGRESSION ON INCOME OF WOMEN AS A SHARE OF HER TOTAL HOUSEHOLD INCOME #
 ########################################################################################
 
 inc_02_spouse <- inc02 %>%
-  select(hhid02, ivid02,tinh, hhwt, sex, m1c3, provtariff, provtariff_k, year, totalinc, tal, agri_work, manu, traded_manu, wage_work, urban, educ, age, married)
+  select(hhid02, ivid02,tinh, hhwt, sex, m1c3, provtariff, provtariff_k, provtariff_f, provtariff_fk, year, totalinc, tal, agri_work, manu, traded_manu, wage_work, urban, educ, age, married)
 
 m5aho_02 <- m5aho_02 %>% 
   rename(hhid02 = hhid) %>%
@@ -112,9 +115,15 @@ inc_06_spouse_p <- merge(hhid020406, inc_06_spouse, by = "hhid06") %>%
 inc_0206_spouse_p <- bind_rows(inc_0602_spouse_p, inc_06_spouse_p) %>% 
   mutate(Female = as.numeric(sex == "Female"))
 
+save(inc_0204_spouse_p, file = "inc_0204_spouse_p.rda")
+save(inc_0206_spouse_p, file = "inc_0206_spouse_p.rda")
+
 #####################################################################################
 # REGRESSION ON WOMENS INCOME AS A SHARE OF TOTAL HOUSEHOLD INCOME USING PANEL DATA #
 #####################################################################################
+
+load("inc_0204_spouse_p.rda")
+load("inc_0206_spouse_p.rda")
 
 etable(list(
   feols(inc_ratio ~ provtariff | hhid + year,
@@ -134,6 +143,28 @@ etable(list(
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
+
+# Accounting for female-intensity 
+
+etable(list(
+  feols(inc_ratio ~ provtariff_f | hhid + year,
+        subset(inc_0204_spouse_p, Female == 1 & married == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff_fk | hhid02 + year,
+        subset(inc_0204_spouse_p, Female == 1 & married == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff_f | hhid06 + year,
+        subset(inc_0206_spouse_p, Female == 1 & married == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff_fk | hhid06 + year,
+        subset(inc_0206_spouse_p, Female == 1 & married == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+), tex = TRUE)
+
 
 #################################################################
 # REGRESSION ON SPOUSAL WAGE GAP - BY SECTOR - USING PANEL DATA #
