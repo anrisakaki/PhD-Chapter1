@@ -21,8 +21,7 @@ for(i in emp02){
              age = m1c5,
              provtariff = preprov_tariff,
              industry2 = industry,
-             work = m3c2
-           ) %>%
+             work = m3c2) %>%
            mutate(year = 2002,
                   work = as.numeric(work == 1)))
   
@@ -229,7 +228,7 @@ for (i in y){
 models_0206_p_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff | year + ivid02"))
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff) | year + ivid02"))
   model <- feols(formula,
                  employment0206_p,
                  vcov = ~tinh,
@@ -242,7 +241,7 @@ for (i in y){
 models_0206_p_k_summary <- list()
 
 for (i in y){
-  formula <- as.formula(paste(i, " ~ as.factor(Female)/provtariff_k | year + ivid02"))
+  formula <- as.formula(paste(i, " ~ i(as.factor(Female), provtariff_k) | year + ivid02"))
   model <- feols(formula,
                  employment0206_p,
                  vcov = ~tinh,
