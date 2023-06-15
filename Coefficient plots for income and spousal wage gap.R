@@ -1,12 +1,6 @@
-dict = c("as.factor(Female)" = "Female", "provtariff" = "Marginal effect of province-level tariff", "provtariff_k" = "Marginal effect of province-level tariff")
+dict = c( "as.factor(Female)" = "Female", "provtariff" = "Province-level tariff", "provtariff_k" = "Province-level tariff")
 
 setFixest_coefplot(dict = dict, grid = F)
-
-inc_0204_spouse_p <- inc_0204_spouse_p %>% 
-  mutate(provtariff_k = provtariff_k*-1)
-
-inc_0206_spouse_p <- inc_0206_spouse_p %>% 
-  mutate(provtariff_k = provtariff_k*-1)
 
 png("tce_finc_020406.png")
 coefplot(list(
@@ -76,15 +70,15 @@ dev.off()
 
 png("tce_finc_educ_0206.png")
 coefplot(list(
-  feols(inc_ratio ~ provtariff_k | hhid02 + year,
+  feols(inc_ratio ~ provtariff_fk | hhid02 + year,
         subset(inc_0206_spouse_p, Female == 1 & educ > 9 & year == 2002 & married == 2 | year == 2006 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k | hhid02 + year,
+  feols(inc_ratio ~ provtariff_fk | hhid02 + year,
         subset(inc_0206_spouse_p, Female == 1 & educ > 5 & educ < 10 & year == 2002 & married == 2 | year == 2006 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k | hhid02 + year,
+  feols(inc_ratio ~ provtariff_fk | hhid02 + year,
         subset(inc_0206_spouse_p, Female == 1 & educ < 6 & year == 2002 & married == 2 | year == 2006 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh)), main = "")
@@ -126,15 +120,15 @@ dev.off()
 # Sector 
 png("tce_finc_secremained_0204.png")
 coefplot(list(
-  feols(inc_ratio ~ provtariff_k | hhid02 + year,
+  feols(inc_ratio ~ provtariff_fk | hhid02 + year,
         subset(inc_0204_spouse_p, Female == 1 & agri_work == 1),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k | hhid02 + year,
+  feols(inc_ratio ~ provtariff_fk | hhid02 + year,
         subset(inc_0204_spouse_p, Female == 1 & tal == 1),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k | hhid02 + year,
+  feols(inc_ratio ~ provtariff_fk | hhid02 + year,
         subset(inc_0204_spouse_p, Female == 1 & manu == 1),
         weights = ~hhwt, 
         vcov = ~tinh)), main = "", zero.par = list( type="dotted", lty=2))
