@@ -40,6 +40,25 @@ etable(list(
         vcov = ~tinh)  
 ), tex = TRUE)
 
+etable(list(
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff_f) | ivid02 + year,
+        subset(inc0402_p),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff_fk) | ivid02 + year,
+        subset(inc0402_p),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff_f) | ivid02 + year,
+        subset(inc0602_p),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totalinc) ~ i(as.factor(Female), provtariff_fk) | ivid02 + year,
+        subset(inc0602_p),
+        weights = ~hhwt, 
+        vcov = ~tinh)  
+), tex = TRUE)
+
 ## Rural
 etable(list(
   feols(log(totalinc) ~ i(as.factor(Female), provtariff) | ivid02 + year,
