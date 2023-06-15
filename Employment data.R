@@ -99,7 +99,7 @@ emp020406 <- c("employment_mf_02", "employment_mf_04", "employment_mf_06", "empl
 for(i in emp020406) {
   assign(i,get(i) %>%
            mutate(
-             tal = as.numeric(industry %in% c(18, 19)),
+             tal = as.numeric(industry %in% c(18)),
              agri_work = as.numeric(industry %in% c(1,2,4,5)),
              service = as.numeric(industry > 50),
              manu = as.numeric(industry > 14 & industry < 38),
