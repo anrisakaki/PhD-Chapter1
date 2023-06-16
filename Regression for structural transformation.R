@@ -185,6 +185,8 @@ load("employment0206_p.rda")
 setFixest_dict(c("as.factor(Female)" = "Female",
                  "provtariff" = "Tariff_{pt}^k",
                  "provtariff_k" = "Tariff_{pt}^k",
+                 "provtariff_f" = "Tariff_{pt}^k",
+                 "provtariff_fk" = "Tariff_{pt}^k",
                  "as.factor(Female)0" = "",
                  "as.factor(Female)1" = "Female",
                  "year" = "Year",
