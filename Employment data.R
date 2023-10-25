@@ -20,7 +20,7 @@ employment_mf_02 <- list(m1_02, m3_02, educ_02) %>%
   filter(m1c5 < 65) %>% 
   select(-c(huyen02.y, diaban02.y)) # N = 185,749
 
-employment_mf_02 <- merge(employment_mf_02, weights_02, by = c("xa02", "diaban02", "huyen02")) # N = 185,749
+employment_mf_02 <- merge(employment_mf_02, weights_02, by = c("tinh02", "xa02", "diaban02")) # N = 185,749
 
 ## Recoding binary variable for sex
 employment_mf_02$sex <- factor(employment_mf_02$m1c2,
