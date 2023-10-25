@@ -65,9 +65,15 @@ ivid0206 <- ivid020406 %>% select(ivid02, ivid06) %>%
 housework_0602_p <- merge(ivid0206, housework_02, by = "ivid02")
 housework_06_p <- merge(ivid0206, housework_06, by = "ivid")
 
-housework0206_p <- bind_rows(housework_0602_p, housework_06_p)
+housework0206_p <- bind_rows(housework_0602_p, housework_06_p)#
+
+save(housework0204_p, file = "housework0204_p.rda")
+save(housework0206_p, file = "housework0206_p.rda")
 
 # TWFE FOR TARIFF CUT EXPOSURE AND PROBABILITY OF HUSBAND DOING HOUSEWORK # 
+
+load("housework0204_p.rda")
+load("housework0206_p.rda")
 
 etable(list(
   feols(housework ~ provtariff | year + ivid,
