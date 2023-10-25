@@ -87,3 +87,22 @@ WVS_regions_post <- merge(WVS_regions_post, provinces, by = "Tinh")
 WVS_postBTA_tariffs <- list(WVS_regions_post, postBTA_provtariff, postBTA_provtariff_k) %>% 
   reduce(merge, by = "tinh") %>% 
   select(tinh, V257, postprov_tariff, postprov_tariff_k)
+
+load("C:/Users/Anri Sakakibara/OneDrive/PhD Political Economy/VHLSS Data/WV4_Data_R_v20201117.rdata")
+
+WVS_global <- WV4_Data_R_v20201117 %>% 
+  group_by(C_COW_ALPHA) %>% 
+  summarise(divorce = mean(V211, na.rm = T)) %>% 
+  rename(Country = C_COW_ALPHA) %>% 
+  mutate(Country = case_when(
+    Country == "DRV" ~ "VIE",
+    TRUE ~ Country
+  )) %>% 
+  filter(Country != "TUR")
+
+ggplot(WVS_global, aes(x = Country, y = divorce, fill = Country)) +
+  geom_bar(stat = "identity") +
+  guides(fill = FALSE) + 
+  scale_fill_manual(values = c("VIE" = "red", "Other" = "gray")) +  
+  labs(x = "Country", y = "")
+ggsave("WVS_global.png", width = 12, height = 7)
