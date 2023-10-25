@@ -18,7 +18,7 @@ exp_02 <- exp_02 %>%
   mutate(hoso = diaban02*10^3 + hoso) %>% 
   mutate(xa = tinh * 10^4 + huyen * 10^2 + xa)
 
-hh02 <- c("exp_02", "m1_02", "m2_02", "m3_02", "m5a_02", "m5b4_02", "m6a2_02", "m6b1_02", "m6b2_02", "m6b34_02", "m7_02")
+hh02 <- c("exp_02", "m1_02", "m2_02", "m3_02", "m5a_02", "m5b4_02", "m6a2_02", "m6b1_02", "m6b2_02", "m6b34_02", "m7_02", "inc_02")
 
 for(i in hh02){
   assign(i, mutate(get(i),
@@ -43,7 +43,7 @@ diaban04 <- m123a_04 %>%
 exp_04 <- left_join(exp_04, diaban04, by = c("tinh", "huyen", "xa")) %>% 
   distinct()
 
-hh04 <- c("exp_04", "ho1_04", "m123a_04", "m1b_04", "m4a_04", "m4a_04a", "m5a2_04", "m5b1_04", "m5b2_04", "m6a_04", "m6b_04")
+hh04 <- c("exp_04", "ho1_04", "m123a_04", "m1b_04", "m4a_04", "m4a_04a", "m5a2_04", "m5b1_04", "m5b2_04", "m6a_04", "m6b_04", "inc_04")
 
 for(i in hh04){
   
@@ -57,7 +57,16 @@ for(i in hh04){
     
     assign(i, get(i) %>% 
              mutate(hhid = tinh*10^9+huyen*10^7+xa*10^5+diaban*100+hoso))
-  }   
+  }
+  
+  if(i %in% c("inc_04")){
+    
+    assign(i, left_join(get(i), diaban04, by = c("tinh", "huyen", "xa")) %>% 
+             distinct())
+    
+    assign(i, get(i) %>% 
+             mutate(hhid = tinh*10^9+huyen*10^7+xa*10^5+diaban*100+hoso))    
+  }
   
   if (i %in% c("exp_04", "m5a2_04", "m5b1_04", "m5b2_04")){
     
@@ -74,17 +83,21 @@ diaban06 <- m1a_06 %>%
   select(tinh, huyen, xa, diaban) %>% 
   distinct()
 
-hh06 <- c("exp_06", "m1a_06", "m1b_06", "m2a_06", "m4a_06", "m5a2_06", "m5b1_06", "m5b2_06", "m6a_06", "m6b_06", "ttchung_06")
+inc_06 <- left_join(inc_06, diaban06, by = c("tinh", "huyen", "xa"))
+
+exp_06 <- left_join(exp_06, diaban06, by = c("tinh", "huyen", "xa"))
+
+hh06 <- c("exp_06", "m1a_06", "m1b_06", "m2a_06", "m4a_06", "m5a2_06", "m5b1_06", "m5b2_06", "m6a_06", "m6b_06", "ttchung_06", "inc_06")
 
 for(i in hh06){
   
   if (i %in% c("m1a_06", "m1b_06", "m2a_06", "m4a_06", "m5a2_06", "m5b1_06", "m5b2_06", "m6a_06", "m6b_06", "ttchung_06")){
     assign(i, get(i) %>%
              select(-diaban))
+    
+    assign(i, left_join(get(i), diaban06, by = c("tinh", "huyen", "xa")) %>% 
+             distinct())
   }
-  
-  assign(i, left_join(get(i), diaban06, by = c("tinh", "huyen", "xa")) %>% 
-           distinct())
   
   assign(i, get(i) %>% 
            mutate(hhid = tinh*10^9 + huyen*10^7 + xa*10^5 + diaban*10^2 + hoso))
@@ -102,8 +115,9 @@ hhid0204a <- ho1_04 %>%
   filter(m1c1 == 1) %>% 
   select(tinh02, huyen02, xa02, hoso02, tinh, huyen, xa, hoso, hhid) %>% 
   filter(!is.na(tinh02)) %>% 
-  select(xa02, hoso02, tinh, huyen, xa, hoso, hhid) %>% 
-  mutate(across(c(xa02, hoso02, tinh, huyen, xa, hoso, hhid), as.numeric))
+  mutate(across(c(xa02, hoso02, tinh, huyen, xa, hoso, hhid), as.numeric),
+         xa02 = tinh02 * 10^4 + huyen02 * 10^2 + xa02,
+         hhid02 = xa02*10^5 + hoso02)
 
 diaban02a <- diaban02 %>% 
   select(-hoso02) %>% 
@@ -116,7 +130,8 @@ hhid0204a <- left_join(hhid0204a, diaban02a, by = "xa02")
 hhid0204a <- hhid0204a %>% 
   mutate(diaban02 = if_else(diaban02 == 14, 14.1, diaban02)) %>%   
   mutate(hoso02 = diaban02*10^3 + hoso02,
-         hhid02 = xa02*10^5 + hoso02)
+         hhid02 = xa02*10^5 + hoso02) %>% 
+  select(hhid02, hhid)
 
 ## Households who have only clusterid02 and hoso02 as identifiers 
 hhid0204_clusterid02 <- ho1_04 %>%
@@ -127,10 +142,10 @@ hhid0204_clusterid02 <- ho1_04 %>%
   mutate(xa02 = tinh * 10^4 + huyen * 100 + xa) %>% 
   select(xa02, hoso02, tinh, huyen, xa, hoso, hhid) %>% 
   mutate(across(c(xa02, hoso02, tinh, huyen, xa, hoso, hhid), as.numeric)) %>% 
-  mutate(hhid02 = xa02*10^5 + hoso02)
+  mutate(hhid02 = xa02*10^5 + hoso02) %>% 
+  select(hhid02, hhid)
 
-hhid0204 <- bind_rows(hhid0204a, hhid0204_clusterid02) %>% 
-  select(xa02, hoso02, hhid02, tinh, huyen, xa, hoso, hhid)
+hhid0204 <- bind_rows(hhid0204a, hhid0204_clusterid02)
 
 hhid02 <- hhid0204 %>%
   select(xa02, hoso02, hhid02)
@@ -218,16 +233,13 @@ for(i in id06){
 ivid04 <- m1b_04 %>%
   filter(m1bc6 == 1) %>% 
   filter(!is.na(matv)) %>% 
-  select(tinh, huyen, xa, hoso, matv, hhid, ivid, m1bc3, m1bc4, m1bc5) %>% 
+  select(hhid, ivid, m1bc3, m1bc4, m1bc5) %>% 
   rename("matv02" = m1bc3) #N = 91,723
 
-ivid0204 <- merge(ivid04, hhid0204, by = c("tinh", "huyen", "xa", "hoso", "hhid"), all.x=TRUE) %>% 
-  distinct() # List of individuals by their 2002 and 2004 identifiers (N = 91,738)
-
-ivid0204 <- ivid0204 %>% 
-  mutate(ivid02 = hhid02*10^2 + matv02)
-
-ivid0204$ivid02 <- as.character(as.numeric(ivid0204$ivid02))
+ivid0204 <- merge(ivid04, hhid0204, by = "hhid") %>% 
+  distinct() %>% 
+  mutate(ivid02 = as.character(hhid02*100 + matv02)) %>% 
+  select(-matv02) # List of individuals by their 2002 and 2004 identifiers (N = 91,738)
 
 # 2002 - 2006 
 ivid0406 <- m1b_06 %>% 
@@ -243,8 +255,6 @@ ivid0406 <- ivid0406 %>%
   mutate(ivid04 = hhid04*100 + matv04) %>% 
   select(ivid04, ivid06, m1bc4, m1bc5)
 
-ivid0406$ivid04 <- as.character(as.numeric(ivid0406$ivid04))
-
 ######################################
 # CHECKING ACCURACY OF PANEL CREATED #
 ######################################
@@ -252,12 +262,11 @@ ivid0406$ivid04 <- as.character(as.numeric(ivid0406$ivid04))
 # 2002 - 2004 
 ## Checking if merged dataset is accurate by comparing age in 2002 and 2002 age and sex reported in VHLSS 2004 to VHLSS 2002 
 age_vhlss02 <- m1_02 %>%
-  select(xa02, hoso, matv02, hhid, ivid, m1c2, m1c5) %>% 
-  rename("hhid02" = "hhid",
-         hoso02 = hoso) %>% 
-  rename("ivid02" = "ivid")
+  select(hhid, ivid, m1c2, m1c5) %>% 
+  rename(hhid02 = hhid,
+  ivid02 = ivid)
 
-age_vhlss0204 <- merge(ivid0204, age_vhlss02, by = c("xa02", "hhid02", "ivid02"), all.x=TRUE) ##Keeping the Age02 dataframe to those in the panel (N = 88,826)
+age_vhlss0204 <- merge(ivid0204, age_vhlss02, by = c("hhid02", "ivid02")) ##Keeping the Age02 dataframe to those in the panel (N = 88,826)
 
 age_vhlss0204 <- age_vhlss0204 %>%
   mutate(agediff = m1bc5 - m1c5,
