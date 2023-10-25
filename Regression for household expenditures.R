@@ -30,6 +30,9 @@ exp_0206_p <- bind_rows(exp_0206, exp_06_p)
 exp_0402 <- bind_rows(exp_02, exp_04)
 exp_0602 <- bind_rows(exp_02, exp_06)
 
+save(exp_0402_p, file = "exp_0402_p.rda")
+save(exp_0206_p, file = "exp_0206_p.rda")
+
 ########################################################################
 # REGRESSION ON EXPENDITURE ON HOUSEHOLD PUBLIC GOODS USING PANEL DATA #
 ########################################################################
@@ -37,6 +40,9 @@ exp_0602 <- bind_rows(exp_02, exp_06)
 y_exp <- c("food_share", "tobac_share", "educ_share", "health_share")
 
 y_exp_nom <- c("log(foodreal)", "log(tobac12m)", "log(educex_2)", "log(hlthex_2)")
+
+load("exp_0402_p.rda")
+load("exp_0206_p.rda")
 
 # 2002 - 2004 
 exp_tce_0204_hhfe_p_summary <- list()
@@ -251,11 +257,8 @@ etable(list(
 ), tex = TRUE)
 
 etable(list(
-  exp_tce_0206_hhfe_p_summary[[2]],
-  exp_tce_k_0206_hhfe_p_summary[[2]]  
-), tex = TRUE)
-
-etable(list(
+  exp_tce_0204_nom_hhfe_p_summary[[2]],
+  exp_tce_k_0204_nom_hhfe_p_summary[[2]],
   exp_tce_0206_nom_hhfe_p_summary[[2]],
-  exp_tce_k_0206_nom_hhfe_p_summary[[2]]),
-  tex = TRUE)
+  exp_tce_k_0206_nom_hhfe_p_summary[[2]]  
+), tex = T)
