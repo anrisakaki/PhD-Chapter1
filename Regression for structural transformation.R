@@ -4,10 +4,12 @@
 
 emp02 <- c("employment_mf_02", "employment_mf_02p")
 
+employment_mf_02 <- employment_mf_02 %>% select(-"tinh02")
+employment_mf_02p <- employment_mf_02p %>% rename(tinh = tinh02)
+
 for(i in emp02){
   
   assign(i, get(i) %>% 
-           select(-"tinh02") %>% 
            mutate(across(tinh, as.factor)) %>% 
            mutate(traded_nonagri = as.numeric(traded == 1 & agri_work == 0),
                   traded_manu = as.numeric(traded == 1 & manu == 1))
