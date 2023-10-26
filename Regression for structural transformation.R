@@ -7,7 +7,7 @@ emp02 <- c("employment_mf_02", "employment_mf_02p")
 for(i in emp02){
   
   assign(i, get(i) %>% 
-           select(-c(diaban02)) %>% 
+           select(-"tinh02") %>% 
            mutate(across(tinh, as.factor)) %>% 
            mutate(traded_nonagri = as.numeric(traded == 1 & agri_work == 0),
                   traded_manu = as.numeric(traded == 1 & manu == 1))
@@ -32,7 +32,6 @@ for(i in emp02){
   
   if (i %in% c("employment_mf_02")){
     assign(i, get(i) %>%
-             rename(huyen= huyen02) %>%
              select(-ends_with(c(".x", ".y"))))
   }
   
