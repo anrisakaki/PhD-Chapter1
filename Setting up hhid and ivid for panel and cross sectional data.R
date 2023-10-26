@@ -108,9 +108,6 @@ for(i in hh06){
 ##############################
 
 # 2002 - 2004 
-ho1_04 <- ho1_04 %>%
-  mutate(xa02 = tinh02 * 10^4 + huyen02 * 10^2 + xa02)
-
 hhid0204a <- ho1_04 %>%
   filter(m1c1 == 1) %>% 
   select(tinh02, huyen02, xa02, hoso02, tinh, huyen, xa, hoso, hhid) %>% 
@@ -146,13 +143,6 @@ hhid0204_clusterid02 <- ho1_04 %>%
   select(hhid02, hhid)
 
 hhid0204 <- bind_rows(hhid0204a, hhid0204_clusterid02)
-
-hhid02 <- hhid0204 %>%
-  select(xa02, hoso02, hhid02)
-
-hhid04 <- ho1_04 %>% 
-  filter(m1c1 == 1) %>% 
-  select(tinh, huyen, xa, hoso, hhid)
 
 # 2002 - 2006  
 
@@ -266,7 +256,7 @@ age_vhlss02 <- m1_02 %>%
   rename(hhid02 = hhid,
   ivid02 = ivid)
 
-age_vhlss0204 <- merge(ivid0204, age_vhlss02, by = c("hhid02", "ivid02")) ##Keeping the Age02 dataframe to those in the panel (N = 88,826)
+age_vhlss0204 <- merge(ivid0204, age_vhlss02, by = c("hhid02", "ivid02")) ##Keeping the Age02 dataframe to those in the panel (N = 87,685)
 
 age_vhlss0204 <- age_vhlss0204 %>%
   mutate(agediff = m1bc5 - m1c5,
@@ -282,19 +272,14 @@ age_vhlss0204$sexcorrect[age_vhlss0204$sexdiff < 0] <- 0
 
 age_vhlss0204$correct <- ifelse(age_vhlss0204$agecorrect == 1 & age_vhlss0204$sexcorrect == 1, 1, 0)
 
-proportions(table(age_vhlss0204$correct)) ## 14.1% of the matches are incorrect. I drop the mismatched observations.  
+proportions(table(age_vhlss0204$correct)) ## 17.01% of the matches are incorrect. I drop the mismatched observations.  
 
 ivid0204 <- age_vhlss0204 %>% 
   filter(correct == 1) %>% 
   filter(!is.na(ivid02))
 
-ivid02 <- ivid0204 %>% select(hhid02, ivid02)
-ivid04 <- ivid0204 %>% select(hhid, ivid)
-
 ivid0204 <- ivid0204 %>%
-  select(xa02, hoso02.x, matv02.x, hhid02, ivid02, tinh, huyen, xa, hoso, matv, hhid, ivid) %>% 
-  rename(hoso02 = hoso02.x,
-         matv02 = matv02.x) # Finally, I have a panel of 78,051 individuals 
+  select(ivid02, hhid02, ivid, hhid) # Finally, I have a panel of 72,769 individuals 
 
 # 2002 - 2006 
 age_vhlss04 <- m123a_04 %>% 
