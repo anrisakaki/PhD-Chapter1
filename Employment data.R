@@ -16,9 +16,9 @@ employment_mf_02 <- list(m1_02, m3_02, educ_02) %>%
          "industry" = m3c7,
          "huyen02" = huyen02.x,
          "diaban02" = diaban02.x) %>%
-  filter(m1c5 >= 18) %>%
+  filter(m1c5 >= 16) %>%
   filter(m1c5 < 65) %>% 
-  select(-c(huyen02.y, diaban02.y)) # N = 185,749
+  select(-c(huyen02.y, diaban02.y)) # N = 202,490
 
 employment_mf_02 <- merge(employment_mf_02, weights_02, by = c("tinh02", "xa02", "diaban02")) # N = 185,749
 
@@ -33,49 +33,39 @@ employment_mf_02p <- employment_mf_02 %>%
   select(-ends_with(".x")) %>% 
   select(-ends_with(".y"))
 
-employment_mf_02p <- merge(ivid0204, employment_mf_02p, by = c("xa02", "hhid02", "ivid02")) %>% 
-  distinct() %>% 
-  select(-ends_with(".y")) %>% 
-  rename(hoso02 = hoso02.x,
-         matv02 = matv02.x) # N = 39,988
-
-emp_ivid04 <- employment_mf_02p %>% select("tinh", "huyen", "xa", "hoso", "matv", "hhid", "ivid")
+employment_mf_02p <- merge(ivid0204, employment_mf_02p, by = c("ivid02", "hhid02")) %>% 
+  distinct() # N = 43,405
 
 # 2004 
 m4a_04$m4ac5[is.na(m4a_04$m4ac5)] <- 0
 
-employment_mf_04a <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "diaban", "hoso", "matv", "hhid", "ivid")) %>%
+employment_mf_04 <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "diaban", "hoso", "matv", "hhid", "ivid")) %>%
   distinct() %>% 
   select(tinh, huyen, xa, diaban, hoso, matv, hhid, ivid, m1ac2, m1ac5, m1ac6, m2c1, m4ac1a, m4ac1c, m4ac2, m4ac5) %>% 
   rename(
     "industry" = m4ac5,
-    "wage_work" = m4ac1a
-  ) #Merging data on age, sex, marital status, and industry worked in (N = 202,321)
+    "wage_work" = m4ac1a) %>% 
+  filter(m1ac5 >= 16) %>%
+  filter(m1ac5 < 65) #Merging data on age, sex, marital status, and industry worked in (N = 202,321)
 
-employment_mf_04a <- merge(employment_mf_04a, weights_04, by = c("tinh", "huyen", "xa")) %>% 
+employment_mf_04 <- merge(employment_mf_04, weights_04, by = c("tinh", "huyen", "xa")) %>% 
   distinct()
-
-employment_mf_04 <- employment_mf_04a %>%
-  filter(m1ac5 >= 18) %>%
-  filter(m1ac5 < 65) # N = 117,114
 
 #Recoding binary variable for sex
 employment_mf_04$sex <- factor(employment_mf_04$m1ac2,
                                c(1,2),
                                c("Male", "Female")) 
 
-employment_mf_04p <- left_join(emp_ivid04, employment_mf_04, by = c("tinh", "huyen", "xa", "hoso", "matv", "hhid", "ivid")) %>% 
-  distinct() #N = 40,014
+employment_mf_04p <- left_join(ivid0204, employment_mf_04, by = c("hhid", "ivid")) %>% 
+  distinct() #N = 87,622
 
 # 2006 
 m4a_06$m4ac5[is.na(m4a_06$m4ac5)] <- 0
 
 employment_mf_06 <- merge(m1a_06, m4a_06, by = c("tinh", "huyen", "xa", "diaban", "hoso", "matv", "hhid", "ivid"))
-employment_mf_06 <- merge(employment_mf_06, weights_06, by = c("tinh", "huyen", "xa"))
-
-employment_mf_06 <- employment_mf_06 %>%
-  filter(m1ac5 >= 18,
-         m1ac5 < 65) %>% # N = 117,552 
+employment_mf_06 <- merge(employment_mf_06, weights_06, by = c("tinh", "huyen", "xa")) %>% 
+  filter(m1ac5 >= 16,
+         m1ac5 < 65) %>% # N = 127,757
   rename("industry" = m4ac5,
          "wage_work" = m4ac1a) 
 
@@ -88,7 +78,7 @@ employment_mf_06p <- employment_mf_06 %>%
   rename(ivid06 = ivid)
 
 employment_mf_06p <- left_join(ivid020406, employment_mf_06p, by = "ivid06") %>% 
-  distinct() #N = 31,981
+  distinct() #N = 29,632
 
 #########################################################
 # CREATING EMPLOMYMENT DUMMIES AND LABELLING INDUSTRIES #
