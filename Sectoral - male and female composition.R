@@ -132,7 +132,7 @@ industry_lf_020406 <- list(industry_mf_02, industry_mf_04, industry_mf_06) %>%
 
 industry_lf_020406$isic2 <- as.factor(industry_lf_020406$isic2) 
 
-industry_lf_020406 <- left_join(industry_lf_020406, tariff, by = c("Industry", "isic2"))
+industry_lf_020406 <- left_join(industry_lf_020406, tariff, by = c("isic2", "Industry"))
 
 industry_lf_020406 <- industry_lf_020406 %>%
   arrange(as.numeric(as.character(FChange, decreasing = TRUE)))
@@ -258,8 +258,6 @@ sec020406 <- sec020406 %>%
 #################################################
 # PROVINCE-LEVEL SECTORAL COMPOSITION BY GENDER #
 #################################################
-
-# Only execute the steps from here onwoards after running code on province-level tariffs
 
 # 2002 
 agri_prov_02 <- employment_mf_02 %>% 
