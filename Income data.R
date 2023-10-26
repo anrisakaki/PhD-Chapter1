@@ -10,15 +10,13 @@ rcpi_02 <- inc_02 %>%
 
 rcpi_04 <- inc_04 %>%
   mutate(total_income = rlincomepc * hhsize) %>%   
-  select(tinh, huyen, xa, hoso, rcpi, mcpi, total_income) %>% 
-  distinct() %>% 
-  mutate(across(tinh, as.factor))
+  select(hhid, rcpi, mcpi, total_income) %>% 
+  distinct()
 
 rcpi_06 <- inc_06 %>% 
   mutate(total_income = rlincomepc * hhsize) %>%     
   select(tinh, huyen, xa, hoso, rcpi, mcpi, total_income) %>% 
-  distinct() %>% 
-  mutate(across(tinh, as.factor))
+  distinct() 
 
 ################################################
 # CREATING DATAFRAME FOR INCOME AND EMPLOYMENT #
