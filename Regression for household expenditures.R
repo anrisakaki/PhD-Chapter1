@@ -5,10 +5,10 @@
 exp_02_p <- exp_02 %>% 
   select(tinh, xa02, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, hhexp2rl, provtariff, provtariff_k, hhwt, urban)
 
-exp_02_p <- merge(hhid02, exp_02_p, by = c("xa02", "hhid02")) %>% 
+exp_02_p <- merge(hhid0204, exp_02_p, by = "hhid02") %>% 
   mutate(year = 2002)
 
-exp_04_p <- merge(hhid0204, exp_04, by = c("tinh", "xa", "hoso", "hhid")) %>% 
+exp_04_p <- merge(hhid0204, exp_04, by = "hhid") %>% 
   mutate(across(tinh, as.factor)) %>% 
   select(tinh, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, hhexp2rl, provtariff, provtariff_k, hhwt, urban) %>% 
   mutate(year = 2004)
