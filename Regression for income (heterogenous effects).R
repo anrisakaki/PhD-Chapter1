@@ -4,7 +4,7 @@
 
 # Urban
 etable(list(
-  feols(inc_ratio ~ provtariff | hhid02 + year,
+  feols(inc_ratio ~ provtariff | hhid + year,
         subset(inc_0204_spouse_p, female == 1 & married == 2 & urban == 1),
         weights = ~hhwt, 
         vcov = ~tinh),
