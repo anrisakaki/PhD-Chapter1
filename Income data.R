@@ -3,19 +3,17 @@
 #############################################
 
 rcpi_02 <- inc_02 %>% 
-  mutate(total_income = rlincomepc * hhsize) %>% 
-  select(hhid, rcpi, mcpi, total_income) %>% 
+  mutate(hhinc = rlincomepc * hhsize * 12) %>% 
+  select(hhid, rcpi, mcpi, hhinc) %>% 
   rename(hhid02 = hhid) %>% 
   distinct()
 
 rcpi_04 <- inc_04 %>%
-  mutate(total_income = rlincomepc * hhsize) %>%   
-  select(hhid, rcpi, mcpi, total_income) %>% 
+  select(hhid, rcpi, mcpi) %>% 
   distinct()
 
 rcpi_06 <- inc_06 %>% 
-  mutate(total_income = rlincomepc * hhsize) %>%     
-  select(tinh, huyen, xa, hoso, rcpi, mcpi, total_income) %>% 
+  select(hhid, rcpi, mcpi) %>% 
   distinct() 
 
 ################################################
@@ -24,67 +22,66 @@ rcpi_06 <- inc_06 %>%
 
 # 2002 
 inc02 <- m5a_02 %>% 
-  mutate(totalinc = m5ac6 + m5ac7e) %>% 
-  select(xa02, huyen02, matv, hhid, ivid, totalinc) %>% 
+  mutate(inc = m5ac6 + m5ac7e) %>% 
+  select(hhid, ivid, inc) %>% 
   rename(hhid02 = hhid, 
          ivid02 = ivid)
 
-inc02 <- merge(employment_mf_02, inc02, by = c("xa02", "matv", "hhid02", "ivid02")) %>% 
+inc02 <- left_join(employment_mf_02, inc02, by = c("hhid02", "ivid02")) %>% 
   distinct()
 
-inc02 <- list(inc02, rcpi_02, inc_hh) %>% 
-  reduce(left_join, by = "hhid02") %>% 
+inc02 <- left_join(inc02, rcpi_02, by = "hhid02") %>% 
   distinct() %>% 
-  mutate(income = (totalinc / rcpi / mcpi/12),
-         hhinc = (hhinc / rcpi/mcpi),
-         female = ifelse(sex == "Female", 1, 0)) %>% 
-  select(tinh, hhid02, ivid02, female, wage_work, married, educ, income, total_income, hhinc, agri_work, tal, manu, traded, traded_nonagri, provtariff, provtariff_k, provtariff_f, provtariff_fk, hhwt, urban)# N = 163,501
+  mutate(female = ifelse(sex == "Female", 1, 0),
+         inc_ratio = inc/hhinc,
+         inc_ratio = ifelse(is.na(inc_ratio), 0, inc_ratio)) %>% 
+  select(tinh, hhid02, ivid02, female, age, wage_work, married, educ, inc, hhinc, inc_ratio, agri_work, tal, manu, traded, traded_nonagri, provtariff, provtariff_k, provtariff_f, provtariff_fk, hhwt, urban)# N = 163,501
 
 # 2004 
 inc04 <- m4a_04 %>% 
-  mutate(totalinc = (m4ac11) + m4ac12e) %>% 
-  select(tinh, huyen, xa, hoso, matv, hhid, ivid, totalinc)
+  mutate(m4ac11 = ifelse(is.na(m4ac11), 0 , m4ac11),
+         m4ac12e = ifelse(is.na(m4ac12e), 0 , m4ac12e),
+         inc = m4ac11 + m4ac12e,
+         across(tinh, as.factor)) %>% 
+  select(tinh, huyen, xa, hoso, matv, hhid, ivid, inc)
 
-inc04 <- merge(employment_mf_04, inc04, by = c("tinh", "huyen", "xa", "hoso", "matv", "hhid", "ivid"), all.x = TRUE) %>% 
-  distinct() # N = 101,799
+hhinc_04 <- ho1_04 %>% select(hhid, thunhap)
 
-inc_04_hh <- inc04 %>% 
-  group_by(tinh, huyen, xa, hoso) %>% 
-  mutate(totalinc = ifelse(is.na(totalinc), 0, totalinc)) %>% 
-  summarise(hhinc = sum(totalinc)) %>% 
-  mutate(hhinc = ifelse(hhinc == 0, NA, hhinc/12))
+inc04 <- left_join(inc04, hhinc_04, by = "hhid") %>% distinct()
 
-inc04 <- list(inc04, rcpi_04, inc_04_hh) %>%
-  reduce(left_join, by = c("tinh", "huyen", "xa", "hoso")) %>% 
-  mutate(income = (totalinc / rcpi / mcpi / 12),
-         hhinc = (hhinc / rcpi/mcpi),
+inc04 <- left_join(employment_mf_04, inc04, by = c("tinh", "huyen", "xa", "hoso", "matv", "hhid", "ivid")) %>% 
+  distinct() 
+
+inc04 <- left_join(inc04, rcpi_04, by = "hhid") %>% 
+  mutate(hhinc = (thunhap/rcpi/mcpi),
+         inc_ratio = inc/hhinc,
          female = ifelse(sex == "Female", 1, 0)) %>% 
   distinct() %>% 
-  select(tinh, hhid, ivid, female, wage_work, married, educ, income, total_income, hhinc, agri_work, tal, manu, traded, traded_nonagri, provtariff, provtariff_k, provtariff_f, provtariff_fk, hhwt, urban)# N = 163,501
-
+  select(tinh, hhid, ivid, female, age, wage_work, married, educ, inc, hhinc, inc_ratio, agri_work, tal, manu, traded, traded_nonagri, provtariff, provtariff_k, provtariff_f, provtariff_fk, hhwt, urban)# N = 163,501
 
 # 2006 
 inc06 <- m4a_06 %>% 
-  mutate(totalinc = (m4ac11) + m4ac12f) %>% 
-  select(tinh, huyen, xa, hoso, matv, hhid, ivid, totalinc) %>% 
-  mutate(across(c(huyen, xa, hoso, matv), as.numeric))
+  mutate(inc = (m4ac11) + m4ac12f) %>% 
+  select(tinh, huyen, xa, hoso, matv, hhid, ivid, inc) %>% 
+  mutate(across(c(huyen, xa, hoso, matv), as.numeric),
+         across(tinh, as.factor))
 
-inc06 <- merge(employment_mf_06, inc06, by = c("tinh", "huyen", "xa", "hoso", "matv", "hhid", "ivid"), all.x = TRUE) %>% 
-  distinct()
+hhinc_06 <- ttchung_06 %>% select(hhid, thunhap)
 
-inc_06_hh <- inc06 %>% 
-  group_by(tinh, huyen, xa, hoso) %>% 
-  mutate(totalinc = ifelse(is.na(totalinc), 0, totalinc)) %>% 
-  summarise(hhinc = sum(totalinc)) %>% 
-  mutate(hhinc = ifelse(hhinc == 0, NA, hhinc/12))
+inc06 <- merge(inc06, hhinc_06, by = "hhid")
 
-inc06 <- list(inc06, rcpi_06, inc_06_hh) %>% 
-  reduce(left_join, by = c("tinh", "huyen", "xa", "hoso")) %>% 
+inc06 <- left_join(employment_mf_06, inc06, by = c("tinh", "huyen", "xa", "hoso", "matv", "hhid", "ivid")) %>% 
   distinct() %>% 
-  mutate(income = totalinc / rcpi / mcpi / 12,
+  mutate(across(tinh, as.double))
+
+inc06 <- left_join(inc06, rcpi_06, by = "hhid") %>% 
+  distinct() %>% 
+  mutate(hhinc = (thunhap / rcpi/mcpi),
+         inc_ratio = inc/hhinc,
+         inc_ratio = ifelse(is.na(inc_ratio), 0, inc_ratio),
          female = ifelse(sex == "Female", 1, 0)) %>% 
   rename(married = m1ac6) %>% 
-  select(tinh, hhid, ivid, female, wage_work, married, educ, income, total_income, hhinc, agri_work, tal, manu, traded, traded_nonagri, provtariff, provtariff_k, provtariff_f, provtariff_fk, hhwt, urban)# N = 163,501
+  select(tinh, hhid, ivid, female, age, wage_work, married, educ, inc, hhinc, inc_ratio, agri_work, tal, manu, traded, traded_nonagri, provtariff, provtariff_k, provtariff_f, provtariff_fk, hhwt, urban)# N = 163,501
 
 ##############################################################
 # DESCRIPTIVE STATISTICS FOR INCOME AND SECTOR OF EMPLOYMENT #
