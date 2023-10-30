@@ -110,3 +110,16 @@ etable(list(
         vcov = ~tinh,
         weights = ~hhwt)), tex = TRUE)
 
+###################################################################
+# HETEROGENOUS EFFECT OF BTA ON STRUCTURAL TRANSFORMATION - URBAN # 
+########################################################### #######
+
+etable(list(
+  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
+         subset(employment0204_p, agri_work == 1 & urban == 1 & year == 2002 | year == 2004),
+         vcov = ~tinh,
+         weights = ~hhwt),
+   feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
+         subset(employment0204_p, agri_work == 1 & urban == 2 & year == 2002 | year == 2004),
+         vcov = ~tinh,
+         weights = ~hhwt)), tex = TRUE)
