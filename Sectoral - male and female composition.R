@@ -140,8 +140,8 @@ industry_lf_020406 <- industry_lf_020406 %>%
 # Bar chart for changes in male and female employment composition between 2001 - 2005 
 ggplot(dplyr::filter(industry_lf_020406, MChange > 0.3 | MChange < - 0.06), aes(reorder(Industry, MChange), MChange)) +
   geom_col() +
-  labs(x = "Industry",
-       y= "Change in MLF composition \nbetween 2001 and 2005") +
+  labs(x = "",
+       y= "") +
   theme(axis.text.x = element_text(angle = 90))+
   coord_flip()
 ggsave(file = "MLFP-Industry.png", device = png, width = 7, height = 7)
@@ -149,8 +149,8 @@ ggsave(file = "MLFP-Industry.png", device = png, width = 7, height = 7)
 ggplot(dplyr::filter(industry_lf_020406, FChange > 0.2 | FChange < - 0.07), aes(reorder(Industry, FChange), FChange)) +
   geom_col() +
   # geom_text(aes(label = round(FChange, digits = 2))) +  
-  labs(x = "Industry",
-       y= "Change in FLF composition \nbetween 2001 and 2005") +
+  labs(x = "",
+       y= "") +
   theme(axis.text.x = element_text(angle = 90))+
   coord_flip()
 ggsave(file = "FLFP-Industry.png", device = png, width = 7, height = 7)
