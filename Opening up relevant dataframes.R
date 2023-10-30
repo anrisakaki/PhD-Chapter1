@@ -47,6 +47,7 @@ m2_02 <- read_dta (file = "Full VHLSS/VHLSS 2002 N= 45,000/muc2.dta") #DF contai
 m3_02 <- read_dta (file = "Full VHLSS/VHLSS 2002 N= 45,000/muc3.dta") #DF containing work 
 m5a_02 <- read_dta (file = "Full VHLSS/VHLSS 2002 N= 45,000/muc5a.dta") #DF containing work
 m5aho_02 <- read_dta(file = "Full VHLSS/VHLSS 2002 N= 45,000/muc5aho.dta")
+m5bho_02 <- read_dta(file = "Full VHLSS/VHLSS 2002 N= 45,000/muc5b2ho.dta")
 m5b25_02 <- read_dta (file = "Full VHLSS/VHLSS 2002 N= 45,000/muc5b25.dta")
 m5b32_02 <- read_dta(file = "Full VHLSS/VHLSS 2002 N= 45,000/muc5b32.dta")
 m5b4_02 <- read_dta(file = "Full VHLSS/VHLSS 2002 N= 45,000/muc5b4.dta")
