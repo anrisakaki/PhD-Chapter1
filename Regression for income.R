@@ -2,25 +2,17 @@
 # SETING UP FOR REGRESSION ON INCOME OF WOMEN AS A SHARE OF HER TOTAL HOUSEHOLD INCOME #
 ########################################################################################
 
-inc020406 <- c("inc02", "inc04", "inc06")
-
-for(i in inc020406){
-  
-  assign(i, get(i) %>% 
-           mutate(inc_ratio = income/total_income,
-                  inc_ratio_1 = income/hhinc))
-}
-
 # Constructing panel data 
 ## 2002 - 2004 
-inc_02_spouse_p <- merge(hhid0204, inc02, by = "hhid02") %>% 
-  rename(tinh = tinh.x) %>% 
-  select(-c("tinh.y")) %>% 
+inc_02_spouse_p <- merge(ivid0204, inc02, by = c("ivid02", "hhid02")) %>% 
   distinct() %>% 
   mutate(across(tinh, as.factor)) %>% 
-  mutate(year = 2002)
+  mutate(year = 2002) # N = 58,954
 
-inc_04_spouse_p <- merge(hhid0204, inc04, by = c("tinh", "hhid")) %>% 
+inc_panel <- inc_02_spouse_p %>% select(hhid, ivid) %>% distinct()
+
+inc_04_spouse_p <- merge(inc_panel, inc04, by = c("ivid", "hhid")) %>% 
+  group_by(ivid) %>% 
   distinct() %>% 
   mutate(year = 2004) %>% 
   mutate(across(tinh, as.factor))
@@ -29,12 +21,14 @@ inc_0204_spouse_p <- bind_rows(inc_02_spouse_p, inc_04_spouse_p)
 
 ## 2002 - 2006 
 inc_0602_spouse_p <- merge(hhid020406, inc02, by = "hhid02") %>% 
-  mutate(year = 2002)
+  mutate(year = 2002,
+         across(tinh, as.double))
 
 inc06 <- inc06 %>% rename(hhid06 = hhid)
 
 inc_06_spouse_p <- merge(hhid020406, inc06, by = "hhid06") %>% 
-  mutate(year = 2006)
+  mutate(year = 2006,
+         across(tinh, as.double))
 
 inc_0206_spouse_p <- bind_rows(inc_0602_spouse_p, inc_06_spouse_p)
 
@@ -49,19 +43,19 @@ load("inc_0204_spouse_p.rda")
 load("inc_0206_spouse_p.rda")
 
 etable(list(
-  feols(inc_ratio ~ provtariff | hhid02 + year,
+  feols(inc_ratio ~ provtariff | ivid + year,
         subset(inc_0204_spouse_p, female == 1 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k | hhid02 + year,
-        subset(inc_0204_spouse_p, female == 1 & married == 2),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff| hhid06 + year,
+  feols(inc_ratio ~ provtariff| hhid02 + year,
         subset(inc_0206_spouse_p, female == 1 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k | hhid06 + year,
+  feols(inc_ratio ~provtariff_f | ivid + year,
+        subset(inc_0204_spouse_p, female == 1 & married == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_ratio ~ provtariff_f | hhid02 + year,
         subset(inc_0206_spouse_p, female == 1 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh)  
@@ -70,11 +64,11 @@ etable(list(
 # Accounting for female-intensity  
 
 etable(list(
-  feols(inc_ratio ~ provtariff_f | hhid02 + year,
+  feols(inc_ratio ~ provtariff_f | hhid + year,
         subset(inc_0204_spouse_p, female == 1 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_fk | hhid02 + year,
+  feols(inc_ratio ~ provtariff_fk | hhid + year,
         subset(inc_0204_spouse_p, female == 1 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
