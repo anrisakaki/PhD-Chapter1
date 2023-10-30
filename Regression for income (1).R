@@ -2,21 +2,27 @@
 # REGRESSION ON TARIFF CUT EXPOSURE AND INCOME USING PANEL DATA #
 #################################################################
 
+inc_0204_spouse_p <- inc_0204_spouse_p %>% 
+  mutate(income = ifelse(inc == 0, NA, inc))
+
+inc_0206_spouse_p <- inc_0206_spouse_p %>% 
+  mutate(income = ifelse(inc == 0, NA, inc))
+
 etable(list(
-  feols(log(totalinc) ~ i(as.factor(Female), provtariff) | ivid02 + year,
-        subset(inc0402_p),
+  feols(log(inc) ~ i(as.factor(female), -provtariff) | hhid + year,
+        subset(inc_0204_spouse_p, married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ i(as.factor(Female), provtariff_k) | ivid02 + year,
-        subset(inc0402_p),
+  feols(log(inc) ~ i(as.factor(female), -provtariff) | hhid02 + year,
+        subset(inc_0206_spouse_p, married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ i(as.factor(Female), provtariff) | ivid02 + year,
-        subset(inc0602_p),
+  feols(log(inc) ~ i(as.factor(female), -provtariff_f) | hhid + year,
+        subset(inc_0204_spouse_p, married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(totalinc) ~ i(as.factor(Female), provtariff_k) | ivid02 + year,
-        subset(inc0602_p),
+  feols(log(inc) ~ i(as.factor(female), -provtariff_f) | hhid02+ year,
+        subset(inc_0206_spouse_p, married == 2),
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
