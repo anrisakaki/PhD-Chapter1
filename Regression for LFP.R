@@ -21,6 +21,25 @@ etable(list(
         weights = ~hhwt)  
 ), tex = TRUE)
 
+etable(list(
+  feols(wage_work ~ i(as.factor(Female), provtariff) | ivid + year,
+        employment0204_p,
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(wage_work ~ i(as.factor(Female), provtariff_k) | ivid + year,
+        employment0204_p,
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(wage_work ~ i(as.factor(Female), provtariff) | ivid02 + year,
+        employment0206_p,
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(wage_work ~ i(as.factor(Female), provtariff_k) | ivid02 + year,
+        employment0206_p,
+        vcov = ~tinh,
+        weights = ~hhwt)  
+), tex = TRUE)
+
 # Rural 
 etable(list(
   feols(work ~ i(as.factor(Female), provtariff) | ivid + year,
