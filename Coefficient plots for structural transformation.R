@@ -8,11 +8,11 @@ setFixest_coefplot(dict = dict, grid = F, zero.par = list( type="dotted", lty=2)
 
 png("reallocation_lpm_020406.png")
 iplot(list(
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid,
         employment0204_p,
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid02,
         employment0206_p,
         vcov = ~tinh,
         weights = ~hhwt)), zero = F, main = "")
@@ -23,73 +23,44 @@ dev.off()
 # Age 
 png("reallocation_lpm_age_0204.png")
 iplot(list(
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
-        subset(employment0204_p, age > 17 & age < 31 & year == 2002 | year == 2004),
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid,
+        subset(employment0204_p, age > 15 & age < 31 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid,
         subset(employment0204_p, age > 30 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt)), zero = F, main = "")
 legend("bottomleft", col = 1:2, pch = 16, cex = 0.9, bty = "n",
-       legend = c("18-30", "31-65"))
+       legend = c("16-30", ">30"))
 dev.off()
 
 png("reallocation_lpm_age_0206.png")
 iplot(list(
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
-        subset(employment0206_p, age > 17 & age < 31 & year == 2002 | year == 2006),
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid02,
+        subset(employment0206_p, age > 15 & age < 31 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid02,
         subset(employment0206_p, age > 30 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt)), main = "")
 legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9, 
-       legend = c("18-30", "> 30"))
-dev.off()
-
-
-png("reallocation_lpm_age_0204.png")
-iplot(list(
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
-        subset(employment0204_p, age > 17 & age < 31 & year == 2002 | year == 2004),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
-        subset(employment0204_p, age > 30 & year == 2002 | year == 2004),
-        vcov = ~tinh,
-        weights = ~hhwt)), zero = F, main = "")
-legend("bottomleft", col = 1:2, pch = 16, cex = 0.9, bty = "n",
-       legend = c("18-30", "31-65"))
-dev.off()
-
-png("reallocation_lpm_age_0206.png")
-iplot(list(
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
-        subset(employment0206_p, age > 17 & age < 31 & year == 2002 | year == 2006),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
-        subset(employment0206_p, age > 30 & year == 2002 | year == 2006),
-        vcov = ~tinh,
-        weights = ~hhwt)), main = "")
-legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9, 
-       legend = c("18-30", "> 30"))
+       legend = c("16-30", "> 30"))
 dev.off()
 
 # Education 
-png("reallocation_lpm_educ_0204_k.png")
+png("reallocation_lpm_educ_0204.png")
 iplot(list(
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid,
         subset(employment0204_p, educ > 9 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid,
         subset(employment0204_p, educ > 5 & educ < 10 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid,
         subset(employment0204_p, educ < 6 & year == 2002 | year == 2004),
         vcov = ~tinh,
         weights = ~hhwt)), main = "")
@@ -97,17 +68,17 @@ legend("bottomleft", col = 1:3, pch = 16, bty = "n", cex = 0.9,
        legend = c("High school and above", "Secondary", "Primary"))
 dev.off()
 
-png("reallocation_lpm_educ_0206_k.png")
+png("reallocation_lpm_educ_0206.png")
 iplot(list(
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid02,
         subset(employment0206_p, educ > 9 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid02,
         subset(employment0206_p, educ > 5 & educ < 10 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid02,
         subset(employment0206_p, educ < 6 & year == 2002 | year == 2006),
         vcov = ~tinh,
         weights = ~hhwt)), main = "")
@@ -116,26 +87,26 @@ legend("bottomleft", col = 1:3, pch = 16, bty = "n", cex = 0.9,
 dev.off()
 
 # Urban - rural 
-png("reallocation_lpm_urban_0204_k.png")
+png("reallocation_lpm_urban_0204.png")
 iplot(list(
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid,
         subset(employment0204_p, urban == 1),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid,
         subset(employment0204_p, urban == 2))),
   main = "")
 legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9,
        legend = c("Urban", "Rural"))
 dev.off()
 
-png("reallocation_lpm_urban_0206_k.png")
+png("reallocation_lpm_urban_0206.png")
 iplot(list(
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid02,
         subset(employment0206_p, urban == 1),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(tal ~ i(as.factor(Female), provtariff_k) | year + ivid02,
+  feols(tal ~ i(as.factor(Female), -provtariff) | year + ivid02,
         subset(employment0206_p, urban == 2))),
   main = "")
 legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9,
@@ -148,11 +119,11 @@ dev.off()
 
 # All observations
 png("reallocation_manu_020406.png")
-iplot(list(feols(manu ~ i(as.factor(Female), provtariff_k) | year + ivid,
+iplot(list(feols(manu ~ i(as.factor(Female), -provtariff) | year + ivid,
   employment0204_p,
   vcov = ~tinh,
   weights = ~hhwt),
-  feols(manu ~ i(as.factor(Female), provtariff_k) | year + ivid02,
+  feols(manu ~ i(as.factor(Female), -provtariff) | year + ivid02,
         employment0206_p,
         vcov = ~tinh,
         weights = ~hhwt)), main = "Effect of BTA on reallocation into \nthe manufacturing sector")
@@ -161,11 +132,11 @@ legend("bottomleft", col = 1:3, pch = 16, bty = "n", cex = 0.5,
 dev.off()
 
 # Urban - rural
-iplot(list(feols(manu ~ i(as.factor(Female), provtariff_k) | year + ivid,
+iplot(list(feols(manu ~ i(as.factor(Female), -provtariff) | year + ivid,
                  subset(employment0204_p, urban == 1),
                  vcov = ~tinh,
                  weights = ~hhwt),
-           feols(manu ~ i(as.factor(Female), provtariff_k) | year + ivid,
+           feols(manu ~ i(as.factor(Female), -provtariff) | year + ivid,
                  subset(employment0204_p, urban == 2),
                  vcov = ~tinh,
                  weights = ~hhwt)), main = "Effect of BTA on reallocation into \nthe manufacturing sector")
@@ -214,11 +185,11 @@ legend("bottomleft", col = 1:2, pch = 16, cex = 0.5,
 
 # All observations 
 iplot(list(feols(
-  traded_manu ~ i(as.factor(Female), provtariff) | year + ivid,
+  traded_manu ~ i(as.factor(Female), -provtariff) | year + ivid,
   employment0204_p,
   vcov = ~tinh,
   weights = ~hhwt),
-  feols(traded_manu ~ i(as.factor(Female), provtariff) | year + ivid02,
+  feols(traded_manu ~ i(as.factor(Female), -provtariff) | year + ivid02,
         employment0206_p,
         vcov = ~tinh,
         weights = ~hhwt)))
