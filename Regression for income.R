@@ -17,7 +17,17 @@ inc_04_spouse_p <- merge(inc_panel, inc04, by = c("ivid", "hhid")) %>%
   mutate(year = 2004) %>% 
   mutate(across(tinh, as.factor))
 
-inc_0204_spouse_p <- bind_rows(inc_02_spouse_p, inc_04_spouse_p)
+inc_0204_spouse_p <- bind_rows(inc_02_spouse_p, inc_04_spouse_p) %>% 
+  filter(married == 2,
+         !is.na(hhid)) %>% 
+  group_by(hhid, year) %>%
+  mutate(total_hhinc_ratio = sum(inc_ratio)) %>% 
+  # filter(total_hhinc_ratio >= 0 & total_hhinc_ratio <= 1) %>% 
+  mutate(both_nonwage = ifelse(all(inc_ratio == 0), 1, 0),
+         inc_ratio = ifelse(both_nonwage == 1, 0.5, inc_ratio)) %>% 
+  mutate(total_hhinc_ratio_new = sum(inc_ratio)) %>% 
+  ungroup() %>% 
+  select(-c(both_nonwage, total_hhinc_ratio, total_hhinc_ratio_new))
 
 ## 2002 - 2006 
 inc_0602_spouse_p <- merge(hhid020406, inc02, by = "hhid02") %>% 
@@ -30,7 +40,17 @@ inc_06_spouse_p <- merge(hhid020406, inc06, by = "hhid06") %>%
   mutate(year = 2006,
          across(tinh, as.double))
 
-inc_0206_spouse_p <- bind_rows(inc_0602_spouse_p, inc_06_spouse_p)
+inc_0206_spouse_p <- bind_rows(inc_0602_spouse_p, inc_06_spouse_p) %>% 
+  filter(married == 2,
+         !is.na(hhid02)) %>% 
+  group_by(hhid02, year) %>%
+  mutate(total_hhinc_ratio = sum(inc_ratio)) %>% 
+  # filter(total_hhinc_ratio >= 0 & total_hhinc_ratio <= 1) %>% 
+  mutate(both_nonwage = ifelse(all(inc_ratio == 0), 1, 0),
+         inc_ratio = ifelse(both_nonwage == 1, 0.5, inc_ratio)) %>% 
+  mutate(total_hhinc_ratio_new = sum(inc_ratio)) %>% 
+  ungroup() %>% 
+  select(-c(both_nonwage, total_hhinc_ratio, total_hhinc_ratio_new))
 
 save(inc_0204_spouse_p, file = "inc_0204_spouse_p.rda")
 save(inc_0206_spouse_p, file = "inc_0206_spouse_p.rda")
@@ -61,7 +81,7 @@ etable(list(
         vcov = ~tinh)  
 ), tex = TRUE)
 
-# Accounting for female-intensity  
+1.363# Accounting for female-intensity  
 
 etable(list(
   feols(inc_ratio ~ provtariff_f | hhid + year,
