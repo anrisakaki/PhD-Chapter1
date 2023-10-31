@@ -28,11 +28,11 @@ dev.off()
 
 png("tce_finc_urban_0204.png")
 coefplot(list(
-  feols(inc_ratio ~ provtariff_f | ivid + year,
+  feols(inc_ratio ~ provtariff | ivid + year,
         subset(inc_0204_spouse_p, female == 1 & urban == 1 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_f | hhid02 + year,
+  feols(inc_ratio ~ provtariff | hhid02 + year,
         subset(inc_0206_spouse_p, female == 1 & urban == 2 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh)
@@ -43,11 +43,11 @@ dev.off()
 
 png("tce_finc_urban_0206.png")
 coefplot(list(
-  feols(inc_ratio ~ provtariff_f | hhid02 + year,
+  feols(inc_ratio ~ provtariff | hhid02 + year,
         subset(inc_0206_spouse_p, female == 1 & urban == 1 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_f | hhid02 + year,
+  feols(inc_ratio ~ provtariff | hhid02 + year,
         subset(inc_0206_spouse_p, female == 1 & urban == 2 & married == 2),
         weights = ~hhwt, 
         vcov = ~tinh)
