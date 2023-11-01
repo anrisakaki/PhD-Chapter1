@@ -26,6 +26,7 @@ inc_0204_spouse_p <- bind_rows(inc_02_spouse_p, inc_04_spouse_p) %>%
   mutate(both_nonwage = ifelse(all(inc_ratio == 0), 1, 0),
          inc_ratio = ifelse(both_nonwage == 1, 0.5, inc_ratio)) %>% 
   mutate(total_hhinc_ratio_new = sum(inc_ratio)) %>% 
+  filter(inc_ratio >= 0 & inc_ratio <= 1) %>% 
   ungroup() %>% 
   select(-c(both_nonwage, total_hhinc_ratio, total_hhinc_ratio_new))
 
@@ -48,6 +49,7 @@ inc_0206_spouse_p <- bind_rows(inc_0602_spouse_p, inc_06_spouse_p) %>%
   # filter(total_hhinc_ratio >= 0 & total_hhinc_ratio <= 1) %>% 
   mutate(both_nonwage = ifelse(all(inc_ratio == 0), 1, 0),
          inc_ratio = ifelse(both_nonwage == 1, 0.5, inc_ratio)) %>% 
+  filter(inc_ratio >= 0 & inc_ratio <= 1) %>%   
   mutate(total_hhinc_ratio_new = sum(inc_ratio)) %>% 
   ungroup() %>% 
   select(-c(both_nonwage, total_hhinc_ratio, total_hhinc_ratio_new))
@@ -81,56 +83,3 @@ etable(list(
         vcov = ~tinh)  
 ), tex = TRUE)
 
-1.363# Accounting for female-intensity  
-
-etable(list(
-  feols(inc_ratio ~ provtariff_f | hhid + year,
-        subset(inc_0204_spouse_p, female == 1 & married == 2),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_fk | hhid + year,
-        subset(inc_0204_spouse_p, female == 1 & married == 2),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_f | hhid06 + year,
-        subset(inc_0206_spouse_p, female == 1 & married == 2),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_fk | hhid06 + year,
-        subset(inc_0206_spouse_p, female == 1 & married == 2),
-        weights = ~hhwt, 
-        vcov = ~tinh)  
-), tex = TRUE)
-
-
-#################################################################
-# REGRESSION ON SPOUSAL WAGE GAP - BY SECTOR - USING PANEL DATA #
-#################################################################
-
-# 2002 - 2004 
-etable(list(
-  feols(inc_ratio ~ provtariff | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & agri_work == 1 & year == 2002 | Female == 1 & agri_work == 1 & year == 2004),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & agri_work == 1 & year == 2002 | Female == 1 & agri_work == 1 & year == 2004),
-        weights = ~hhwt, 
-        vcov = ~tinh),  
-  feols(inc_ratio ~ provtariff | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & agri_work == 1 & year == 2002 | Female == 1 & manu == 1 & year == 2004),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k | hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & agri_work == 1 & year == 2002 | Female == 1 & manu == 1 & year == 2004),
-        weights = ~hhwt, 
-        vcov = ~tinh),  
-  feols(inc_ratio ~ provtariff| hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & agri_work == 1 & year == 2002 | Female == 1 & tal == 1 & year == 2004),
-        weights = ~hhwt, 
-        vcov = ~tinh),
-  feols(inc_ratio ~ provtariff_k| hhid02 + year,
-        subset(inc_0204_spouse_p, Female == 1 & agri_work == 1 & year == 2002 | Female == 1 & tal == 1 & year == 2004),
-        weights = ~hhwt, 
-        vcov = ~tinh)  
-), tex = TRUE)
