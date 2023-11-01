@@ -9,26 +9,14 @@ etable(list(
         subset(exp_0402_p, urban == 1),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(food_share ~ provtariff_k | hhid02 + year,
-        subset(exp_0402_p, urban == 1),
-        vcov = ~tinh,
-        weights = ~hhwt),
   feols(educ_share ~ provtariff | hhid02 + year,
-        subset(exp_0402_p, urban == 1),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(educ_share ~ provtariff_k | hhid02 + year,
         subset(exp_0402_p, urban == 1),
         vcov = ~tinh,
         weights = ~hhwt),
   feols(health_share ~ provtariff | hhid02 + year,
         subset(exp_0402_p, urban == 1),
         vcov = ~tinh,
-        weights = ~hhwt),
-  feols(health_share ~ provtariff_k | hhid02 + year,
-        subset(exp_0402_p, urban == 1),
-        vcov = ~tinh,
-        weights = ~hhwt)  
+        weights = ~hhwt)
 ))
 
 etable(list(
@@ -36,34 +24,18 @@ etable(list(
         subset(exp_0402_p, urban == 2),
         vcov = ~tinh,
         weights = ~hhwt),
-  feols(food_share ~ provtariff_k | hhid02 + year,
-        subset(exp_0402_p, urban == 2),
-        vcov = ~tinh,
-        weights = ~hhwt),
   feols(educ_share ~ provtariff | hhid02 + year,
-        subset(exp_0402_p, urban == 2),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(educ_share ~ provtariff_k | hhid02 + year,
         subset(exp_0402_p, urban == 2),
         vcov = ~tinh,
         weights = ~hhwt),
   feols(health_share ~ provtariff | hhid02 + year,
         subset(exp_0402_p, urban == 2),
         vcov = ~tinh,
-        weights = ~hhwt),
-  feols(health_share ~ provtariff_k | hhid02 + year,
-        subset(exp_0402_p, urban == 2),
-        vcov = ~tinh,
-        weights = ~hhwt)  
+        weights = ~hhwt)
 ))
 
 etable(list(
   feols(tobac_share ~ provtariff | hhid02 + year,
-        subset(exp_0402_p, urban == 1),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(tobac_share ~ provtariff_k | hhid02 + year,
         subset(exp_0402_p, urban == 1),
         vcov = ~tinh,
         weights = ~hhwt)
@@ -71,10 +43,6 @@ etable(list(
 
 etable(list(
   feols(tobac_share ~ provtariff | hhid02 + year,
-        subset(exp_0402_p, urban == 2),
-        vcov = ~tinh,
-        weights = ~hhwt),
-  feols(tobac_share ~ provtariff_k | hhid02 + year,
         subset(exp_0402_p, urban == 2),
         vcov = ~tinh,
         weights = ~hhwt)
