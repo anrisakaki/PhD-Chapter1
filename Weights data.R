@@ -9,7 +9,7 @@ weights_02 <- inc_02 %>%
   distinct()
 
 weights_exp_02 <- exp_02 %>% 
-  select(tinh02, xa02, hhid, wt30) %>% 
+  select(tinh, huyen, xa, hoso, wt30) %>% 
   distinct() %>% 
   rename(hhwt = wt30)
 
@@ -20,7 +20,7 @@ weights_04 <- inc_04 %>%
   distinct() 
 
 weights_exp_04 <- exp_04 %>% 
-  select(hhid, hhwt)
+  select(tinh, huyen, xa, hoso, hhwt)
 
 # 2006 
 weights_06 <- exp_06 %>%
@@ -30,5 +30,5 @@ weights_06 <- exp_06 %>%
   distinct()  
 
 weights_exp_06 <- exp_06 %>% 
-  select(hhid, wt9) %>% 
+  select(tinh, huyen, xa, hoso, wt9) %>% 
   rename(hhwt = wt9) 
