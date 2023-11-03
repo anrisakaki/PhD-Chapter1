@@ -43,7 +43,7 @@ diaban04 <- m123a_04 %>%
 exp_04 <- left_join(exp_04, diaban04, by = c("tinh", "huyen", "xa")) %>% 
   distinct()
 
-hh04 <- c("exp_04", "ho1_04", "m123a_04", "m1b_04", "m4a_04", "m4a_04a", "m5a2_04", "m5b1_04", "m5b2_04", "m6a_04", "m6b_04", "inc_04")
+hh04 <- c("exp_04", "ho1_04", "m123a_04", "m1b_04", "m4a_04", "m4a_04a", "m5a2_04", "m5b1_04", "m5b2_04", "m5b34_04", "m6a_04", "m6b_04", "inc_04")
 
 for(i in hh04){
   
@@ -68,7 +68,7 @@ for(i in hh04){
              mutate(hhid = tinh*10^9+huyen*10^7+xa*10^5+diaban*100+hoso))    
   }
   
-  if (i %in% c("exp_04", "m5a2_04", "m5b1_04", "m5b2_04")){
+  if (i %in% c("exp_04", "m5a2_04", "m5b1_04", "m5b2_04", "m5b34_04")){
     
     assign(i, get(i) %>% 
              mutate(hhid = tinh*10^9+huyen*10^7+xa*10^5+diaban*100+hoso))
@@ -87,11 +87,13 @@ inc_06 <- left_join(inc_06, diaban06, by = c("tinh", "huyen", "xa"))
 
 exp_06 <- left_join(exp_06, diaban06, by = c("tinh", "huyen", "xa"))
 
-hh06 <- c("exp_06", "m1a_06", "m1b_06", "m2a_06", "m4a_06", "m5a2_06", "m5b1_06", "m5b2_06", "m6a_06", "m6b_06", "ttchung_06", "inc_06")
+m5b34_06 <- m5b34_06 %>% mutate(across(diaban, as.numeric))
+
+hh06 <- c("exp_06", "m1a_06", "m1b_06", "m2a_06", "m4a_06", "m5a2_06", "m5b1_06", "m5b2_06", "m6a_06", "m6b_06", "ttchung_06", "inc_06", "m5b34_06")
 
 for(i in hh06){
   
-  if (i %in% c("m1a_06", "m1b_06", "m2a_06", "m4a_06", "m5a2_06", "m5b1_06", "m5b2_06", "m6a_06", "m6b_06", "ttchung_06")){
+  if (i %in% c("m1a_06", "m1b_06", "m2a_06", "m4a_06", "m5a2_06", "m5b1_06", "m5b2_06", "m6a_06", "m6b_06", "ttchung_06")){m5b34_06
     assign(i, get(i) %>%
              select(-diaban))
     
@@ -314,3 +316,4 @@ ivid020406 <- ivid0204 %>%
 
 ivid020406 <- merge(ivid020406, ivid0406, by = "ivid04") %>% 
   select(ivid02, ivid04, ivid06)
+
