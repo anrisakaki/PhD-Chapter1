@@ -134,8 +134,9 @@ ivid02 <- ivid0204_ %>%
   rename_with(~ str_replace(.x, "02", ""), everything())  
 
 ivid04 <- ivid0204_ %>% 
-  select(c(tinh, huyen, xa, diaban, hoso, hhid, ivid)) %>% 
-  mutate(year = 2004)
+  select(c(tinh, huyen, xa, diaban, hoso, m1bc7, hhid, ivid)) %>% 
+  mutate(year = 2004) %>% 
+  rename(matv = m1bc7)
 
 ivid0204 <- bind_rows(ivid02, ivid04)
 
