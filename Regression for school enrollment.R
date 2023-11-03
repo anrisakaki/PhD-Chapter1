@@ -38,9 +38,9 @@ schooling_02 <- schooling_02 %>%
   rename(ivid02 = ivid, 
          hhid02 = hhid)
 
-schooling_0204 <- merge(ivid0204, schooling_02, by = c("hhid02", "ivid02", "tinh", "xa02")) %>% 
+schooling_0204 <- merge(ivid0204, schooling_02, by = c("hhid02", "ivid02")) %>% 
   mutate(year = 2002 )
-schooling_0402 <- merge(ivid0204, schooling_04, by = c("tinh", "huyen", "xa", "hhid", "ivid")) %>% 
+schooling_0402 <- merge(ivid0204, schooling_04, by = c("hhid", "ivid")) %>% 
   mutate(year = 2004)
 
 # 2002 - 2006 
@@ -69,20 +69,22 @@ etable(list(
         schooling_0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ provtariff_k*Female | ivid02 + year,
-        schooling_0204_p,
-        weights = ~hhwt,
-        vcov = ~tinh),
   feols(enrolled ~ provtariff*Female | ivid02 + year,
-        schooling_0206_p,
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(enrolled ~ provtariff_k*Female| ivid02 + year,
         schooling_0206_p,
         weights = ~hhwt,
         vcov = ~tinh)),
   tex = TRUE)
 
+etable(list(
+  feols(enrolled ~ provtariff*Female| ivid02 + year,
+        subset(schooling_0204_p, age > 16),
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(enrolled ~ provtariff*Female | ivid02 + year,
+        subset(schooling_0206_p, age > 16),
+        weights = ~hhwt,
+        vcov = ~tinh)),
+  tex = TRUE)
 
 etable(list(
   feols(enrolled ~ as.factor(Female) / provtariff | ivid02 + year,
