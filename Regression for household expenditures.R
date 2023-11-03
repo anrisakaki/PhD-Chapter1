@@ -14,11 +14,15 @@ exp_04_p <- merge(hhid0204, exp_04, by = "hhid") %>%
   mutate(year = 2004)
 
 
-exp_0206 <- exp_02
+exp_0206 <- exp_02 %>% 
+  select(tinh, xa02, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, hhexp2rl, provtariff, provtariff_k, hhwt, urban) %>% 
+  mutate(year = 2002)
 exp_06_p <- exp_06 %>% 
   rename(hhid06 = hhid)
 exp_0206 <- merge(hhid020406, exp_0206, by = "hhid02")
-exp_06_p <- merge(hhid020406, exp_06_p, by = "hhid06")
+exp_06_p <- merge(hhid020406, exp_06_p, by = "hhid06") %>%
+  select(tinh, hhid06, hhid02, foodreal, educex_2, hlthex_2, tobac12m, riceexp_share, food_share, tobac_share, educ_share, health_share, hhexp2rl, provtariff, provtariff_k, hhwt, urban) %>% 
+  mutate(year = 2006)
 
 # Panel data 
 
@@ -32,6 +36,22 @@ exp_0602 <- bind_rows(exp_02, exp_06)
 
 save(exp_0402_p, file = "exp_0402_p.rda")
 save(exp_0206_p, file = "exp_0206_p.rda")
+
+#############################################
+# REGRESSION ON TOTAL HOUSEHOLD EXPENDITURE #
+#############################################
+
+
+etable(list(
+  feols(log(hhexp2rl) ~ provtariff | hhid02 + year,
+        data = exp_0402_p,
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(log(hhexp2rl) ~ provtariff | hhid02 + year,
+        data = exp_0206_p,
+        vcov = ~tinh,
+        weights = ~hhwt)  
+))
 
 ########################################################################
 # REGRESSION ON EXPENDITURE ON HOUSEHOLD PUBLIC GOODS USING PANEL DATA #
