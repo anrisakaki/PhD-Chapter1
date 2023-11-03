@@ -2,7 +2,7 @@
 # PROVINCE-LEVEL TARIFFS USING TOPALOVA'S METHOD #
 ##################################################
 provtariff_weights <- employment_mf_02 %>% 
-  filter(m3c2 == 1) %>% 
+  filter(work == 1) %>% 
   select(tinh, industry, hhwt) %>% 
   group_by(tinh, industry) %>% 
   count(industry, tinh, wt = hhwt)
@@ -86,7 +86,7 @@ provtariff_weights_a <- provtariff_weights %>%
   mutate(tinh = as.factor(tinh))
 
 tariff_f_weights <- employment_mf_02 %>% 
-  filter(m3c2 == 1) %>% 
+  filter(work == 1) %>% 
   select(tinh, industry, hhwt, sex) %>% 
   group_by(tinh, industry, sex) %>% 
   count(industry, sex, tinh, wt = hhwt) %>% 
@@ -143,3 +143,41 @@ provtariffs <- list(preBTA_provtariff_f, preBTA_provtariff_fk, postBTA_provtarif
   reduce(full_join, by = "tinh")
 
 save(provtariffs, file = "provtariffs.rda")
+
+########################
+# Put into 1 dataframe #
+########################
+
+preBTA_provtariff <- preBTA_provtariff %>% 
+  mutate(year = 2002) %>%
+  rename(provtariff = preprov_tariff)
+
+preBTA_provtariff_k <- preBTA_provtariff_k %>% 
+  mutate(year = 2002) %>% 
+  rename(provtariff_k = preprov_tariff_k)
+
+preBTA_provtariff_f <- preBTA_provtariff_f %>%
+  mutate(year = 2002) %>%
+  rename(provtariff_f = preprov_tariff_f)
+
+preBTA <- list(preBTA_provtariff, preBTA_provtariff_k, preBTA_provtariff_f) %>% 
+  reduce(full_join, by = c("tinh", "year"))
+
+postBTA_provtariff <- postBTA_provtariff %>% 
+  rename(provtariff = postprov_tariff) %>% 
+  mutate(across(tinh, as.factor))
+
+postBTA_provtariff_k <- postBTA_provtariff_k %>% 
+  rename(provtariff_k = postprov_tariff_k)
+
+postBTA_provtariff_f <- postBTA_provtariff_f %>%
+  rename(provtariff_f = postprov_tariff_f)
+
+postBTA <- list(postBTA_provtariff, postBTA_provtariff_k, postBTA_provtariff_f) %>% 
+  reduce(full_join, by = "tinh")
+
+provtariffs0204 <- bind_rows(preBTA, postBTA) %>% 
+  mutate(year = ifelse(is.na(year), 2004, year))
+
+provtariffs0206 <- bind_rows(preBTA, postBTA) %>% 
+  mutate(year = ifelse(is.na(year), 2006, year))
