@@ -4,11 +4,11 @@
 
 # 2002 
 industry_mf_02 <- employment_mf_02 %>%
-  select(m1c2, industry, hhwt) %>% 
+  select(sex, industry, hhwt) %>% 
   replace(is.na(.), 0) %>%  
-  group_by(industry, m1c2) %>% 
-  count(m1c2, industry, wt = hhwt) %>% 
-  pivot_wider(names_from = "m1c2", values_from = "n")
+  group_by(industry, sex) %>% 
+  count(sex, industry, wt = hhwt) %>% 
+  pivot_wider(names_from = "sex", values_from = "n")
 
 industry_mf_02 <- industry_mf_02 %>% 
   rename("Industry" = "industry") %>% 
@@ -17,8 +17,8 @@ industry_mf_02 <- industry_mf_02 %>%
 
 colSums(industry_mf_02[,c(2,3)], na.rm = TRUE)
 
-nm_02 <- 20971525
-nf_02 <- 22242964 
+nm_02 <- 23937250 
+nf_02 <- 24620932  
 
 industry_mf_02 <- industry_mf_02 %>% 
   mutate(MRatio_02 = Male / (nm_02) * 100,
