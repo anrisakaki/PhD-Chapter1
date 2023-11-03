@@ -9,11 +9,13 @@ rcpi_02 <- inc_02 %>%
   distinct()
 
 rcpi_04 <- inc_04 %>%
-  select(hhid, rcpi, mcpi) %>% 
+  mutate(hhinc = rlincomepc * hhsize * 12) %>%   
+  select(hhid, rcpi, mcpi, hhinc) %>% 
   distinct()
 
 rcpi_06 <- inc_06 %>% 
-  select(hhid, rcpi, mcpi) %>% 
+  mutate(hhinc = rlincomepc * hhsize * 12) %>%     
+  select(hhid, rcpi, mcpi, hhinc) %>% 
   distinct() 
 
 ################################################
@@ -45,16 +47,13 @@ inc04 <- m4a_04 %>%
          across(tinh, as.factor)) %>% 
   select(tinh, huyen, xa, hoso, matv, hhid, ivid, inc)
 
-hhinc_04 <- ho1_04 %>% select(hhid, thunhap)
+# hhinc_04 <- ho1_04 %>% select(hhid, thunhap)
 
-inc04 <- left_join(inc04, hhinc_04, by = "hhid") %>% distinct()
+inc04 <- left_join(inc04, rcpi_04, by = "hhid") %>% distinct()
 
 inc04 <- left_join(employment_mf_04, inc04, by = c("tinh", "huyen", "xa", "hoso", "matv", "hhid", "ivid")) %>% 
-  distinct() 
-
-inc04 <- left_join(inc04, rcpi_04, by = "hhid") %>% 
-  mutate(hhinc = (thunhap/rcpi/mcpi),
-         inc_ratio = inc/hhinc,
+  distinct() %>% 
+  mutate(inc_ratio = inc/hhinc,
          female = ifelse(sex == "Female", 1, 0)) %>% 
   distinct() %>% 
   select(tinh, hhid, ivid, female, age, wage_work, married, educ, inc, hhinc, inc_ratio, agri_work, tal, manu, traded, traded_nonagri, provtariff, provtariff_k, provtariff_f, provtariff_fk, hhwt, urban)# N = 163,501
@@ -66,18 +65,14 @@ inc06 <- m4a_06 %>%
   mutate(across(c(huyen, xa, hoso, matv), as.numeric),
          across(tinh, as.factor))
 
-hhinc_06 <- ttchung_06 %>% select(hhid, thunhap)
+# hhinc_06 <- ttchung_06 %>% select(hhid, thunhap)
 
-inc06 <- merge(inc06, hhinc_06, by = "hhid")
+inc06 <- merge(inc06, rcpi_06, by = "hhid")
 
 inc06 <- left_join(employment_mf_06, inc06, by = c("tinh", "huyen", "xa", "hoso", "matv", "hhid", "ivid")) %>% 
   distinct() %>% 
-  mutate(across(tinh, as.double))
-
-inc06 <- left_join(inc06, rcpi_06, by = "hhid") %>% 
-  distinct() %>% 
-  mutate(hhinc = (thunhap / rcpi/mcpi),
-         inc_ratio = inc/hhinc,
+  mutate(across(tinh, as.double)) %>% 
+  mutate(inc_ratio = inc/hhinc,
          inc_ratio = ifelse(is.na(inc_ratio), 0, inc_ratio),
          female = ifelse(sex == "Female", 1, 0)) %>% 
   rename(married = m1ac6) %>% 
