@@ -1,0 +1,23 @@
+```{r}
+employment_0204 <- bind_rows(employment_mf_02, employment_mf_04)
+employment_0206 <- bind_rows(employment_mf_02, employment_mf_06)
+
+employment_0204 <- merge(employment_0204, provtariffs0204, by = c("tinh", "year"))
+employment_0206 <- merge(employment_0206, provtariffs0206, by = c("tinh", "year"))
+
+emp0204_p <- merge(employment_0204, ivid0204, by = ivid) %>% 
+  mutate(inc = ifelse(inc == 0, NA, inc))
+
+emp0206_p <- merge(employment_0206, ivid0206, by = ivid) %>% 
+  mutate(inc = ifelse(inc == 0, NA, inc))
+
+```
+
+```{r}
+
+etable(list(
+  feols(tal ~ provtariff | ivid + year,
+        emp0204_p,
+        weights = ~hhwt,
+        vcov = ~ tinh)
+))
