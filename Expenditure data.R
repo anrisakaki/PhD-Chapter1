@@ -2,6 +2,8 @@
 # EXPENDITURE DATA ON HOUSEHOLD PUBLIC GOODS #
 ##############################################
 
+
+
 exp_020406 <- c("exp_02", "exp_04", "exp_06")
 
 for(i in exp_020406){
