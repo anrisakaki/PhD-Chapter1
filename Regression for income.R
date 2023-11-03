@@ -83,3 +83,16 @@ etable(list(
         vcov = ~tinh)  
 ), tex = TRUE)
 
+##########################
+# TOTAL HOUSEHOLD INCOME #
+##########################
+
+etable(list(
+  feols(log(hhinc) ~ provtariff | hhid + year,
+        inc_0204_spouse_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(hhinc) ~ provtariff | hhid02 + year,
+        inc_0206_spouse_p,
+        weights = ~hhwt, 
+        vcov = ~tinh)), tex = T)
