@@ -67,7 +67,9 @@ employment_mf_04 <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "h
   filter(age < 65) %>% 
   select(tinh, huyen, xa, hoso, matv, sex, educ, work, industry, age, married, days, hours,inc, year, housework, female) #Merging data on age, sex, marital status, and industry worked in (N = 202,321)
 
-employment_mf_04 <- merge(employment_mf_04, weights_04, by = c("tinh", "huyen", "xa"))
+employment_mf_04 <- list(employment_mf_04, diaban04, weights_04) %>% 
+  reduce(merge, by = c("tinh", "huyen", "xa")) %>% 
+  rename(diaban = diaban04)
 
 #Recoding binary variable for sex
 employment_mf_04$sex <- factor(employment_mf_04$sex,
@@ -103,7 +105,12 @@ employment_mf_06 <- merge(employment_mf_06, weights_06, by = c("tinh", "huyen", 
          married = ifelse(m1ac6 == 1, 1, 0),
          year = 2006,
          female = ifelse(sex == 2, 1, 0)) %>% 
-  select(tinh, huyen, xa, hoso, matv, sex, educ, work, industry, age, married, days, hours, year, housework, female) 
+  select(tinh, huyen, xa, hoso, matv, sex, educ, work, industry, age, married, days, hours, inc, year, housework, female) 
+
+employment_mf_06 <- left_join(employment_mf_06, diaban06, by =c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
+  rename(diaban = diaban06)
+
+employment_mf_06 <- left_join(employment_mf_06, weights_06, by = c("tinh", "huyen", "xa"))
 
 ## Recoding binary variable for sex
 employment_mf_06$sex <- factor(employment_mf_06$sex,
@@ -123,8 +130,9 @@ for(i in emp020406) {
              agri_work = as.numeric(industry %in% c(1,2,4,5)),
              service = as.numeric(industry > 50),
              manu = as.numeric(industry > 14 & industry < 38),
-             construction = as.numeric(industry == 45)
-           ))
+             construction = as.numeric(industry == 45),
+             hours = ifelse(work == 1 & hours == 0, NA, hours),
+             days = ifelse(work == 1 & days == 0, NA, hours)))
   
   assign(i,get(i) %>%
            mutate(Industry = recode(industry,
@@ -190,11 +198,3 @@ for(i in emp020406) {
                                     "95" = "Private households with employed persons",
                                     "99" = "Extra-territorial organizations and bodies")))
 }
-
-# PANEL DATA
-
-employment_0204 <- bind_rows(employment_mf_02, employment_mf_04)
-employment_0206 <- bind_rows(employment_mf_02, employment_mf_06)
-
-employment_0204 <- merge(employment_0204, provtariffs0204, by = c("tinh", "year"))
-employment_0206 <- merge(employment_0206, provtariffs0206, by = c("tinh", "year"))
