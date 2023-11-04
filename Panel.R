@@ -13,7 +13,10 @@ panel0204 <- ho1_04 %>%
          hoso02 = ifelse(nchar(hoso02) > 2, substr(hoso02, nchar(hoso02) - 1, nchar(hoso02)), hoso02),
          across(hoso02, as.numeric))
 
-diaban04 <- panel0204 %>% filter(!is.na(diaban)) %>% select(tinh, huyen, xa, diaban) %>% distinct() %>% rename(diaban04 = diaban)
+diaban04 <- m5a2_04 %>% 
+  select(tinh, huyen, xa, diaban) %>% 
+  distinct() %>% 
+  rename(diaban04 = diaban)
 
 panel0204 <- left_join(panel0204, diaban04, by = c("tinh", "huyen", "xa")) %>% 
   mutate(diaban = ifelse(is.na(diaban), diaban04, diaban)) %>% 
@@ -24,7 +27,10 @@ diaban02 <- inc_02 %>%
   distinct()
 
 panel0204_ <- left_join(panel0204, diaban02, by = c("tinh02", "huyen02", "xa02")) %>% 
-  select(tinh02, huyen02, xa02, diaban02, hoso02, everything())
+  select(tinh02, huyen02, xa02, diaban02, hoso02, everything()) %>% 
+  group_by(tinh02, huyen02, xa02, diaban02, hoso02, tinh, huyen, xa, diaban, hoso) %>% 
+  mutate(hhid = cur_group_id()) %>% 
+  ungroup()
 
 # # 2002 - 2004 - 2006  
 
@@ -32,7 +38,7 @@ panel0406 <- ttchung_06 %>%
   select(tinh, huyen, xa, hoso, tinh04, huyen04, xa04, hoso04) %>% 
   filter(!is.na(hoso04))
 
-diaban06 <- m1a_06 %>% 
+diaban06 <- m5a2_06 %>% 
   mutate(across(diaban, as.numeric)) %>%   
   filter(!is.na(diaban)) %>%   
   select(tinh, huyen, xa, diaban) %>% 
@@ -45,23 +51,13 @@ panel0406 <- left_join(panel0406, diaban06, by = c("tinh" = "tinh06", "huyen" = 
 
 panel0406 <- panel0406 %>% rename(tinh06 = tinh, huyen06 = huyen, xa06 = xa, hoso06 = hoso)
 
-panel0206_ <- left_join(panel0204_, panel0406, by = c("tinh" = "tinh04", "huyen" = "huyen04", "xa" = "xa04", "diaban" = "diaban04", "hoso" = "hoso04")) %>% 
-  filter(!is.na(tinh06)) %>% 
+panel0206_ <- inner_join(panel0204_, panel0406, by = c("tinh" = "tinh04", "huyen" = "huyen04", "xa" = "xa04", "diaban" = "diaban04", "hoso" = "hoso04")) %>% 
+  distinct() %>% 
   mutate(diaban02 = ifelse(is.na(diaban02), diaban06, diaban02)) %>% 
-  select(-c(tinh, huyen, xa, diaban, hoso)) %>% 
-  group_by(tinh02, huyen02, xa02, diaban02, hoso02) %>% 
-  mutate(hhid = cur_group_id()) %>% 
+  group_by(tinh02, huyen02, xa02, diaban02, hoso02, tinh, huyen, xa, diaban, hoso, tinh06, huyen06, xa06, diaban06) %>%
+  select(-c(tinh, huyen, xa, diaban, hoso)) %>%   
+  mutate(hhid = cur_group_id()) %>%
   ungroup()
-
-panel06 <- panel0206_ %>% 
-  select(c(matches("06"), hhid)) %>% 
-  mutate(year = 2006) %>% 
-  rename_with(~ str_replace(.x, "06", ""), everything())
-
-panel02 <- panel0206_ %>% 
-  select(c(matches("02"), hhid)) %>% 
-  mutate(year = 2002) %>% 
-  rename_with(~ str_replace(.x, "02", ""), everything())
 
 # Clean 
 
@@ -76,11 +72,6 @@ panel02 <- panel0206_ %>%
   rename_with(~ str_replace(.x, "02", ""), everything())
 
 panel0206 <- bind_rows(panel02, panel06)
-
-panel0204_ <- panel0204_ %>% 
-  group_by(tinh02, huyen02, xa02, diaban02, hoso02) %>% 
-  mutate(hhid = cur_group_id()) %>% 
-  ungroup()
 
 panel02_04 <- panel0204_ %>% 
   select(c(matches("02"), hhid)) %>% 
@@ -106,7 +97,7 @@ ivid04 <- m1b_04 %>%
   select(tinh, huyen, xa, hoso, m1bc7, everything())
 
 ivid0204 <- merge(ivid04, panel0204_, by = c("tinh", "huyen", "xa", "hoso")) %>% 
-  select(tinh, huyen, xa, diaban, hoso, m1bc7, tinh02, huyen02, xa02, diaban02, hoso02, matv02, m1bc4, m1bc5)
+  select(hhid, tinh, huyen, xa, diaban, hoso, m1bc7, tinh02, huyen02, xa02, diaban02, hoso02, matv02, m1bc4, m1bc5)
 
 # Checking accuracy of panel based on age and sex 
 
@@ -115,28 +106,37 @@ age_vhlss02 <- m1_02 %>%
   mutate(matv02 = ifelse(nchar(matv02) > 2, substr(matv02, nchar(matv02) - 1, nchar(matv02)), matv02),
          across(matv02, as.numeric))
 
-age_vhlss02 <- left_join(ivid0204, age_vhlss02, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02", "matv02")) %>% distinct()
+age_vhlss02 <- merge(ivid0204, age_vhlss02, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02", "matv02")) %>% distinct()
 
 ivid0204_ <- age_vhlss02 %>% 
   mutate(correct = (m1bc5 - m1c5) + (m1bc4 - m1c2),
          correct = ifelse(correct == 0, 1, 0)) %>% 
   filter(correct == 1) %>% 
-  select(-c(m1bc4, m1bc5, correct, m1c2, m1c5)) %>% 
-  group_by(tinh, huyen, xa, diaban, hoso, m1bc7) %>% 
-  mutate(ivid = cur_group_id()) %>% 
-  group_by(tinh, huyen, xa, diaban, hoso) %>% 
-  mutate(hhid = cur_group_id()) %>% 
-  ungroup()
+  group_by(hhid, tinh02, huyen02, xa02, diaban02, hoso02, matv02, m1c5, m1c2, tinh, huyen, xa, diaban, hoso, m1bc7, m1bc5, m1bc4) %>% 
+  mutate(ivid = cur_group_id()) %>%   
+  select(-correct) %>% 
+  ungroup() %>% 
+  rename(matv04 = m1bc7)
 
 ivid02 <- ivid0204_ %>% 
-  select(c(matches("02"), hhid, ivid)) %>% 
+  select(c(hhid, ivid, matches("02"), m1c2, m1c5)) %>% 
   mutate(year = 2002) %>% 
-  rename_with(~ str_replace(.x, "02", ""), everything())  
+  rename_with(~ str_replace(.x, "02", ""), everything()) %>% 
+  rename(sex = m1c2, 
+         age = m1c5)
+
+age_vhlss04 <- m123a_04 %>% 
+  select(tinh, huyen, xa, hoso, matv, m1ac2, m1ac5) %>% 
+  rename(sex = m1ac2,
+         age = m1ac5)
 
 ivid04 <- ivid0204_ %>% 
-  select(c(tinh, huyen, xa, diaban, hoso, m1bc7, hhid, ivid)) %>% 
+  select(c(hhid, ivid, tinh, huyen, xa, diaban, hoso, matv04, m1bc4)) %>% 
   mutate(year = 2004) %>% 
-  rename(matv = m1bc7)
+  rename(matv = matv04,
+         sex = m1bc4) 
+
+ivid04 <- merge(ivid04, age_vhlss04, by = c("tinh", "huyen", "xa", "hoso", "matv", "sex"))
 
 ivid0204 <- bind_rows(ivid02, ivid04)
 
@@ -146,9 +146,12 @@ ivid0406 <- m1b_06 %>%
   filter(m1bc6 == 1) %>% 
   rename(matv04 = m1bc3) %>% 
   select(tinh, huyen, xa, hoso, m1bc7, matv04, m1bc4, m1bc5) %>% 
-  rename(tinh06 = tinh, huyen06 = huyen, xa06 = xa, hoso06 = hoso)
+  rename(tinh06 = tinh, huyen06 = huyen, xa06 = xa, hoso06 = hoso, matv06 = m1bc7)
 
-ivid0406 <- merge(ivid0406, panel0406, by = c("tinh06", "xa06", "huyen06", "hoso06"))
+ivid0406 <- merge(ivid0406, panel0406, by = c("tinh06", "xa06", "huyen06", "hoso06")) %>% 
+  group_by(tinh04, huyen04, xa04, diaban04, hoso04, tinh06, huyen06, xa06, diaban06, hoso06) %>%   
+  mutate(hhid = cur_group_id()) %>%
+  ungroup()
 
 # Checking accuracy 
 
@@ -160,19 +163,29 @@ age_vhlss04 <- merge(age_vhlss04, ivid0406, by = c("tinh04", "huyen04", "xa04", 
   mutate(correct = (m1ac5 - m1bc5) + (m1ac2 - m1bc4),
          correct = ifelse(correct == 0, 1, 0)) %>% 
   filter(correct == 1) %>% 
-  select(-c(correct, m1ac5, m1bc5, m1ac2, m1bc4, diaban04))
+  select(-correct) %>% 
+  group_by(tinh04, huyen04, xa04, diaban04, matv04, m1ac5, m1bc5, m1ac2, m1bc4, tinh06, huyen06, xa06, diaban06, hoso06, matv06) %>% 
+  mutate(ivid = cur_group_id()) %>% 
+  ungroup()
 
-ivid0206_ <- inner_join(ivid0204_, age_vhlss04, by = c("tinh" = "tinh04", "huyen" = "huyen04", "xa" = "xa04", "hoso" = "hoso04", "m1bc7")) %>% 
-  select(-c(tinh, huyen, xa, diaban, hoso, matv04)) %>% 
-  rename(matv06 = m1bc7) %>% 
-  select(ends_with("02"), ends_with("06"), hhid, ivid) %>% 
+ivid0204_a <- ivid0204_ %>% 
+  select(-c(hhid, ivid, m1bc5, m1bc4))
+
+ivid0206_ <- inner_join(ivid0204_a, age_vhlss04, by = c("tinh" = "tinh04", "huyen" = "huyen04", "xa" = "xa04", "hoso" = "hoso04", "matv04")) %>% 
+  select(-c(tinh, huyen, xa, diaban, hoso, matv04, m1ac2)) %>% 
+  select(ends_with("02"), ends_with("06"), hhid, ivid, m1c2, m1c5) %>% 
   distinct()
 
 ivid02_06 <- ivid0206_ %>% 
-  select(c(matches("02"), hhid, ivid)) %>% 
+  select(c(matches("02"), hhid, ivid, m1c2, m1c5)) %>% 
   rename_with(~ str_replace(.x, "02", ""), everything()) %>% 
   ungroup() %>% 
-  mutate(year = 2002)
+  mutate(year = 2002) %>% 
+  rename(sex = m1c2,
+         age = m1c5)
+
+age06 <- m1a_06 %>% 
+  select(tinh, huyen, xa, hoso, matv, m1ac2, m1ac5)
 
 ivid06 <- ivid0206_ %>% 
   select(c(matches("06"), hhid, ivid)) %>% 
@@ -180,7 +193,11 @@ ivid06 <- ivid0206_ %>%
   ungroup() %>% 
   mutate(year = 2006)
 
-ivid0206 = bind_rows(ivid02_06, ivid06)
+ivid06 <- merge(ivid06, age06, by = c("tinh", "huyen", "xa", "hoso", "matv")) %>% 
+  rename(sex = m1ac2,
+         age = m1ac5)
 
-ivid <- c("tinh", "huyen", "xa", "diaban", "hoso", "matv", "year")
+ivid0206 <- bind_rows(ivid02_06, ivid06)
+
+ivid <- c("tinh", "huyen", "xa", "diaban", "hoso", "matv", "year", "age", "sex")
 hhid <- c("tinh", "huyen", "xa", "diaban", "hoso", "year")
