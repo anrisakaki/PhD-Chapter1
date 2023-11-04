@@ -16,8 +16,8 @@ emp0206_p <- merge(employment_0206, ivid0206, by = ivid) %>%
 ```{r}
 
 etable(list(
-  feols(tal ~ provtariff | ivid + year,
+  feols(tal ~ i(as.factor(female), provtariff) | ivid + year,
         emp0204_p,
         weights = ~hhwt,
         vcov = ~ tinh)
-))
+), tex = T)
