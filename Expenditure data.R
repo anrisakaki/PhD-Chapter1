@@ -2,8 +2,6 @@
 # EXPENDITURE DATA ON HOUSEHOLD PUBLIC GOODS #
 ##############################################
 
-
-
 exp_020406 <- c("exp_02", "exp_04", "exp_06")
 
 for(i in exp_020406){
@@ -12,41 +10,37 @@ for(i in exp_020406){
                   food_share = foodreal/hhexp2rl,
                   tobac_share = tobac12m/hhexp2rl,
                   educ_share = educex_2/hhexp2rl,
-                  health_share = hlthex_2/hhexp2rl) %>%
-           mutate(across(tinh, as.factor)))
-  
-  if(i %in% c("exp_02")){
-    assign(i, left_join(get(i), preBTA_provtariff, by = "tinh"))
-    
-    assign(i, left_join(get(i), preBTA_provtariff_k, by = "tinh"))
-    
-    assign(i, get(i) %>% 
-             rename(provtariff = preprov_tariff,
-                    provtariff_k = preprov_tariff_k,
-                    hhwt = wt30))
-  }
-  
-  if(i %in% c("exp_04", "exp_06")){
-    assign(i, left_join(get(i), postBTA_provtariff, by = "tinh"))
-    
-    assign(i, left_join(get(i), postBTA_provtariff_k, by = "tinh"))
-    
-    assign(i, get(i) %>% 
-             rename(provtariff = postprov_tariff,
-                    provtariff_k = postprov_tariff_k))
-  }
+                  health_share = hlthex_2/hhexp2rl))
+         
 }
 
 exp_02 <- exp_02 %>% 
-  rename(hhid02 = hhid,
-         urban = urban02) 
-
-exp_06 <- exp_06 %>% 
-  mutate(across(xa, as.character)) %>% 
-  rename(hhwt = wt9,
-         urban = urban06) %>%
-  mutate(across(c(xa, hoso, hhid, huyen), as.double))  
+  mutate(year = 2002) %>% 
+  select(year, tinh02, huyen02, xa02, diaban02, hoso02, riceexp_share, food_share, tobac_share, educ_share, health_share, riceexp, foodreal, tobac12m, educex_2, hlthex_2, urban02, wt30) %>% 
+  rename_with(~ str_replace(.x, "02", ""), everything()) %>% 
+  rename(hhwt = wt30)
 
 exp_04 <- exp_04 %>% 
-  select(-huyen) %>% 
+  mutate(year = 2004) %>% 
+  select(year, tinh, huyen, xa, hoso, riceexp_share, food_share, tobac_share, educ_share, health_share, riceexp, foodreal, tobac12m, educex_2, hlthex_2, urban04, hhwt) %>% 
   rename(urban = urban04)
+
+exp_04 <- merge(exp_04, diaban04, by = c("tinh", "huyen", "xa")) %>% 
+  rename(diaban = diaban04)
+
+exp_06 <- exp_06 %>% 
+  mutate(year = 2006) %>% 
+  select(year, tinh, huyen, xa, hoso, riceexp_share, food_share, tobac_share, educ_share, health_share, riceexp, foodreal, tobac12m, educex_2, hlthex_2, urban06, wt9) %>% 
+  rename(urban = urban06,
+         hhwt = wt9)
+
+exp_06 <- inner_join(exp_06, diaban06, by = c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
+  rename(diaban = diaban06)
+
+exp0204 <- bind_rows(exp_02, exp_04)
+exp0206 <- bind_rows(exp_02, exp_06)
+
+exp0204 <- merge(exp0204, provtariffs0204, by = c("tinh", "year"))
+exp0206 <- merge(exp0204, provtariffs0206, by = c("tinh", "year"))
+
+exp0204_p <- 
