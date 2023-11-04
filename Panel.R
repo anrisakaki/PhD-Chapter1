@@ -199,5 +199,15 @@ ivid06 <- merge(ivid06, age06, by = c("tinh", "huyen", "xa", "hoso", "matv")) %>
 
 ivid0206 <- bind_rows(ivid02_06, ivid06)
 
-ivid <- c("tinh", "huyen", "xa", "diaban", "hoso", "matv", "year", "age", "sex")
+ivid0204 <- ivid0204 %>% 
+  mutate(across(sex, as.numeric),
+         female = ifelse(sex == 2, 1, 0)) %>% 
+  select(-sex)
+
+ivid0206 <- ivid0206 %>% 
+  mutate(across(sex, as.numeric),
+         female = ifelse(sex == 2, 1, 0)) %>% 
+  select(-sex)
+
+ivid <- c("tinh", "huyen", "xa", "diaban", "hoso", "matv", "year", "age", "female")
 hhid <- c("tinh", "huyen", "xa", "diaban", "hoso", "year")
