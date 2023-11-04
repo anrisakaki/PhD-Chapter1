@@ -125,4 +125,4 @@ etable(list(
         subset(school0206_p, age > 11),
         weights = ~hhwt,
         vcov = ~tinh)  
-))
+), tex = T)
