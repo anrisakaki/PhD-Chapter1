@@ -79,7 +79,7 @@ panel02_04 <- panel0204_ %>%
   rename_with(~ str_replace(.x, "02", ""), everything())  
 
 panel04 <- panel0204_ %>% 
-  select(c(tinh, huyen, xa, hoso, hhid)) %>% 
+  select(c(tinh, huyen, xa, diaban, hoso, hhid)) %>% 
   mutate(year = 2004)
 
 panel0204 <- bind_rows(panel02_04, panel04)
