@@ -43,4 +43,9 @@ exp0206 <- bind_rows(exp_02, exp_06)
 exp0204 <- merge(exp0204, provtariffs0204, by = c("tinh", "year"))
 exp0206 <- merge(exp0204, provtariffs0206, by = c("tinh", "year"))
 
-exp0204_p <- 
+exp0204_p <- merge(panel0204, exp0204, by = hhid)
+exp0206_p <- merge(panel0204, exp0206, by = hhid)
+
+
+save(exp0204_p, file = "exp0204_p.rda")
+save(exp0206_p, file = "exp0206_p.rda")
