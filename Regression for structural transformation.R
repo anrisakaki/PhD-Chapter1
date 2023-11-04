@@ -67,3 +67,22 @@ etable(hours_twfe, tex = T)
 etable(days_twfe, tex = T)
 
 etable(housework_twfe, tex = T)
+
+etable(list(
+  feols(tal ~ i(as.factor(female), -provtariff) | year + ivid,
+        data = emp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(tal ~ i(as.factor(female), -provtariff) | year + ivid,
+        data = emp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(tal ~ i(as.factor(female), -provtariff_f) | year + ivid,
+        data = emp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(tal ~ i(as.factor(female), -provtariff_f) | year + ivid,
+        data = emp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh)  
+), tex = T)
