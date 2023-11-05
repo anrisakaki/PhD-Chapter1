@@ -24,11 +24,11 @@ save(emp0206_p, file = 'employment0206_p.rda')
 # REGRESSION ON STRUCTURAL TRANSFORMATION USING PANEL DATA #
 ############################################################
 
-setFixest_dict(c("as.factor(Female)" = "Female",
-                 "provtariff" = "Tariff_{pt}",
-                 "provtariff_f" = "Tariff_{pt}^f",
-                 "as.factor(Female)0" = "",
-                 "as.factor(Female)1" = "Female",
+setFixest_dict(c("as.factor(female)" = "Female",
+                 "-provtariff" = "Tariff_{pt}",
+                 "-provtariff_f" = "Tariff_{pt}^f",
+                 "as.factor(female)0" = "",
+                 "as.factor(female)1" = "Female",
                  "year" = "Year",
                  "ivid" = "Individual",
                  "hhid" = "Household",
@@ -42,23 +42,26 @@ inc_twfe <- lapply(df, function(df) {
   feols(log(inc) ~ i(as.factor(female), provtariff) | year + hhid, data = df, weights = ~hhwt, vcov = ~tinh)
 })
 
-housework_twfe <- lapply(df, function(df) {
-  feols(housework ~ i(as.factor(female), provtariff) | year + hhid, data = df, weights = ~hhwt, vcov = ~tinh)
-})
-
 hours_twfe <- lapply(df, function(df) {
-  feols(log(hours) ~ i(as.factor(female), provtariff) | year + ivid, data = df, weights = ~hhwt, vcov = ~tinh)
+  feols(log(hours) ~ i(as.factor(female), -provtariff) | year + ivid, data = df, weights = ~hhwt, vcov = ~tinh)
 })
 
 days_twfe <- lapply(df, function(df) {
-  feols(log(days) ~ i(as.factor(female), provtariff) | year + ivid, data = df, weights = ~hhwt, vcov = ~tinh)
+  feols(log(days) ~ i(as.factor(female), -provtariff) | year + ivid, data = df, weights = ~hhwt, vcov = ~tinh)
 })
 
 tal_twfe <- lapply(df, function(df) {
   feols(tal ~ i(as.factor(female), provtariff) | year + ivid, data = df, weights = ~hhwt, vcov = ~tinh)
 })
 
-etable(inc_twfe, tex = T)
+etable(list(feols(log(inc) ~ i(as.factor(female), -provtariff) | year + hhid,
+                  data = emp0204_p,
+                  weights = ~hhwt,
+                  vcov = ~tinh),
+            feols(log(inc) ~ i(as.factor(female), -provtariff) | year + hhid,
+                  data = emp0206_p,
+                  weights = ~hhwt,
+                  vcov = ~tinh)), tex = T)
 
 etable(tal_twfe, tex = T)
 
@@ -86,3 +89,14 @@ etable(list(
         weights = ~hhwt,
         vcov = ~tinh)  
 ), tex = T)
+
+ etable(list(
+  feols(housework ~ provtariff | year + hhid,
+        subset(emp0204_p, female == 0 & married == 1),
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(housework ~ provtariff | year + hhid,
+        subset(emp0206_p, female == 0 & married == 1),
+        weights = ~hhwt,
+        vcov = ~tinh)), tex = T)
+
