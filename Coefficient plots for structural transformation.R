@@ -1,8 +1,8 @@
-#####################################################################
-# PLOTTING REALLOCATION INTO THE WEARING APPAREL AND LEATHER SECTOR # 
-#####################################################################
+##############################################################
+# PLOTTING WORKING IN THE WEARING APPAREL AND LEATHER SECTOR # 
+##############################################################
 
-dict = c("as.factor(female)" = "Female")
+dict = c("as.factor(female)" = "Female", "provtariff" = " ")
 
 setFixest_coefplot(dict = dict, grid = F, zero.par = list( type="dotted", lty=2), main = "")
 
@@ -112,3 +112,32 @@ iplot(list(
 legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9,
        legend = c("Urban", "Rural"))
 dev.off()
+
+png("reallocation_lpm_hours_020406.png")
+iplot(list(
+  feols(hours ~ i(as.factor(female), -provtariff) | year + ivid,
+        emp0204_p,
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(log(hours) ~ i(as.factor(female), -provtariff) | year + ivid,
+        emp0206_p,
+        vcov = ~tinh,
+        weights = ~hhwt)),  main = "")
+legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 0.7, bty = "n", 
+       legend = c("2 years", "4 years"))
+dev.off()
+
+png("reallocation_lpm_hours_020406.png")
+iplot(list(
+  feols(log(days) ~ i(as.factor(female), -provtariff) | year + ivid,
+        emp0204_p,
+        vcov = ~tinh,
+        weights = ~hhwt),
+  feols(log(days) ~ i(as.factor(female), -provtariff) | year + ivid,
+        emp0206_p,
+        vcov = ~tinh,
+        weights = ~hhwt)), main = "")
+legend("bottomleft", col = 1:2, pch = 1, lwd = 2, cex = 0.7, bty = "n", 
+       legend = c("2 years", "4 years"))
+dev.off()
+
