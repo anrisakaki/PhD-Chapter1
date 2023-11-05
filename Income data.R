@@ -23,12 +23,18 @@ inc04 <- ho1_04 %>%
          wage_tot = tthu_4) %>% 
   mutate(wage_tot = ifelse(wage_tot == 0, NA, wage_tot))
 
+inc04 <- merge(inc04, diaban04, by = c("tinh", "huyen", "xa")) %>% 
+  rename(diaban = diaban04)
+
 inc06 <- ttchung_06 %>% 
   select(tinh, huyen, xa, hoso, thunhap, tongthu_04) %>% 
   rename(hhinc = thunhap,
          wage_tot = tongthu_04) %>% 
   mutate(year = 2006,
          wage_tot = ifelse(wage_tot == 0, NA, wage_tot))
+
+inc06 <- inner_join(inc06, diaban06, by = c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
+  rename(diaban = diaban06)
 
 inc0204 <- bind_rows(inc02, inc04)
 inc0206 <- bind_rows(inc02, inc06)
@@ -38,5 +44,9 @@ inc_spouse_0204 <- emp0204_p %>%
 inc_spouse_0206 <- emp0206_p %>% 
   filter(female == 1 & married == 1)
 
-inc_spouse_0204_p <- merge(inc_spouse_0204, inc0204, by = hhid)
-inc_spouse_0206_p <- merge(inc_spouse_0206, inc0206, by = hhid)
+inc_spouse_0204_p <- merge(inc_spouse_0204, inc0204, by = hhid) %>%
+  mutate(wage_share = inc/wage_tot,
+         wage_share = ifelse(wage_share >= 1 | wage_share < 0, NA, wage_share))
+inc_spouse_0206_p <- merge(inc_spouse_0206, inc0206, by = hhid) %>%
+  mutate(wage_share = inc/wage_tot,
+         wage_share = ifelse(wage_share >= 1 | wage_share < 0, NA, wage_share))
