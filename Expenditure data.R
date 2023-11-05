@@ -133,3 +133,18 @@ school0206 <- merge(school0206, provtariffs0206, by = c("tinh", "year"))
 
 school0204_p <- merge(ivid0204, school0204, by = ivid)
 school0206_p <- merge(ivid0206, school0206, by = ivid)
+
+# Education level of wife 
+
+educwife_0204 <- emp0204_p %>% 
+  filter(married == 1 & female == 1) %>% 
+  select(year, hhid, ivid, tinh, huyen, xa, diaban, hoso, matv, educ)
+
+educwife_0206 <- emp0206_p %>% 
+  filter(married == 1 & female == 1) %>% 
+  select(year, hhid, ivid, tinh, huyen, xa, diaban, hoso, matv, educ)
+
+educ_exp_0204_p <- merge(educwife_0204, exp0204_p, by = c("year", "tinh", "huyen", "xa", "diaban", "hoso", "hhid"))
+educ_exp_0206_p <- merge(educwife_0206, exp0206_p, by = c("year", "tinh", "huyen", "xa", "diaban", "hoso")) %>% 
+  select(-hhid.x) %>% 
+  rename(hhid = hhid.y)
