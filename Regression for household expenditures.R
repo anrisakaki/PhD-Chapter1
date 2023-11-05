@@ -11,7 +11,7 @@ etable(list(
         data = exp0206_p,
         vcov = ~tinh,
         weights = ~hhwt)  
-))
+), tex = T)
 
 #######################################################
 # REGRESSION ON EXPENDITURE ON HOUSEHOLD PUBLIC GOODS #
