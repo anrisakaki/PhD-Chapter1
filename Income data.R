@@ -61,12 +61,3 @@ emp0206_p <- merge(emp0206_p, hhinc0206, by = hhid) %>%
   ungroup() %>% 
   select(-c(tot_inc_share, agri_impute))
   
-# Horowitz-Manski Bounds 
-
-hm_upperbound_02 <- max(emp0204_p$inc_share[emp0204_p$year == 2002], na.rm = T)
-hm_upperbound_04 <- max(emp0204_p$inc_share[emp0204_p$year == 2004], na.rm = T)
-hm_upperbound_06 <- max(emp0206_p$inc_share[emp0206_p$year == 2006], na.rm = T)
-
-hm_lowerbound_02 <- min(emp0204_p$inc_share[emp0204_p$year == 2002], na.rm = T)
-hm_lowerbound_04 <- min(emp0204_p$inc_share[emp0204_p$year == 2004], na.rm = T)
-hm_lowerbound_06 <- min(emp0206_p$inc_share[emp0206_p$year == 2006], na.rm = T)
