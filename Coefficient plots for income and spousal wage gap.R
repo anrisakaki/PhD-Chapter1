@@ -2,12 +2,10 @@ dict = c( "as.factor(Female)" = "Female", "provtariff" = "Province-level tariff"
 
 setFixest_coefplot(dict = dict, grid = F)
 
-inc_0204_spouse_p <- inc_0204_spouse_p %>%
-  mutate(provtariff = -provtariff,
-         provtariff_f = -provtariff_f)
-inc_0206_spouse_p <- inc_0206_spouse_p %>%
-  mutate(provtariff = -provtariff,
-         provtariff_f = -provtariff_f)
+emp0204_p <- emp0204_p %>%
+  mutate(provtariff = -provtariff)
+emp0206_p <- emp0206_p %>%
+  mutate(provtariff = -provtariff)
 
 png("tce_finc_020406.png")
 coefplot(list(
