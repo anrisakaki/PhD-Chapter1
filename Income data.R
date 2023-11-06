@@ -33,17 +33,9 @@ hhinc0206_p <- merge(hhinc0206_p, weights_06, by = c("tinh", "huyen", "xa"))
 
 emp0204_p <- merge(emp0204_p, hhinc0204, by = hhid) %>%
   mutate(inc_share = inc/hhinc, 
-         inc_share = ifelse(inc_share >= 1 | inc_share < 0, NA, inc_share),
-         inc_share = ifelse(is.na(inc_share), 0, inc_share)) %>% 
-  group_by(hhid, year) %>%
-  mutate(total_hhinc_ratio = sum(inc_share)) %>% 
-  # If both partners work on field or have own business total_hhinc_ratio will be equals to 0
-  mutate(inc_share = ifelse(total_hhinc_ratio == 0 & inc_share == 0, 0.5, inc_share)) %>% 
-  select(-total_hhinc_ratio) %>% 
-  ungroup()  
+         inc_share = ifelse(inc_share >= 1 | inc_share < 0, NA, inc_share))
 
 emp0206_p <- merge(emp0206_p, hhinc0206, by = hhid) %>%
   mutate(inc_share = inc/hhinc, 
-         inc_share = ifelse(inc_share >= 1 | inc_share < 0, NA, inc_share),
-         inc_share = ifelse(is.na(inc_share), 0, inc_share))
+         inc_share = ifelse(inc_share >= 1 | inc_share < 0, NA, inc_share))
   
