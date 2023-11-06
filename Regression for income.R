@@ -3,42 +3,43 @@
 #####################################################################################
 
 etable(list(
-  feols(log(inc) ~ i(as.factor(female), provtariff) | ivid + year,
-        subset(emp0204_p, work == 1),
+  feols(log(inc) ~ i(as.factor(female), provtariff) | hhid + year,
+        subset(emp0204_p, work == 1 & spouse == 1 & wider == 0),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(inc) ~ i(as.factor(female), provtariff)| ivid + year,
-        subset(emp0206_p, work == 1),
+  feols(log(inc) ~ i(as.factor(female), provtariff)| hhid + year,
+        subset(emp0206_p, work == 1 & spouse == 1 & wider == 0),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(inc) ~ i(as.factor(female), provtariff_f) | ivid + year,
-        subset(emp0204_p, work == 1),
+  feols(log(inc) ~ i(as.factor(female), provtariff_f) | hhid + year,
+        subset(emp0204_p, work == 1 & spouse == 1 & wider == 0),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(log(inc) ~ i(as.factor(female), provtariff_f) | ivid + year,
-        subset(emp0206_p, work == 1),
+  feols(log(inc) ~ i(as.factor(female), provtariff_f) | hhid + year,
+        subset(emp0206_p, work == 1 & spouse == 1 & wider == 0),
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
 
 etable(list(
   feols(inc_share ~ provtariff | hhid + year,
-        subset(emp0204_p, work == 1 & female == 1 & married == 1),
+        subset(emp0204_p, work == 1 & female == 1 & relationship == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(inc_share ~ provtariff| hhid + year,
-        subset(emp0206_p, work == 1 & female == 1 & married == 1),
+        subset(emp0206_p, work == 1 & female == 1 & relationship == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
   feols(inc_share ~provtariff_f | hhid + year,
-        subset(emp0204_p, work == 1 & female == 1 & married == 1),
+        subset(emp0204_p, work == 1 & female == 1 & relationship == 2),
         weights = ~hhwt, 
         vcov = ~tinh),
-  feols(inc_share ~ provtariff_f | hhid + year,
-        subset(emp0206_p, work == 1 & female == 1 & married == 1),
+  feols(inc_share ~ provtariff_f | ivid + year,
+        subset(emp0206_p, work == 1 & female == 1 & relationship == 2),
         weights = ~hhwt, 
         vcov = ~tinh)  
 ), tex = TRUE)
+
 
 ##########################
 # TOTAL HOUSEHOLD INCOME #
