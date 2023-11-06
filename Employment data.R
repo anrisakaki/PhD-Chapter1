@@ -18,18 +18,22 @@ employment_mf_02 <- list(m1_02, m3_02, educ_02) %>%
          year = 2002 ) %>%   
   select(-c(tinh, xa, hoso, matv)) %>%
   select(-matches("\\.x|\\.y")) %>% 
-  mutate(work = ifelse(m3c2 == 1, 1, 0),
+  mutate(wage_work = ifelse(m3c1a == 1, 1, 0),
+         work = ifelse(m3c2 == 1, 1, 0),
          married = ifelse(m1c6 == 2, 1, 0),
-         housework = ifelse(m3c17 == 1, 1, 0)) %>% 
+         housework = ifelse(m3c17 == 1, 1, 0),
+         self_agri = ifelse(m3c1b == 1, 1, 0),
+         self_bus = ifelse(m3c1c == 1, 1, 0)) %>% 
   rename("educ" = m2c1,
          "industry" = m3c7,
          age = m1c5,
          hours = m3c11,
          sex = m1c2,
-         days = m3c10) %>%
+         days = m3c10,
+         relationship = m1c3) %>%
   filter(age >= 16) %>%
   filter(age < 65) %>% 
-  select(tinh02, huyen02, xa02, diaban02, hoso02, matv02, sex, educ, work, industry, age, married, days, hours, year, housework) 
+  select(tinh02, huyen02, xa02, diaban02, hoso02, matv02, relationship, sex, educ, work, wage_work, self_agri, self_bus, industry, age, married, days, hours, year, housework) 
 
 employment_mf_02 <- left_join(employment_mf_02, inc02, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02", "matv02")) %>% distinct()
 
@@ -54,18 +58,22 @@ employment_mf_04 <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "h
          days = m4ac7, 
          hours = m4ac8,
          sex = m1ac2,
-         educ = m2c1) %>% 
+         educ = m2c1,
+         relationship = m1ac3) %>% 
   mutate(work = ifelse(m4ac2 == 1, 1, 0),
+         wage_work = ifelse(m4ac1a == 1, 1, 0),
          m4ac11 = ifelse(is.na(m4ac11), 0 , m4ac11),
          m4ac12e = ifelse(is.na(m4ac12e), 0 , m4ac12e),
          inc = m4ac11 + m4ac12e,
          housework = ifelse(m4ac26 == 1, 1, 0),
          married = ifelse(m1ac6 == 1, 1, 0),
          year = 2004,
-         female = ifelse(sex == 2, 1, 0)) %>% 
+         female = ifelse(sex == 2, 1, 0),
+         self_agri = ifelse(m4ac1b == 1, 1, 0),
+         self_bus = ifelse(m4ac1c == 1, 1, 0)) %>% 
   filter(age >= 16) %>%
   filter(age < 65) %>% 
-  select(tinh, huyen, xa, hoso, matv, sex, educ, work, industry, age, married, days, hours,inc, year, housework, female) #Merging data on age, sex, marital status, and industry worked in (N = 202,321)
+  select(tinh, huyen, xa, hoso, matv, relationship, sex, educ, wage_work, work, self_agri, self_bus, industry, age, married, days, hours,inc, year, housework, female) #Merging data on age, sex, marital status, and industry worked in (N = 202,321)
 
 employment_mf_04 <- list(employment_mf_04, diaban04, weights_04) %>% 
   reduce(merge, by = c("tinh", "huyen", "xa")) %>% 
@@ -80,7 +88,7 @@ employment_mf_04$sex <- factor(employment_mf_04$sex,
 m4a_06$m4ac5[is.na(m4a_06$m4ac5)] <- 0
 
 m1a_06 <- m1a_06 %>% 
-  select(tinh, huyen, xa, hoso, matv, m1ac2, m1ac5, m1ac6)
+  select(tinh, huyen, xa, hoso, matv, m1ac2, m1ac3, m1ac5, m1ac6)
 
 educ_06 <- m2a_06 %>% 
   select(tinh, huyen, xa, hoso, matv, m2ac1)  
@@ -96,7 +104,8 @@ employment_mf_06 <- merge(employment_mf_06, weights_06, by = c("tinh", "huyen", 
          days = m4ac7, 
          hours = m4ac8,
          sex = m1ac2,
-         educ = m2ac1) %>% 
+         educ = m2ac1,
+         relationship = m1ac3) %>% 
   mutate(work = ifelse(m4ac2 == 1, 1, 0),
          m4ac11 = ifelse(is.na(m4ac11), 0 , m4ac11),
          m4ac12f = ifelse(is.na(m4ac12f), 0 , m4ac12f),
@@ -104,8 +113,10 @@ employment_mf_06 <- merge(employment_mf_06, weights_06, by = c("tinh", "huyen", 
          housework = ifelse(m4ac26 == 1, 1, 0),
          married = ifelse(m1ac6 == 1, 1, 0),
          year = 2006,
-         female = ifelse(sex == 2, 1, 0)) %>% 
-  select(tinh, huyen, xa, hoso, matv, sex, educ, work, industry, age, married, days, hours, inc, year, housework, female) 
+         female = ifelse(sex == 2, 1, 0),
+         self_agri = ifelse(m4ac1b == 1, 1, 0),
+         self_bus = ifelse(m4ac1c == 1, 1, 0)) %>% 
+  select(tinh, huyen, xa, hoso, matv, relationship, sex, educ, work, self_agri, self_bus, industry, age, married, days, hours, inc, year, housework, female) 
 
 employment_mf_06 <- left_join(employment_mf_06, diaban06, by =c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
   rename(diaban = diaban06)
