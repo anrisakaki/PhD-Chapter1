@@ -23,7 +23,8 @@ employment_mf_02 <- list(m1_02, m3_02, educ_02) %>%
          married = ifelse(m1c6 == 2, 1, 0),
          housework = ifelse(m3c17 == 1, 1, 0),
          self_agri = ifelse(m3c1b == 1, 1, 0),
-         self_bus = ifelse(m3c1c == 1, 1, 0)) %>% 
+         self_bus = ifelse(m3c1c == 1, 1, 0),
+         divorce = ifelse(m1c6 == 4, 1, 0)) %>% 
   rename("educ" = m2c1,
          "industry" = m3c7,
          age = m1c5,
@@ -33,7 +34,7 @@ employment_mf_02 <- list(m1_02, m3_02, educ_02) %>%
          relationship = m1c3) %>%
   filter(age >= 16) %>%
   filter(age < 65) %>% 
-  select(tinh02, huyen02, xa02, diaban02, hoso02, matv02, relationship, sex, educ, work, wage_work, self_agri, self_bus, industry, age, married, days, hours, year, housework) 
+  select(tinh02, huyen02, xa02, diaban02, hoso02, matv02, relationship, sex, divorce, educ, work, wage_work, self_agri, self_bus, industry, age, married, days, hours, year, housework) 
 
 employment_mf_02 <- left_join(employment_mf_02, inc02, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02", "matv02")) %>% distinct()
 
@@ -70,10 +71,11 @@ employment_mf_04 <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "h
          year = 2004,
          female = ifelse(sex == 2, 1, 0),
          self_agri = ifelse(m4ac1b == 1, 1, 0),
-         self_bus = ifelse(m4ac1c == 1, 1, 0)) %>% 
+         self_bus = ifelse(m4ac1c == 1, 1, 0),
+         divorce = ifelse(m4ac6 == 4, 1, 0)) %>% 
   filter(age >= 16) %>%
   filter(age < 65) %>% 
-  select(tinh, huyen, xa, hoso, matv, relationship, sex, educ, wage_work, work, self_agri, self_bus, industry, age, married, days, hours,inc, year, housework, female) #Merging data on age, sex, marital status, and industry worked in (N = 202,321)
+  select(tinh, huyen, xa, hoso, matv, relationship, divorce, sex, educ, wage_work, work, self_agri, self_bus, industry, age, married, days, hours,inc, year, housework, female) #Merging data on age, sex, marital status, and industry worked in (N = 202,321)
 
 employment_mf_04 <- list(employment_mf_04, diaban04, weights_04) %>% 
   reduce(merge, by = c("tinh", "huyen", "xa")) %>% 
@@ -115,8 +117,9 @@ employment_mf_06 <- merge(employment_mf_06, weights_06, by = c("tinh", "huyen", 
          year = 2006,
          female = ifelse(sex == 2, 1, 0),
          self_agri = ifelse(m4ac1b == 1, 1, 0),
-         self_bus = ifelse(m4ac1c == 1, 1, 0)) %>% 
-  select(tinh, huyen, xa, hoso, matv, relationship, sex, educ, work, self_agri, self_bus, industry, age, married, days, hours, inc, year, housework, female) 
+         self_bus = ifelse(m4ac1c == 1, 1, 0),
+         divorce = ifelse(m1ac6 == 4, 1, 0)) %>% 
+  select(tinh, huyen, xa, hoso, matv, relationship, divorce, sex, educ, work, self_agri, self_bus, industry, age, married, days, hours, inc, year, housework, female) 
 
 employment_mf_06 <- left_join(employment_mf_06, diaban06, by =c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
   rename(diaban = diaban06)
