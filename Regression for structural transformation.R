@@ -38,10 +38,6 @@ setFixest_dict(c("as.factor(female)" = "Female",
 
 df <- list(emp0204_p, emp0206_p)
 
-inc_twfe <- lapply(df, function(df) {
-  feols(log(inc) ~ i(as.factor(female), provtariff) | year + hhid, data = df, weights = ~hhwt, vcov = ~tinh)
-})
-
 hours_twfe <- lapply(df, function(df) {
   feols(log(hours) ~ i(as.factor(female), -provtariff) | year + ivid, data = df, weights = ~hhwt, vcov = ~tinh)
 })
@@ -63,13 +59,9 @@ etable(list(feols(log(inc) ~ i(as.factor(female), -provtariff) | year + hhid,
                   weights = ~hhwt,
                   vcov = ~tinh)), tex = T)
 
-etable(tal_twfe, tex = T)
-
 etable(hours_twfe, tex = T)
 
 etable(days_twfe, tex = T)
-
-etable(housework_twfe, tex = T)
 
 etable(list(
   feols(tal ~ i(as.factor(female), -provtariff) | year + ivid,
