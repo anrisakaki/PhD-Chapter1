@@ -90,23 +90,23 @@ etable(list(
 # Education per child 
 
 etable(list(
-  feols(enrolled ~ i(as.factor(female), provtariff) | hhid + year,
+  feols(enrolled ~ i(as.factor(female), -provtariff) | hhid + year,
         school0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ i(as.factor(female), provtariff) | hhid + year,
+  feols(enrolled ~ i(as.factor(female), -provtariff) | hhid + year,
         school0206_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ i(as.factor(female), provtariff) | hhid + year,
+  feols(enrolled ~ i(as.factor(female), -provtariff) | hhid + year,
         subset(school0204_p, age > 16),
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(enrolled ~ i(as.factor(female), provtariff) | hhid + year,
+  feols(enrolled ~ i(as.factor(female), -provtariff) | hhid + year,
         subset(school0206_p, age > 16),
         weights = ~hhwt,
         vcov = ~tinh)  
-))
+), tex = T)
 
 etable(list(
   feols(log(educ_exp) ~ i(as.factor(female), provtariff) | hhid + year,
