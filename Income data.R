@@ -61,3 +61,38 @@ emp0206_p <- merge(emp0206_p, hhinc0206, by = hhid) %>%
   ungroup() %>% 
   select(-c(tot_inc_share, agri_impute))
   
+# Wage income 
+
+hhwage_02 <- m5aho_02 %>% 
+  filter(m5ac1 == 1) %>% 
+  mutate(totwage = m5ac7e+m5ac9) %>% 
+  select(tinh, xa, hoso, totwage) %>% 
+  mutate(
+    huyen = substr(as.character(xa), 4, 5),   
+    diaban = substr(as.character(hoso), 1, 2),
+    hoso = substr(as.character(hoso), nchar(as.character(hoso)) - 1, nchar(as.character(hoso))),
+    xa = substr(as.character(xa), 6, 7),
+    across(c(tinh, huyen, xa, hoso, diaban), as.numeric)    
+  ) %>% 
+  select(tinh, huyen, xa, diaban, hoso, everything()) %>% 
+  mutate(year = 2002)
+
+hhwage_04 <- ho1_04 %>% 
+  select(tinh, huyen, xa, hoso, m4atn) %>% 
+  rename(totwage = m4atn)
+hhwage_04 <- merge(hhwage_04, diaban04, by = c("tinh", "huyen", "xa")) %>% 
+  rename(diaban = diaban04) %>% 
+  mutate(year = 2004)
+
+hhwage_06 <- ttchung_06 %>% 
+  select(tinh, huyen, xa, hoso, m4atn) %>% 
+  rename(totwage = m4atn)  
+hhwage_06 <- inner_join(hhwage_06, diaban06, by = c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
+  rename(diaban = diaban06) %>% 
+  mutate(year = 2006)
+
+hhwage0204 <- bind_rows(hhwage_02, hhwage_04)
+hhwage0206 <- bind_rows(hhwage_02, hhwage_06)
+
+hhinc0204_p <- left_join(hhinc0204_p, hhwage0204, by = hhid)
+hhinc0206_p <- left_join(hhinc0206_p, hhwage0206, by = hhid)
