@@ -16,9 +16,9 @@ emp0206_p <- merge(employment_0206, ivid0206, by = ivid) %>%
 
 # write .rda files 
 save(employment_0204, file='employment0204.rda')
-save(emp0204_p, file='employment0204_p.rda')
+save(emp0204_p, file='emp0204_p')
 save(employment_0206, file = 'employment0206.rda')
-save(emp0206_p, file = 'employment0206_p.rda')
+save(emp0206_p, file = 'emp0206_p.rda')
 
 ############################################################
 # REGRESSION ON STRUCTURAL TRANSFORMATION USING PANEL DATA #
