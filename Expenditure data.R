@@ -148,3 +148,41 @@ educ_exp_0204_p <- merge(educwife_0204, exp0204_p, by = c("year", "tinh", "huyen
 educ_exp_0206_p <- merge(educwife_0206, exp0206_p, by = c("year", "tinh", "huyen", "xa", "diaban", "hoso")) %>% 
   select(-hhid.x) %>% 
   rename(hhid = hhid.y)
+
+# Savings 
+
+savings_02 <- m6b34_02 %>% 
+  select(tinh02, huyen02, xa02, diaban02, hoso02, m6b3c2h404, m6b3c2h405, m6b4c2h509b, m6b4c2h509d) %>% 
+  rename(savings = m6b4c2h509b, 
+         wedding = m6b3c2h404,
+         funeral = m6b3c2h405,
+         gold = m6b4c2h509d) %>%
+  rename_with(~ str_replace(.x, "02", ""), everything()) %>%   
+  mutate(year = 2002)
+
+savings_04 <- m5b34_04 %>% 
+  select(tinh, huyen, xa, hoso, m5b3c2_4, m5b3c2_5, m5b4c2_3, m5b4c2_4) %>% 
+  rename(wedding = m5b3c2_4,
+         funeral = m5b3c2_5,
+         gold = m5b4c2_3, 
+         savings = m5b4c2_4) %>% 
+  mutate(year = 2004)
+savings_04 <- merge(savings_04, diaban04, by = c("tinh", "huyen", "xa")) %>% 
+  rename(diaban = diaban04)
+
+savings_06 <- m5b34_06 %>% 
+  select(tinh, huyen, xa, hoso, m5b3c2_04, m5b3c2_05, m5b4c2_3, m5b4c2_4) %>% 
+  rename(wedding = m5b3c2_04,
+         funeral = m5b3c2_05,
+         gold = m5b4c2_3,
+         savings = m5b4c2_4) %>% 
+  mutate(year = 2006)
+savings_06 <- inner_join(savings_06, diaban06, by = c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
+  rename(diaban = diaban06)
+
+savings0204 <- bind_rows(savings_02, savings_04)
+savings0206 <- bind_rows(savings_02, savings_06)
+
+exp0204_p <- left_join(exp0204_p, savings0204, by = hhid) %>% 
+  select(year, tinh, huyen, xa, diaban, everything())
+exp0206_p <- left_join(exp0206_p, savings0206, by = hhid)
