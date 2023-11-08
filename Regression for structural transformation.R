@@ -82,6 +82,17 @@ etable(list(
         vcov = ~tinh)  
 ), tex = T)
 
+etable(list(
+  feols(tal ~ i(as.factor(female), -provtariff_k) | year + ivid,
+        data = emp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(tal ~ i(as.factor(female), -provtariff_k) | year + ivid,
+        data = emp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh) 
+), tex = T)
+
  etable(list(
   feols(housework ~ provtariff | year + hhid,
         subset(emp0204_p, female == 0 & married == 1),
