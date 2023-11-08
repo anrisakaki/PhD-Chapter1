@@ -56,10 +56,6 @@ save(exp0206_p, file = "exp0206_p.rda")
 # EDUCATION EXPENDITURE PER CHILD #
 ###################################
 
-######################################################################
-# CONSTRUCTING DATABASE OF CHILDREN AND THEIR EDUCATIONAL ATTAINMENTS#
-######################################################################
-
 # 2002 
 juniors_02 <- m1_02 %>% 
   select(tinh02, xa02, diaban02, huyen02, hoso02, matv02, m1c2, m1c5) %>% 
