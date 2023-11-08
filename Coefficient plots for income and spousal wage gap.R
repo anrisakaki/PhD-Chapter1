@@ -90,3 +90,37 @@ coefplot(list(
 legend("bottomleft", col = 1:3, pch = 16, lwd = 2, bty = "n", cex = 0.9,
        legend = c("High school and above", "Secondary", "Primary"))
 dev.off()
+
+
+# Age
+png("tce_finc_educ_0204.png")
+coefplot(list(
+  feols(inc_share ~ provtariff | hhid + year,
+        subset(emp0204_p, female == 1 & educ > 9 & year == 2002 & relationship == 2 | year == 2004 & relationship == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_share ~ provtariff | hhid + year,
+        subset(emp0204_p, female == 1 & educ > 5 & educ < 10 & year == 2002 & relationship == 2 | year == 2004 & relationship == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_share ~ provtariff | hhid + year,
+        subset(emp0204_p, female == 1 & educ < 6 & year == 2002 & relationship == 2 | year == 2004 & relationship == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh)), main = "", zero.par = list( type="dotted", lty=2))
+legend("bottomleft", col = 1:3, pch = 16, lwd = 2, bty = "n", cex = 0.9,
+       legend = c("High school and above", "Secondary", "Primary"))
+dev.off()
+
+png("tce_finc_educ_0206.png")
+coefplot(list(
+  feols(inc_share ~ provtariff | hhid + year,
+        subset(emp0206_p, age > 25 & age < 31 & year == 2002 | year == 2006),
+        weights = ~hhwt, 
+        vcov = ~tinh),  
+  feols(inc_share ~ provtariff | hhid + year,
+        subset(emp0206_p, age > 30 & year == 2002 | year == 2006),
+        weights = ~hhwt, 
+        vcov = ~tinh)), main = "", zero.par = list( type="dotted", lty=2))
+legend("bottomleft", col = 1:2, pch = 16, bty = "n", cex = 0.9, 
+       legend = c("18-30", "> 30"))
+dev.off()
