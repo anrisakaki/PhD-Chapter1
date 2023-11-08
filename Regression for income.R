@@ -65,3 +65,13 @@ etable(list(
         hhinc0206_p,
         weights = ~hhwt, 
         vcov = ~tinh)), tex = T)
+
+etable(list(
+  feols(log(totwage) ~ provtariff | hhid + year,
+        hhinc0204_p,
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(log(totwage) ~ provtariff | hhid + year,
+        hhinc0206_p,
+        weights = ~hhwt, 
+        vcov = ~tinh)), tex = T)
