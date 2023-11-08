@@ -87,7 +87,50 @@ etable(list(
         weights = ~hhwt) 
 ), tex = T)
 
-# Education per child 
+
+##################################
+# WEDDINGS, FUNERALS AND SAVINGS #
+##################################
+
+etable(list(
+  feols(log(wedding) ~ provtariff | hhid + year, 
+  exp0204_p,
+  weights = ~hhwt,
+  vcov = ~tinh),
+  feols(log(funeral) ~ provtariff | hhid + year, 
+        exp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(log(wedding) ~ provtariff | hhid + year, 
+        exp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(log(funeral) ~ provtariff | hhid + year, 
+        exp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh)), tex = T)
+
+etable(list(
+  feols(log(savings) ~ provtariff | hhid + year, 
+        exp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(log(gold) ~ provtariff | hhid + year, 
+        exp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(log(savings) ~ provtariff | hhid + year, 
+        exp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(log(gold) ~ provtariff | hhid + year, 
+        exp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh)), tex = T)
+
+###########################################
+# CHILDRENS EDUCATION EXP. AND ENROLLMENT #
+###########################################
 
 etable(list(
   feols(enrolled ~ i(as.factor(female), -provtariff) | hhid + year,
