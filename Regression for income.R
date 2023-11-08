@@ -40,6 +40,17 @@ etable(list(
         vcov = ~tinh)  
 ), tex = TRUE)
 
+etable(list(
+  feols(inc_share ~ provtariff_k | hhid + year,
+        subset(emp0204_p, work == 1 & female == 1 & relationship == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh),
+  feols(inc_share ~ provtariff_k | hhid + year,
+        subset(emp0206_p, work == 1 & female == 1 & relationship == 2),
+        weights = ~hhwt, 
+        vcov = ~tinh)
+), tex = TRUE)
+
 
 ##########################
 # TOTAL HOUSEHOLD INCOME #
