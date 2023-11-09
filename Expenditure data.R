@@ -182,3 +182,48 @@ savings0206 <- bind_rows(savings_02, savings_06)
 exp0204_p <- left_join(exp0204_p, savings0204, by = hhid) %>% 
   select(year, tinh, huyen, xa, diaban, everything())
 exp0206_p <- left_join(exp0206_p, savings0206, by = hhid)
+
+# Dwelling 
+
+dwelling_02 <- m8_02 %>% 
+  mutate(
+    tinh = substr(as.character(xa), 1, 3),
+    huyen = substr(as.character(xa), 4, 5),
+    xa = substr(as.character(xa), 6, 7),
+    hoso = substr(as.character(hoso), 4, 5),
+    across(c(tinh, huyen, xa, hoso), as.numeric),
+    m8c21 = ifelse(is.na(m8c21), 0 , m8c21),
+    m8c22 = ifelse(is.na(m8c22), 0 , m8c22),
+    renovation = m8c21 + m8c22,
+    year = 2002
+  ) %>% 
+  rename(totarea = m8c2) %>% 
+  select(year, tinh, huyen, xa, hoso, totarea, renovation)
+dwelling_02 <- inner_join(dwelling_02, diaban02, by = c("tinh" = "tinh02", "huyen" = "huyen02", "xa" = "xa02")) %>% 
+  rename(diaban = diaban02)
+
+dwelling_04 <- m7_04 %>% 
+  mutate(m7c24 = ifelse(is.na(m7c24), 0 , m7c24),
+         m7c25 = ifelse(is.na(m7c25), 0 , m7c25),
+         renovation = m7c24 + m7c25) %>% 
+  rename(totarea = m7c2) %>% 
+  select(tinh, huyen, xa, hoso, totarea, renovation) %>% 
+  mutate(year = 2004)
+dwelling_04 <- merge(dwelling_04, diaban04, by = c("tinh", "huyen", "xa")) %>% 
+  rename(diaban = diaban04)
+
+dwelling_06 <- m7_06 %>% 
+  mutate(m7c24 = ifelse(is.na(m7c24), 0 , m7c24),
+         m7c25 = ifelse(is.na(m7c25), 0 , m7c25),
+         renovation = m7c25 + m7c24) %>% 
+  rename(totarea = m7c2) %>% 
+  select(tinh, huyen, xa, hoso, totarea, renovation) %>% 
+  mutate(year = 2006)  
+dwelling_06 <- inner_join(dwelling_06, diaban06, by = c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
+  rename(diaban = diaban06)
+
+dwelling_0204 <- bind_rows(dwelling_02, dwelling_04)
+dwelling_0206 <- bind_rows(dwelling_02, dwelling_06)
+
+exp0204_p <- left_join(exp0204_p, dwelling_0204, by = hhid)
+exp0206_p <- left_join(exp0206_p, dwelling_0206, by = hhid)
