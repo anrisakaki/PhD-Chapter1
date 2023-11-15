@@ -57,6 +57,7 @@ m6b1_02 <- read_dta(file = "Full VHLSS/VHLSS 2002 N= 45,000/muc6b1.dta")
 m6b2_02 <- read_dta(file = "Full VHLSS/VHLSS 2002 N= 45,000/muc6b2.dta")
 m6b34_02 <- read_dta (file = "Full VHLSS/VHLSS 2002 N= 45,000/muc6b34.dta")
 m7_02 <- read_dta(file = "Full VHLSS/VHLSS 2002 N= 45,000/muc7.dta")
+m8_02 <- read_dta(file = "Full VHLSS/VHLSS 2002 N= 45,000/muc8.dta")
 
 ## 2004 
 ho1_04 <- read_dta(file = "Full VHLSS/2004/ho1.dta")
@@ -72,6 +73,7 @@ m5b2_04 <- read_dta(file = "Full VHLSS/2004/m5b2.dta")
 m5b34_04 <- read_dta(file = "Full VHLSS/2004/m5b3_4.dta")
 m6a_04 <- read_dta(file = "Full VHLSS/2004/m6a.dta")
 m6b_04 <- read_dta(file = "Full VHLSS/2004/m6b.dta")
+m7_04 <- read_dta(file = "Full VHLSS/2004/m7.dta")
 
 ## 2006
 exp_06 <- read_dta(file = "Full VHLSS/2006/hhexpe06.dta")
@@ -86,6 +88,7 @@ m5b2_06 <- read_dta(file = "Full VHLSS/2006/muc5b2.dta") #DF containing hh consu
 m5b34_06 <- read_dta(file = "Full VHLSS/2006/muc5b3_4.dta")
 m6a_06 <- read_dta(file = "Full VHLSS/2006/muc6a.dta")
 m6b_06 <- read_dta(file = "Full VHLSS/2006/muc6b.dta")
+m7_06 <- read_dta(file = "Full VHLSS/2006/muc7.dta")
 ttchung_06 <- read_dta(file = "Full VHLSS/2006/ttchung.dta")
 
 # WVS
