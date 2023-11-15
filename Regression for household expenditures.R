@@ -87,6 +87,25 @@ etable(list(
         weights = ~hhwt) 
 ), tex = T)
 
+etable(list(
+  feols(log(totarea) ~ provtariff | hhid + year,
+        exp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(log(totarea) ~ provtariff | hhid + year,
+        exp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(log(renovation) ~ provtariff | hhid + year,
+        exp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(log(renovation) ~ provtariff | hhid + year,
+        exp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh)  
+))
+
 
 ##################################
 # WEDDINGS, FUNERALS AND SAVINGS #
