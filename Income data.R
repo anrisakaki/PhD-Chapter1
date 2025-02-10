@@ -1,4 +1,4 @@
-inc02 <- inc_02 %>% 
+hhinc02 <- inc_02 %>% 
   mutate(hhinc = rlincomepc * 12 * hhsize) %>%   
   select(tinh02, huyen02, xa02, diaban02, hoso02, hhinc) %>% 
   rename_with(~ str_replace(.x, "02", ""), everything()) %>% 
