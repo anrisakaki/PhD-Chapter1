@@ -29,19 +29,61 @@ emp0206_p <- bind_rows(vhlss02, vhlss06) %>%
 
 etable(list(
   feols(agri ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, work == 1),
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
   feols(agri ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0206_p, work == 1),
+        emp0206_p,
         weights = ~hhwt,
         vcov = ~tinh),
   feols(agri ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, work == 1),
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
   feols(agri ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0206_p, work == 1),
+        emp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh)
+), tex = T)
+
+################################################
+# REGRESSION ON FORMALISATION USING PANEL DATA #
+################################################
+
+etable(list(
+  feols(formal ~ i(as.factor(female), tariff) | year + ivid,
+        emp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(formal ~ i(as.factor(female), tariff) | year + ivid,
+        emp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(formal ~ i(as.factor(female), tariff_f) | year + ivid,
+        emp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(formal ~ i(as.factor(female), tariff_f) | year + ivid,
+        emp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh)
+), tex = T)
+
+etable(list(
+  feols(formal_manu ~ i(as.factor(female), tariff) | year + ivid,
+        emp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(formal_manu ~ i(as.factor(female), tariff) | year + ivid,
+        emp0206_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(formal_manu ~ i(as.factor(female), tariff_f) | year + ivid,
+        emp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(formal_manu ~ i(as.factor(female), tariff_f) | year + ivid,
+        emp0206_p,
         weights = ~hhwt,
         vcov = ~tinh)
 ), tex = T)
