@@ -5,11 +5,9 @@
 # Tariff data was downloaded from Brian McCaig's website: https://sites.google.com/site/briandmccaig/notes-on-vhlsss
 
 tariff <- tariff %>%
-  select(isic2, col2_ave_all, mfn_ave_all)
-
-tariff$isic2 <- as.factor(tariff$isic2)
-
-tariff <- tariff %>% mutate(Change_rate = col2_ave_all - mfn_ave_all)
+  select(isic2, col2_ave_all, mfn_ave_all) %>% 
+  mutate(isic2 = as.factor(isic2),
+         Change_rate = col2_ave_all - mfn_ave_all)
 
 tariff$Industry <-  forcats::fct_recode(tariff$isic2, 
                                         "Agriculture and livestock cultivation" = "1",
