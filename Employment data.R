@@ -3,16 +3,8 @@
 ########################################################
 
 # 2002 
-educ_02 <- m2_02 %>% select(tinh, xa, hoso, matv, tinh02, huyen02, xa02, diaban02, hoso02, matv02, m2c1)
 
-inc02 <- m5a_02 %>% 
-  mutate(inc = m5ac6) %>% 
-  select(tinh02, huyen02, xa02, diaban02, hoso02, matv02, inc) %>% 
-  group_by(tinh02, huyen02, xa02, diaban02, hoso02, matv02) %>% 
-  summarise(inc = sum(inc, na.rm = TRUE), .groups = "drop") %>% 
-  mutate(inc = ifelse(inc == 0, NA, inc))
-
-vhlss02 <- list(m1_02, m3_02, educ_02) %>% 
+vhlss02 <- list(m1_02, m2_02, m3_02) %>% 
   reduce(full_join, by = c("tinh", "xa", "hoso", "matv", "tinh02", "huyen02", "xa02", "diaban02", "hoso02", "matv02")) %>% 
   mutate(matv02 = ifelse(nchar(matv02) > 2, substr(matv02, nchar(matv02) - 1, nchar(matv02)), matv02),
          across(matv02, as.numeric),
@@ -24,8 +16,8 @@ vhlss02 <- list(m1_02, m3_02, educ_02) %>%
          married = ifelse(m1c6 == 2, 1, 0),
          housework = ifelse(m3c17 == 1, 1, 0),
          divorce = ifelse(m1c6 == 4, 1, 0),
-         agri = ifelse(m3c7 < 6, 1, 0),
-         agri = ifelse(is.na(agri), 0, agri),
+         agri = ifelse(m3c7 == 1 & work == 1, 1, 0),
+         agri = ifelse(work == 0, NA, agri),
          female = ifelse(m1c2 == 2, 1, 0)) %>% 
   rename(educ = m2c1,
          industry = m3c7,
@@ -35,7 +27,6 @@ vhlss02 <- list(m1_02, m3_02, educ_02) %>%
          days = m3c10) %>%
   filter(age > 15 & age < 65) %>%
   select(tinh02, huyen02, xa02, diaban02, hoso02, matv02, female, divorce, educ, work, wage_work, agri, industry, age, married, days, hours, year, housework) %>% 
-  left_join(inc02, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02", "matv02")) %>%
   merge(weights_02, by = c("tinh02", "xa02", "huyen02", "diaban02")) %>% 
   rename(tinh = tinh02, 
          huyen = huyen02,
@@ -55,29 +46,22 @@ vhlss04 <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "hoso", "ma
          educ = m2c1) %>% 
   mutate(work = ifelse(m4ac2 == 1, 1, 0),
          wage_work = ifelse(m4ac1a == 1, 1, 0),
-         inc = ifelse(m4ac11 == 0, NA, m4ac11),
          housework = ifelse(m4ac26 == 1, 1, 0),
          married = ifelse(m1ac6 == 1, 1, 0),
          year = 2004,
          female = ifelse(sex == 2, 1, 0),
-         agri = ifelse(industry < 6, 1, 0),
-         agri = ifelse(is.na(agri), 0, agri),
+         agri = ifelse(industry == 1 & work == 1, 1, 0),
+         agri = ifelse(work == 0, NA, agri),
          divorce = ifelse(m4ac6 == 4, 1, 0)) %>% 
   filter(age > 15 & age < 65) %>%
-  select(tinh, huyen, xa, hoso, matv, divorce, female, educ, wage_work, work, agri, industry, age, married, days, hours,inc, year, housework, female)
+  select(tinh, huyen, xa, hoso, matv, divorce, female, educ, wage_work, work, agri, industry, age, married, days, hours, year, housework, female)
 
 vhlss04 <- list(vhlss04, diaban04, weights_04) %>% 
   reduce(merge, by = c("tinh", "huyen", "xa")) %>% 
   rename(diaban = diaban04)
 
 # 2006 
-m1a_06 <- m1a_06 %>% 
-  select(tinh, huyen, xa, hoso, matv, m1ac2, m1ac3, m1ac5, m1ac6)
-
-educ_06 <- m2a_06 %>% 
-  select(tinh, huyen, xa, hoso, matv, m2ac1)  
-
-vhlss06 <- list(m1a_06, m4a_06, educ_06) %>% 
+vhlss06 <- list(m1a_06, m2a_06, m4a_06) %>% 
   reduce(full_join, by = c("tinh", "huyen", "xa", "hoso", "matv")) %>% 
   merge(weights_06, by = c("tinh", "huyen", "xa")) %>% 
   rename(age = m1ac5,
@@ -86,18 +70,17 @@ vhlss06 <- list(m1a_06, m4a_06, educ_06) %>%
          hours = m4ac8,
          educ = m2ac1) %>% 
   mutate(work = ifelse(m4ac2 == 1, 1, 0),
-         inc = ifelse(m4ac11 == 0, NA, m4ac11),
          housework = ifelse(m4ac26 == 1, 1, 0),
          married = ifelse(m1ac6 == 1, 1, 0),
          year = 2006,
          female = ifelse(m1ac2 == 2, 1, 0),
-         agri = ifelse(industry < 6, 1, 0),
-         agri = ifelse(is.na(agri), 0, agri),
+         agri = ifelse(industry == 1 & work == 1, 1, 0),
+         agri = ifelse(work == 0, NA, agri),
          divorce = ifelse(m1ac6 == 4, 1, 0)) %>% 
   filter(age > 15 & age < 65) %>%
-  select(tinh, huyen, xa, hoso, matv, divorce, female, educ, work, agri, industry, age, married, days, hours, inc, year, housework) %>% 
+  select(tinh, huyen, xa, hoso, matv, divorce, female, educ, work, agri, industry, age, married, days, hours, year, housework) %>% 
   left_join(diaban06, by =c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
-  left_join(weights_06, by = c("tinh", "huyen", "xa")) %>% 
+  left_join(weights_06, by = c("tinh", "huyen", "xa")) %>%
   rename(diaban = diaban06)
 
 #########################################################
