@@ -3,15 +3,16 @@
 ########################################################
 
 # 2002 
-m3_02$m3c7[is.na(m3_02$m3c7)] <- 0
-
 educ_02 <- m2_02 %>% select(tinh, xa, hoso, matv, tinh02, huyen02, xa02, diaban02, hoso02, matv02, m2c1)
 
 inc02 <- m5a_02 %>% 
-  mutate(inc = m5ac6 + m5ac7e) %>% 
-  select(tinh02, huyen02, xa02, diaban02, hoso02, matv02, inc)
+  mutate(inc = m5ac6) %>% 
+  select(tinh02, huyen02, xa02, diaban02, hoso02, matv02, inc) %>% 
+  group_by(tinh02, huyen02, xa02, diaban02, hoso02, matv02) %>% 
+  summarise(inc = sum(inc, na.rm = TRUE), .groups = "drop") %>% 
+  mutate(inc = ifelse(inc == 0, NA, inc))
 
-employment_mf_02 <- list(m1_02, m3_02, educ_02) %>% 
+vhlss02 <- list(m1_02, m3_02, educ_02) %>% 
   reduce(full_join, by = c("tinh", "xa", "hoso", "matv", "tinh02", "huyen02", "xa02", "diaban02", "hoso02", "matv02")) %>% 
   mutate(matv02 = ifelse(nchar(matv02) > 2, substr(matv02, nchar(matv02) - 1, nchar(matv02)), matv02),
          across(matv02, as.numeric),
@@ -22,127 +23,94 @@ employment_mf_02 <- list(m1_02, m3_02, educ_02) %>%
          work = ifelse(m3c2 == 1, 1, 0),
          married = ifelse(m1c6 == 2, 1, 0),
          housework = ifelse(m3c17 == 1, 1, 0),
-         self_agri = ifelse(m3c1b == 1, 1, 0),
-         self_bus = ifelse(m3c1c == 1, 1, 0),
-         divorce = ifelse(m1c6 == 4, 1, 0)) %>% 
-  rename("educ" = m2c1,
-         "industry" = m3c7,
+         divorce = ifelse(m1c6 == 4, 1, 0),
+         agri = ifelse(m3c7 < 6, 1, 0),
+         agri = ifelse(is.na(agri), 0, agri),
+         female = ifelse(m1c2 == 2, 1, 0)) %>% 
+  rename(educ = m2c1,
+         industry = m3c7,
          age = m1c5,
          hours = m3c11,
          sex = m1c2,
-         days = m3c10,
-         relationship = m1c3) %>%
-  filter(age >= 16) %>%
-  filter(age < 65) %>% 
-  select(tinh02, huyen02, xa02, diaban02, hoso02, matv02, relationship, sex, divorce, educ, work, wage_work, self_agri, self_bus, industry, age, married, days, hours, year, housework) 
-
-employment_mf_02 <- left_join(employment_mf_02, inc02, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02", "matv02")) %>% distinct()
-
-employment_mf_02 <- merge(employment_mf_02, weights_02, by = c("tinh02", "xa02", "huyen02", "diaban02")) # N = 185,749
-
-## Recoding binary variable for sex
-employment_mf_02$sex <- factor(employment_mf_02$sex,
-                               c(1,2),
-                               c("Male", "Female"))
-
-employment_mf_02 <- employment_mf_02 %>% 
-  rename_with(~ str_replace(.x, "02", ""), everything()) %>% 
-  mutate(female = ifelse(sex == "Female", 1, 0))
+         days = m3c10) %>%
+  filter(age > 15 & age < 65) %>%
+  select(tinh02, huyen02, xa02, diaban02, hoso02, matv02, female, divorce, educ, work, wage_work, agri, industry, age, married, days, hours, year, housework) %>% 
+  left_join(inc02, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02", "matv02")) %>%
+  merge(weights_02, by = c("tinh02", "xa02", "huyen02", "diaban02")) %>% 
+  rename(tinh = tinh02, 
+         huyen = huyen02,
+         xa = xa02,
+         diaban = diaban02,
+         hoso = hoso02,
+         matv = matv02)
 
 # 2004 
-m4a_04$m4ac5[is.na(m4a_04$m4ac5)] <- 0
-
-employment_mf_04 <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "hoso", "matv")) %>%
+vhlss04 <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "hoso", "matv")) %>%
   distinct() %>% 
   rename(age = m1ac5,
          industry = m4ac5,
          days = m4ac7, 
          hours = m4ac8,
          sex = m1ac2,
-         educ = m2c1,
-         relationship = m1ac3) %>% 
+         educ = m2c1) %>% 
   mutate(work = ifelse(m4ac2 == 1, 1, 0),
          wage_work = ifelse(m4ac1a == 1, 1, 0),
-         m4ac11 = ifelse(is.na(m4ac11), 0 , m4ac11),
-         m4ac12e = ifelse(is.na(m4ac12e), 0 , m4ac12e),
-         inc = m4ac11 + m4ac12e,
+         inc = ifelse(m4ac11 == 0, NA, m4ac11),
          housework = ifelse(m4ac26 == 1, 1, 0),
          married = ifelse(m1ac6 == 1, 1, 0),
          year = 2004,
          female = ifelse(sex == 2, 1, 0),
-         self_agri = ifelse(m4ac1b == 1, 1, 0),
-         self_bus = ifelse(m4ac1c == 1, 1, 0),
+         agri = ifelse(industry < 6, 1, 0),
+         agri = ifelse(is.na(agri), 0, agri),
          divorce = ifelse(m4ac6 == 4, 1, 0)) %>% 
-  filter(age >= 16) %>%
-  filter(age < 65) %>% 
-  select(tinh, huyen, xa, hoso, matv, relationship, divorce, sex, educ, wage_work, work, self_agri, self_bus, industry, age, married, days, hours,inc, year, housework, female) #Merging data on age, sex, marital status, and industry worked in (N = 202,321)
+  filter(age > 15 & age < 65) %>%
+  select(tinh, huyen, xa, hoso, matv, divorce, female, educ, wage_work, work, agri, industry, age, married, days, hours,inc, year, housework, female)
 
-employment_mf_04 <- list(employment_mf_04, diaban04, weights_04) %>% 
+vhlss04 <- list(vhlss04, diaban04, weights_04) %>% 
   reduce(merge, by = c("tinh", "huyen", "xa")) %>% 
   rename(diaban = diaban04)
 
-#Recoding binary variable for sex
-employment_mf_04$sex <- factor(employment_mf_04$sex,
-                               c(1,2),
-                               c("Male", "Female")) 
-
 # 2006 
-m4a_06$m4ac5[is.na(m4a_06$m4ac5)] <- 0
-
 m1a_06 <- m1a_06 %>% 
   select(tinh, huyen, xa, hoso, matv, m1ac2, m1ac3, m1ac5, m1ac6)
 
 educ_06 <- m2a_06 %>% 
   select(tinh, huyen, xa, hoso, matv, m2ac1)  
 
-employment_mf_06 <- list(m1a_06, m4a_06, educ_06) %>% 
-  reduce(full_join, by = c("tinh", "huyen", "xa", "hoso", "matv"))
-
-employment_mf_06 <- merge(employment_mf_06, weights_06, by = c("tinh", "huyen", "xa")) %>% 
-  filter(m1ac5 >= 16,
-         m1ac5 < 65) %>% # N = 127,757
+vhlss06 <- list(m1a_06, m4a_06, educ_06) %>% 
+  reduce(full_join, by = c("tinh", "huyen", "xa", "hoso", "matv")) %>% 
+  merge(weights_06, by = c("tinh", "huyen", "xa")) %>% 
   rename(age = m1ac5,
          industry = m4ac5,
          days = m4ac7, 
          hours = m4ac8,
-         sex = m1ac2,
-         educ = m2ac1,
-         relationship = m1ac3) %>% 
+         educ = m2ac1) %>% 
   mutate(work = ifelse(m4ac2 == 1, 1, 0),
-         m4ac11 = ifelse(is.na(m4ac11), 0 , m4ac11),
-         m4ac12f = ifelse(is.na(m4ac12f), 0 , m4ac12f),
-         inc = m4ac11 + m4ac12f,
+         inc = ifelse(m4ac11 == 0, NA, m4ac11),
          housework = ifelse(m4ac26 == 1, 1, 0),
          married = ifelse(m1ac6 == 1, 1, 0),
          year = 2006,
-         female = ifelse(sex == 2, 1, 0),
-         self_agri = ifelse(m4ac1b == 1, 1, 0),
-         self_bus = ifelse(m4ac1c == 1, 1, 0),
+         female = ifelse(m1ac2 == 2, 1, 0),
+         agri = ifelse(industry < 6, 1, 0),
+         agri = ifelse(is.na(agri), 0, agri),
          divorce = ifelse(m1ac6 == 4, 1, 0)) %>% 
-  select(tinh, huyen, xa, hoso, matv, relationship, divorce, sex, educ, work, self_agri, self_bus, industry, age, married, days, hours, inc, year, housework, female) 
-
-employment_mf_06 <- left_join(employment_mf_06, diaban06, by =c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
+  filter(age > 15 & age < 65) %>%
+  select(tinh, huyen, xa, hoso, matv, divorce, female, educ, work, agri, industry, age, married, days, hours, inc, year, housework) %>% 
+  left_join(diaban06, by =c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
+  left_join(weights_06, by = c("tinh", "huyen", "xa")) %>% 
   rename(diaban = diaban06)
-
-employment_mf_06 <- left_join(employment_mf_06, weights_06, by = c("tinh", "huyen", "xa"))
-
-## Recoding binary variable for sex
-employment_mf_06$sex <- factor(employment_mf_06$sex,
-                               c(1,2),
-                               c("Male", "Female")) 
 
 #########################################################
 # CREATING EMPLOMYMENT DUMMIES AND LABELLING INDUSTRIES #
 #########################################################
 
-emp020406 <- c("employment_mf_02", "employment_mf_06", "employment_mf_04")
+emp020406 <- c("vhlss02", "vhlss04", "vhlss06")
 
 for(i in emp020406) {
   assign(i,get(i) %>%
            mutate(
-             tal = as.numeric(industry %in% c(18)),
-             agri_work = as.numeric(industry %in% c(1,2,4,5)),
-             service = as.numeric(industry > 50),
+             apparel = ifelse(industry == 18, 1, 0),
+             service = ifelse(industry > 50 & industry < 60, 1, 0),
              manu = as.numeric(industry > 14 & industry < 38),
              construction = as.numeric(industry == 45),
              hours = ifelse(work == 1 & hours == 0, NA, hours),
@@ -212,3 +180,4 @@ for(i in emp020406) {
                                     "95" = "Private households with employed persons",
                                     "99" = "Extra-territorial organizations and bodies")))
 }
+
