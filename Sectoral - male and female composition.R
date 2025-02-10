@@ -3,26 +3,10 @@
 ##########################################
 
 # 2002 
-industry_mf_02 <- employment_mf_02 %>%
-  select(sex, industry, hhwt) %>% 
+industry_mf_02 <- vhlss02 %>%
   replace(is.na(.), 0) %>%  
-  group_by(industry, sex) %>% 
-  count(sex, industry, wt = hhwt) %>% 
-  pivot_wider(names_from = "sex", values_from = "n")
-
-industry_mf_02 <- industry_mf_02 %>% 
-  rename("Industry" = "industry") %>% 
-  rename("Male" = 2) %>% 
-  rename("Female" = 3)
-
-colSums(industry_mf_02[,c(2,3)], na.rm = TRUE)
-
-nm_02 <- 23937250 
-nf_02 <- 24620932  
-
-industry_mf_02 <- industry_mf_02 %>% 
-  mutate(MRatio_02 = Male / (nm_02) * 100,
-         FRatio_02 = Female / (nf_02) * 100)
+  group_by(female, industry) %>% 
+  summarise(n = n())
 
 # 2004 
 industry_mf_04 <- employment_mf_04 %>% 
