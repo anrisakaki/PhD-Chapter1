@@ -227,3 +227,8 @@ dwelling_0206 <- bind_rows(dwelling_02, dwelling_06)
 
 exp0204_p <- left_join(exp0204_p, dwelling_0204, by = hhid)
 exp0206_p <- left_join(exp0206_p, dwelling_0206, by = hhid)
+
+########
+# DEBT #
+########
+
