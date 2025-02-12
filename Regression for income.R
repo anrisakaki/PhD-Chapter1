@@ -51,7 +51,6 @@ etable(list(
         vcov = ~tinh)
 ), tex = TRUE)
 
-
 ##########################
 # TOTAL HOUSEHOLD INCOME #
 ##########################
