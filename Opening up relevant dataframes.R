@@ -28,6 +28,10 @@ vnmap1 <- read_sf("Full VHLSS/Chloropleth Maps/VNShapefile/gadm36_VNM_1.shp")
 vnmap2 <- read_sf("Full VHLSS/Chloropleth Maps/VNShapefile/gadm36_VNM_2.shp")
 vnmap3 <- read_sf("Full VHLSS/Chloropleth Maps/VNShapefile/gadm36_VNM_3.shp")
 
+# PHC99 
+
+phc99 <- read_dta("PHC99.dta")
+
 # 2002 
 m3_02a <- read_dta (file = "Full VHLSS/VHLSS 2002 N= 45,000/muc3.dta") #DF containing work 
 
