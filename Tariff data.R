@@ -9,6 +9,10 @@ tariff <- tariff %>%
   mutate(isic2 = as.factor(isic2),
          Change_rate = col2_ave_all - mfn_ave_all)
 
+traded <- tariff %>%
+  select(isic2) %>% 
+  mutate(traded = 1)
+
 tariff$Industry <-  forcats::fct_recode(tariff$isic2, 
                                         "Agriculture and livestock cultivation" = "1",
                                         "Forestry" = "2",
