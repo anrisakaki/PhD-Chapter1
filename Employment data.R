@@ -1,41 +1,44 @@
-########################################################
-# SETTING UP DATA FRAME FOR EMPLOYMENT AND INCOME DATA #
-########################################################
+########################################
+# SETTING UP DATA FRAME FOR EMPLOYMENT #
+########################################
 
 # 2002 
-vhlss02 <- list(m1_02, m2_02, m3_02) %>% 
-  reduce(full_join, by = c("tinh", "xa", "hoso", "matv", "tinh02", "huyen02", "xa02", "diaban02", "hoso02", "matv02")) %>% 
-  mutate(matv02 = ifelse(nchar(matv02) > 2, substr(matv02, nchar(matv02) - 1, nchar(matv02)), matv02),
-         across(matv02, as.numeric),
-         year = 2002 ) %>%   
-  select(-c(tinh, xa, hoso, matv)) %>%
-  select(-matches("\\.x|\\.y")) %>% 
-  mutate(wage_work = ifelse(m3c1a == 1, 1, 0),
+
+vhlss02 <- list(m1_02, m2_02, m3_02, m5a_02) %>% 
+  reduce(full_join, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02",  "tinh", "xa", "hoso", "matv", "qui", "phieu")) %>% 
+  left_join(inc_02, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02", "tinh", "xa", "hoso", "qui")) %>% 
+  mutate(rlinc = ifelse(inc == 0, NA, (m5ac6 + m5ac7e)/ (rcpi*mcpi)),
+         rlhhinc = rlincomepc*hhsize*12,
+         wage_work = ifelse(m3c1a == 1, 1, 0),
          work = ifelse(m3c2 == 1, 1, 0),
          married = ifelse(m1c6 == 2, 1, 0),
          housework = ifelse(m3c17 == 1, 1, 0),
          divorce = ifelse(m1c6 == 4, 1, 0),
          agri = ifelse(m3c7 == 1 & work == 1, 1, 0),
          agri = ifelse(work == 0, NA, agri),
-         selfagri = ifelse(m3c1b == 1, 1, 0),
-         selfagri = ifelse(work == 0, NA, selfagri),
+         hhbus = ifelse(m3c8 < 3, 1, 0),
+         selfagri = ifelse(agri == 1 & hhbus == 1, 1, 0),
          formal = ifelse(m3c8 == 7 | m3c8 == 9, 1, 0),
          formal = ifelse(work == 0, NA, formal),
-         female = ifelse(m1c2 == 2, 1, 0)) %>% 
+         fdi = ifelse(m3c8 == 9, 1, 0),
+         private = ifelse(m3c8 == 7, 1, 0),
+         female = ifelse(m1c2 == 2, 1, 0),
+         inc = ifelse(inc == 0, NA, inc),
+         matv = ifelse(nchar(matv) > 2, substr(matv, nchar(matv) - 1, nchar(matv)), matv),
+         across(matv, as.numeric),
+         year = 2002) %>% 
+  select(-c(tinh, huyen, xa, hoso)) %>% 
   rename(educ = m2c1,
          industry = m3c7,
          age = m1c5,
          hours = m3c11,
-         days = m3c10) %>%
-  filter(age > 15 & age < 65) %>%
-  select(tinh02, huyen02, xa02, diaban02, hoso02, matv02, female, divorce, educ, age, married, work, agri, selfagri, industry, formal, days, hours, year, housework) %>% 
-  merge(weights_02, by = c("tinh02", "xa02", "huyen02", "diaban02")) %>% 
-  rename(tinh = tinh02, 
+         days = m3c10,
+         tinh = tinh02, 
          huyen = huyen02,
          xa = xa02,
          diaban = diaban02,
-         hoso = hoso02,
-         matv = matv02)
+         hoso = hoso02) %>% 
+  select(tinh, huyen, xa, diaban, hoso, matv, female, age, educ, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, rlinc, rlhhinc, year)
 
 # 2004 
 vhlss04 <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "hoso", "matv")) %>%
@@ -54,13 +57,18 @@ vhlss04 <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "hoso", "ma
          female = ifelse(sex == 2, 1, 0),
          agri = ifelse(industry == 1 & work == 1, 1, 0),
          agri = ifelse(work == 0, NA, agri),
-         selfagri = ifelse(m4ac1b == 1, 1, 0),
-         selfagri = ifelse(work == 0, NA, selfagri),
+         hhbus = ifelse(m4ac10a == 2 | m4ac10a == 3, 1, 0),
+         selfagri = ifelse(hhbus == 1 & agri == 1, 1, 0),
          formal = ifelse(m4ac10a == 6 | m4ac10a== 7, 1, 0),
-         formal = ifelse(work == 0, NA, formal),
-         divorce = ifelse(m4ac6 == 4, 1, 0)) %>% 
+         fdi = ifelse(m4ac10a== 7, 1, 0),
+         private = ifelse(m4ac10a == 6, 1, 0),
+         divorce = ifelse(m4ac6 == 4, 1, 0),
+         m4ac11 = ifelse(is.na(m4ac11), 0, m4ac11),
+         m4ac12e = ifelse(is.na(m4ac12e), 0, m4ac12e),
+         inc = (m4ac11 + m4ac12e),
+         inc = ifelse(inc == 0, NA, inc)) %>% 
   filter(age > 15 & age < 65) %>%
-  select(tinh, huyen, xa, hoso, matv, female, divorce, educ, age, married, work, agri, selfagri, industry, formal, days, hours, year, housework)
+  select(tinh, huyen, xa, hoso, matv, female, educ, age, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, year, housework, divorce)
 
 vhlss04 <- list(vhlss04, diaban04, weights_04) %>% 
   reduce(merge, by = c("tinh", "huyen", "xa")) %>% 
@@ -82,13 +90,18 @@ vhlss06 <- list(m1a_06, m2a_06, m4a_06) %>%
          female = ifelse(m1ac2 == 2, 1, 0),
          agri = ifelse(industry == 1 & work == 1, 1, 0),
          agri = ifelse(work == 0, NA, agri),
-         selfagri = ifelse(m4ac1b == 1, 1, 0),
-         selfagri = ifelse(work == 0, NA, selfagri),
+         hhbus = ifelse(m4ac10a == 2 | m4ac10a == 3, 1, 0),
+         selfagri = ifelse(hhbus == 1 & agri == 1, 1, 0),
          formal = ifelse(m4ac10a == 6 | m4ac10a== 7, 1, 0),
-         formal = ifelse(work == 0, NA, formal),
+         fdi = ifelse(m4ac10a== 7, 1, 0),
+         private = ifelse(m4ac10a == 6, 1, 0),
+         m4ac11 = ifelse(is.na(m4ac11), 0, m4ac11),
+         m4ac12e = ifelse(is.na(m4ac12e), 0, m4ac12e),
+         inc = (m4ac11 + m4ac12e),
+         inc = ifelse(inc == 0, NA, inc),
          divorce = ifelse(m1ac6 == 4, 1, 0)) %>% 
   filter(age > 15 & age < 65) %>%
-  select(tinh, huyen, xa, hoso, matv, female, divorce, educ, age, married, work, agri, selfagri, industry, formal, days, hours, year, housework) %>% 
+  select(tinh, huyen, xa, hoso, matv, female, educ, age, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, year, housework, divorce) %>% 
   left_join(diaban06, by =c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
   left_join(weights_06, by = c("tinh", "huyen", "xa")) %>%
   rename(diaban = diaban06)
@@ -180,3 +193,36 @@ vhlss_fn <- function(i) {
 vhlss02 <- vhlss_fn(vhlss02)
 vhlss04 <- vhlss_fn(vhlss04)
 vhlss06 <- vhlss_fn(vhlss06)
+
+vhlss <- bind_rows(vhlss02, vhlss04, vhlss06)
+
+provrecode_fn <- function(i){
+  i %>% 
+    mutate(tinh_old = case_when(
+      tinh == 302 ~ 301,
+      tinh == 606 ~ 605,
+      tinh == 816 ~ 815,
+      TRUE ~ tinh
+    ))
+}
+
+# Setting up panel
+
+emp0204_p <- bind_rows(vhlss02, vhlss04) %>%
+  merge(ivid0204, by = ivid) %>%
+  provrecode_fn() %>%
+  left_join(bta0204, by = c("tinh_old", "year")) %>% 
+  mutate(tariff = tariff*-1,
+         tariff_f = tariff_f*-1)
+
+emp0206_p <- bind_rows(vhlss02, vhlss06) %>%
+  merge(ivid0206, by = ivid) %>%
+  provrecode_fn() %>% 
+  left_join(bta0206, by = c("tinh_old", "year")) %>% 
+  mutate(tariff = tariff*-1,
+         tariff_f = tariff_f*-1)
+
+###############
+# Income data #
+###############
+
