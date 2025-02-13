@@ -7,7 +7,8 @@
 vhlss02 <- list(m1_02, m2_02, m3_02, m5a_02) %>% 
   reduce(full_join, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02",  "tinh", "xa", "hoso", "matv", "qui", "phieu")) %>% 
   left_join(inc_02, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02", "tinh", "xa", "hoso", "qui")) %>% 
-  mutate(rlinc = ifelse(inc == 0, NA, (m5ac6 + m5ac7e)/ (rcpi*mcpi)),
+  mutate(inc = m5ac6 + m5ac7e,
+         rlinc = ifelse(inc == 0, NA, inc/ (rcpi*mcpi)),
          rlhhinc = rlincomepc*hhsize*12,
          wage_work = ifelse(m3c1a == 1, 1, 0),
          work = ifelse(m3c2 == 1, 1, 0),
@@ -23,9 +24,9 @@ vhlss02 <- list(m1_02, m2_02, m3_02, m5a_02) %>%
          fdi = ifelse(m3c8 == 9, 1, 0),
          private = ifelse(m3c8 == 7, 1, 0),
          female = ifelse(m1c2 == 2, 1, 0),
-         inc = ifelse(inc == 0, NA, inc),
          matv = ifelse(nchar(matv) > 2, substr(matv, nchar(matv) - 1, nchar(matv)), matv),
          across(matv, as.numeric),
+         urban = ifelse(urban == 1, 1, 0),
          year = 2002) %>% 
   select(-c(tinh, huyen, xa, hoso)) %>% 
   rename(educ = m2c1,
@@ -37,19 +38,24 @@ vhlss02 <- list(m1_02, m2_02, m3_02, m5a_02) %>%
          huyen = huyen02,
          xa = xa02,
          diaban = diaban02,
-         hoso = hoso02) %>% 
-  select(tinh, huyen, xa, diaban, hoso, matv, female, age, educ, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, rlinc, rlhhinc, year)
+         hoso = hoso02,
+         hhwt = wt75) %>% 
+  select(tinh, huyen, xa, diaban, hoso, matv, female, age, educ, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, rlinc, rlhhinc, urban, inc_quint, year, hhwt)
 
 # 2004 
-vhlss04 <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "hoso", "matv")) %>%
-  distinct() %>% 
+vhlss04 <- full_join(m123a_04, m4a_04, by = c("tinh", "huyen", "diaban", "xa", "hoso", "matv", "ky")) %>%
+  left_join(inc_04, by = c("tinh", "huyen", "xa", "hoso")) %>% 
   rename(age = m1ac5,
          industry = m4ac5,
          days = m4ac7, 
          hours = m4ac8,
          sex = m1ac2,
-         educ = m2c1) %>% 
-  mutate(work = ifelse(m4ac2 == 1, 1, 0),
+         educ = m2c1,
+         hhwt = wt45) %>% 
+  mutate(inc = (m4ac11 + m4ac12e),
+         rlinc = ifelse(inc == 0, NA, inc/ (rcpi*mcpi)),
+         rlhhinc = rlincomepc*hhsize*12,
+         work = ifelse(m4ac2 == 1, 1, 0),
          wage_work = ifelse(m4ac1a == 1, 1, 0),
          housework = ifelse(m4ac26 == 1, 1, 0),
          married = ifelse(m1ac6 == 1, 1, 0),
@@ -65,25 +71,23 @@ vhlss04 <- left_join(m123a_04, m4a_04, by = c("tinh", "huyen", "xa", "hoso", "ma
          divorce = ifelse(m4ac6 == 4, 1, 0),
          m4ac11 = ifelse(is.na(m4ac11), 0, m4ac11),
          m4ac12e = ifelse(is.na(m4ac12e), 0, m4ac12e),
-         inc = (m4ac11 + m4ac12e),
-         inc = ifelse(inc == 0, NA, inc)) %>% 
-  filter(age > 15 & age < 65) %>%
-  select(tinh, huyen, xa, hoso, matv, female, educ, age, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, year, housework, divorce)
-
-vhlss04 <- list(vhlss04, diaban04, weights_04) %>% 
-  reduce(merge, by = c("tinh", "huyen", "xa")) %>% 
-  rename(diaban = diaban04)
+         urban = ifelse(urban == 1, 1, 0)) %>% 
+  select(tinh, huyen, xa, diaban, hoso, matv, female, age, educ, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, rlinc, rlhhinc, urban, inc_quint, year, hhwt)
 
 # 2006 
 vhlss06 <- list(m1a_06, m2a_06, m4a_06) %>% 
-  reduce(full_join, by = c("tinh", "huyen", "xa", "hoso", "matv")) %>% 
-  merge(weights_06, by = c("tinh", "huyen", "xa")) %>% 
+  reduce(full_join, by = c("tinh", "huyen", "xa", "diaban", "hoso", "matv")) %>% 
+  left_join(inc_06, by = c("tinh", "huyen", "xa", "hoso")) %>% 
   rename(age = m1ac5,
          industry = m4ac5,
          days = m4ac7, 
          hours = m4ac8,
-         educ = m2ac1) %>% 
-  mutate(work = ifelse(m4ac2 == 1, 1, 0),
+         educ = m2ac1,
+         hhwt = wt45) %>% 
+  mutate(inc = (m4ac11 + m4ac12e),
+         rlinc = ifelse(inc == 0, NA, inc/ (rcpi*mcpi)),
+         rlhhinc = rlincomepc*hhsize*12,
+         work = ifelse(m4ac2 == 1, 1, 0),
          housework = ifelse(m4ac26 == 1, 1, 0),
          married = ifelse(m1ac6 == 1, 1, 0),
          year = 2006,
@@ -95,16 +99,8 @@ vhlss06 <- list(m1a_06, m2a_06, m4a_06) %>%
          formal = ifelse(m4ac10a == 6 | m4ac10a== 7, 1, 0),
          fdi = ifelse(m4ac10a== 7, 1, 0),
          private = ifelse(m4ac10a == 6, 1, 0),
-         m4ac11 = ifelse(is.na(m4ac11), 0, m4ac11),
-         m4ac12e = ifelse(is.na(m4ac12e), 0, m4ac12e),
-         inc = (m4ac11 + m4ac12e),
-         inc = ifelse(inc == 0, NA, inc),
          divorce = ifelse(m1ac6 == 4, 1, 0)) %>% 
-  filter(age > 15 & age < 65) %>%
-  select(tinh, huyen, xa, hoso, matv, female, educ, age, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, year, housework, divorce) %>% 
-  left_join(diaban06, by =c("tinh" = "tinh06", "huyen" = "huyen06", "xa" = "xa06")) %>% 
-  left_join(weights_06, by = c("tinh", "huyen", "xa")) %>%
-  rename(diaban = diaban06)
+  select(tinh, huyen, xa, hoso, matv, female, age, educ, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, rlinc, rlhhinc, urban, inc_quint, year, hhwt)
 
 #########################################################
 # CREATING EMPLOMYMENT DUMMIES AND LABELLING INDUSTRIES #
@@ -196,6 +192,7 @@ vhlss06 <- vhlss_fn(vhlss06)
 
 vhlss <- bind_rows(vhlss02, vhlss04, vhlss06)
 
+
 provrecode_fn <- function(i){
   i %>% 
     mutate(tinh_old = case_when(
@@ -207,22 +204,57 @@ provrecode_fn <- function(i){
 }
 
 # Setting up panel
-
 emp0204_p <- bind_rows(vhlss02, vhlss04) %>%
   merge(ivid0204, by = ivid) %>%
   provrecode_fn() %>%
   left_join(bta0204, by = c("tinh_old", "year")) %>% 
   mutate(tariff = tariff*-1,
-         tariff_f = tariff_f*-1)
+         tariff_f = tariff_f*-1) %>% 
+  group_by(hhid, year) %>%
+  mutate(
+    total_known_income = sum(rlinc, na.rm = TRUE), 
+    count_missing = sum(is.na(rlinc)),  
+    imputed_income = ifelse(is.na(rlinc) & work == 1, (rlhhinc - total_known_income) / count_missing, rlinc)
+  ) %>%
+  ungroup() %>%
+  select(-total_known_income, -count_missing) 
 
 emp0206_p <- bind_rows(vhlss02, vhlss06) %>%
   merge(ivid0206, by = ivid) %>%
   provrecode_fn() %>% 
   left_join(bta0206, by = c("tinh_old", "year")) %>% 
   mutate(tariff = tariff*-1,
-         tariff_f = tariff_f*-1)
+         tariff_f = tariff_f*-1) %>% 
+  group_by(hhid, year) %>%
+  mutate(
+    total_known_income = sum(rlinc, na.rm = TRUE), 
+    count_missing = sum(is.na(rlinc)),  
+    imputed_income = ifelse(is.na(rlinc) & work == 1, (rlhhinc - total_known_income) / count_missing, rlinc)
+  ) %>%
+  ungroup() %>%
+  select(-total_known_income, -count_missing) 
 
-###############
-# Income data #
-###############
+# Reallocation panel 
 
+emp_wide <- emp0204_p %>%
+  group_by(ivid, year) %>%
+  summarise(
+    agri = ifelse(all(is.na(agri)), NA, max(agri, na.rm = TRUE)), 
+    work = ifelse(all(is.na(work)), NA, max(work, na.rm = TRUE)),
+    .groups = "drop"
+  ) %>%
+  pivot_wider(
+    names_from = year, 
+    values_from = c(agri, work), 
+    names_sep = "_" 
+  ) %>%
+  mutate(
+    reallocated = ifelse(
+      (work_2002 == 0 | agri_2002 == 1) & (work_2004 == 1 & agri_2004 == 0), 1, 
+      ifelse(agri_2002 == 0, NA, 0)
+    )  
+  )
+
+emp0204_p <- emp0204_p %>%
+  left_join(emp_wide %>% select(ivid, reallocated), by = "ivid") %>%
+  mutate(reallocated_recode = ifelse(year == 2002 & !is.na(reallocated), 0, reallocated))
