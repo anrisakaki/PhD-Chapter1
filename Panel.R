@@ -202,12 +202,12 @@ ivid0206 <- bind_rows(ivid02_06, ivid06)
 ivid0204 <- ivid0204 %>% 
   mutate(across(sex, as.numeric),
          female = ifelse(sex == 2, 1, 0)) %>% 
-  select(-sex)
+  select(-c(sex, diaban))
 
 ivid0206 <- ivid0206 %>% 
   mutate(across(sex, as.numeric),
          female = ifelse(sex == 2, 1, 0)) %>% 
-  select(-sex)
+  select(-c(sex, diaban))
 
 ivid <- c("tinh", "huyen", "xa", "hoso", "matv", "year", "age", "female")
 hhid <- c("tinh", "huyen", "xa", "hoso", "year")
