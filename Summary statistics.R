@@ -6,7 +6,10 @@ vhlss_sum_fn <- function(i){
       agri = sum(hhwt[agri == 1], na.rm = T),
       manu = sum(hhwt[manu == 1], na.rm = T),
       service = sum(hhwt[service == 1], na.rm = T),
-      inc = weighted.mean(rlinc, hhwt, na.rm = T)
+      inc = weighted.mean(rlinc, hhwt, na.rm = T),
+      tariff = mean(tariff, na.rm = T),
+      age = weighted.mean(age, hhwt, na.rm = T),
+      
     ) %>% 
     mutate(
       agri_share = agri/n,
@@ -16,7 +19,11 @@ vhlss_sum_fn <- function(i){
 }
 
 vhlss_sum <- vhlss %>%
-  group_by(year, tinh) %>% 
+  group_by(year) %>% 
+  vhlss_sum_fn()
+
+vhlss_prov_sum <- vhlss %>%
+  group_by(year, tinh_old) %>% 
   vhlss_sum_fn()
   
 vhlss_f_sum <- vhlss %>%
