@@ -1,11 +1,17 @@
 vhlss_sum_fn <- function(i){
   i %>% 
+    filter(age > 15 & age < 65 & !is.na(hhwt)) %>% 
     summarise(
-      n = n(),
-      agri = weighted.mean(agri, hhwt, na.rm = T),
-      manu = weighted.mean(manu, hhwt, na.rm = T),
-      service = weighted.mean(service, hhwt, na.rm = T),
-      inc = weighted.mean(inc, hhwt, na.rm = T)
+      n = sum(hhwt[work == 1], na.rm = T),
+      agri = sum(hhwt[agri == 1], na.rm = T),
+      manu = sum(hhwt[manu == 1], na.rm = T),
+      service = sum(hhwt[service == 1], na.rm = T),
+      inc = weighted.mean(rlinc, hhwt, na.rm = T)
+    ) %>% 
+    mutate(
+      agri_share = agri/n,
+      manu_share = manu/n,
+      service_share = service/n
     )
 }
 
@@ -15,9 +21,4 @@ vhlss_sum <- vhlss %>%
   
 vhlss_f_sum <- vhlss %>%
   group_by(year, female) %>% 
-  summarise(
-    n = n(),
-    agri = weighted.mean(agri, hhwt, na.rm = T),
-    manu = weighted.mean(manu, hhwt, na.rm = T),
-    inc = weighted.mean(inc, hhwt, na.rm = T)
-  )
+  vhlss_sum_fn()
