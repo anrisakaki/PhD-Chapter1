@@ -209,5 +209,5 @@ ivid0206 <- ivid0206 %>%
          female = ifelse(sex == 2, 1, 0)) %>% 
   select(-sex)
 
-ivid <- c("tinh", "huyen", "xa", "diaban", "hoso", "matv", "year", "age", "female")
-hhid <- c("tinh", "huyen", "xa", "diaban", "hoso", "year")
+ivid <- c("tinh", "huyen", "xa", "hoso", "matv", "year", "age", "female")
+hhid <- c("tinh", "huyen", "xa", "hoso", "year")
