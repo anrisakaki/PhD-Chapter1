@@ -1,5 +1,3 @@
-library(dplyr)
-
 phc99 <- phc99 %>%
   mutate(tinh = case_when(
            geo1_vn1999 == 219 ~ 104,
@@ -12,14 +10,14 @@ phc99 <- phc99 %>%
          ))
 
 traded_n <- phc99 %>% 
-  mutate(isic2 = as.double(str_sub(as.character(ind), 1, if_else(nchar(as.character(ind)) < 3, 1, 2)))) %>% 
+  mutate(isic2 = as.factor(str_sub(as.character(ind), 1, if_else(nchar(as.character(ind)) < 3, 1, 2)))) %>% 
   left_join(traded, by = "isic2") %>% 
   filter(traded == 1) %>% 
   group_by(tinh) %>% 
   summarise(traded_n = sum(perwt))
 
 provtariffs <- phc99 %>% 
-  mutate(isic2 = as.double(str_sub(as.character(ind), 1, if_else(nchar(as.character(ind)) < 3, 1, 2))),
+  mutate(isic2 = as.factor(str_sub(as.character(ind), 1, if_else(nchar(as.character(ind)) < 3, 1, 2))),
          female = ifelse(sex == 2, 1, 0)) %>% 
   group_by(tinh, isic2) %>% 
   summarise(n = sum(perwt),
