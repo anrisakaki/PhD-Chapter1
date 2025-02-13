@@ -2,36 +2,45 @@
 # EXPENDITURE DATA ON HOUSEHOLD PUBLIC GOODS #
 ##############################################
 
-exp_020406 <- c("exp_02", "exp_04", "exp_06")
-
-for(i in exp_020406){
-  assign(i, get(i) %>% 
-           mutate(riceexp_share = riceexp/hhexp2rl, 
-                  food_share = foodreal/hhexp2rl,
-                  tobac_share = tobac12m/hhexp2rl,
-                  educ_share = educex_2/hhexp2rl,
-                  health_share = hlthex_2/hhexp2rl))
+expenditure_fn <- function(i){
+  
+  i %>%
+    mutate(riceexp_share = riceexp/hhexp2rl,
+           food_share = foodreal/hhexp2rl,
+           tobac_share = tobac12m/hhexp2rl,
+           educ_share = educex_2/hhexp2rl,
+           health_share = hlthex_2/hhexp2rl)
          
 }
 
 exp_02 <- exp_02 %>% 
-  mutate(year = 2002) %>% 
-  select(year, tinh02, huyen02, xa02, hoso02, riceexp_share, food_share, tobac_share, educ_share, health_share, riceexp, foodreal, tobac12m, educex_2, hlthex_2, urban02, wt30, hhexp2rl) %>% 
+  expenditure_fn() %>% 
+  select(tinh02, huyen02, xa02, hoso02, riceexp_share, food_share, tobac_share, educ_share, health_share, riceexp, foodreal, tobac12m, educex_2, hlthex_2, urban02, wt30, hhexp2rl) %>% 
   rename_with(~ str_replace(.x, "02", ""), everything()) %>% 
   rename(hhwt = wt30) %>% 
-  mutate(year = 2002)
+  provrecode_fn() %>% 
+  left_join(provtariffs02, by = "tinh_old") 
 
 exp_04 <- exp_04 %>% 
-  mutate(year = 2004) %>% 
-  select(year, tinh, huyen, xa, hoso, riceexp_share, food_share, tobac_share, educ_share, health_share, riceexp, foodreal, tobac12m, educex_2, hlthex_2, urban04, hhwt, hhexp2rl) %>% 
-  rename(urban = urban04)
+  expenditure_fn() %>% 
+  select(tinh, huyen, xa, hoso, riceexp_share, food_share, tobac_share, educ_share, health_share, riceexp, foodreal, tobac12m, educex_2, hlthex_2, urban04, hhwt, hhexp2rl) %>% 
+  rename(urban = urban04) %>% 
+  provrecode_fn() %>% 
+  left_join(provtariffs04, by = "tinh_old") 
 
-exp0204 <- bind_rows(exp_02, exp_04) %>%
-  select(tinh, huyen, xa, hoso, everything()) %>% 
-  provrecode_fn()
+exp_06 <- exp_06 %>% 
+  expenditure_fn() %>% 
+  select(tinh, huyen, xa, hoso, riceexp_share, food_share, tobac_share, educ_share, health_share, riceexp, foodreal, tobac12m, educex_2, hlthex_2, ttnt, wt45, hhexp2rl) %>% 
+  rename(urban = ttnt,
+         hhwt = wt45) %>% 
+  provrecode_fn() %>% 
+  left_join(provtariffs06, by = "tinh_old") 
 
-exp0204 <- merge(exp0204, bta0204, by = c("tinh_old", "year"))
+exp0204 <- bind_rows(exp_02, exp_04) 
+exp0206 <- bind_rows(exp_02, exp_06) 
+
 exp0204_p <- merge(panel0204, exp0204, by = hhid)
+exp0204_p <- merge(panel0206, exp0206, by = hhid)
 
 ###################################
 # EDUCATION EXPENDITURE PER CHILD #
