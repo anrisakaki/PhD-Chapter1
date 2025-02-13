@@ -59,6 +59,39 @@ etable(list(
         vcov = ~tinh)
 ), tex = T)
 
+# Restricting to those who were unemployed or in agriculture in 2002 
+
+etable(list(
+  feols(hhbus ~ i(as.factor(female), tariff) | year + ivid,
+        subset(emp0204_p, age > 19 & age < 65 & agri_2002 == 1 | age > 19 & age < 65 & work_2002 == 0),
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(private ~ i(as.factor(female), tariff) | year + ivid,
+        subset(emp0204_p, age > 19 & age < 65 & agri_2002 == 1 | age > 19 & age < 65 & work_2002 == 0),
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(fdi ~ i(as.factor(female), tariff) | year + ivid,
+        subset(emp0204_p, age > 19 & age < 65 & agri_2002 == 1 | age > 19 & age < 65 & work_2002 == 0),
+        weights = ~hhwt,
+        vcov = ~tinh)
+), tex = T)
+
+etable(list(
+  feols(hhbus ~ i(as.factor(female), tariff_f) | year + ivid,
+        subset(emp0204_p, age > 19 & age < 65 & agri_2002 == 1 | age > 19 & age < 65 & work_2002 == 0),
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(private ~ i(as.factor(female), tariff_f) | year + ivid,
+        subset(emp0204_p, age > 19 & age < 65 & agri_2002 == 1 | age > 19 & age < 65 & work_2002 == 0),
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(fdi ~ i(as.factor(female), tariff_f) | year + ivid,
+        subset(emp0204_p, age > 19 & age < 65 & agri_2002 == 1 | age > 19 & age < 65 & work_2002 == 0),
+        weights = ~hhwt,
+        vcov = ~tinh)), tex = T)
+
+# Hours and days
+
 etable(list(
   feols(log(hours) ~ i(as.factor(female), tariff) | year + ivid,
         subset(subset(emp0204_p, age > 19 & age < 65), hours > -1),
@@ -83,7 +116,7 @@ etable(list(
 #########################################
 
 etable(list(
-  feols(rlinc/rlhhinc ~ i(as.factor(female), tariff) | year + ivid,
+  feols(log(rlinc) ~ i(as.factor(female), tariff) | year + ivid,
         subset(emp0204_p, age > 19 & age < 65),
         weights = ~hhwt,
         vcov = ~tinh),
