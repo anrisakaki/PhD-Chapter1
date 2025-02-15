@@ -1,60 +1,37 @@
+emp0204_p <- emp0204_p %>% 
+  mutate(hhbus_recode = ifelse(is.na(hhbus), 0 , hhbus),
+         formal_manu_recode = ifelse(is.na(formal_manu), 0 , formal_manu))
+
 ################################################
 # REGRESSION ON FORMALISATION USING PANEL DATA #
 ################################################
 
 etable(list(
-  feols(hhbus ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(hhbus ~ i(as.factor(female), -mccaig_bta) + as.factor(female) | year + hhid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(private ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(formal_manu ~ i(as.factor(female), -mccaig_bta) + as.factor(female) | year + hhid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(fdi ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(hhbus ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(private ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(fdi ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(formal_service ~ i(as.factor(female), -mccaig_bta) + as.factor(female) | year + hhid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh)
 ), tex = T)
 
 etable(list(
-  feols(hhbus == 0 & agri == 1 ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(hhbus ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(hhbus == 0 & manu == 1 ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(formal_manu ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(hhbus == 0 & service == 1 ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
-        weights = ~hhwt,
-        vcov = ~tinh)
-), tex = T)
-
-etable(list(
-  feols(hhbus == 0 & agri == 1 ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(hhbus == 0 & manu == 1 ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(hhbus == 0 & service == 1 ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(formal_service ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh)
 ), tex = T)
@@ -62,51 +39,31 @@ etable(list(
 # Restricting to those who were unemployed or in agriculture in 2002 
 
 etable(list(
-  feols(hhbus ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65 & agri_2002 == 1 | age > 19 & age < 65 & work_2002 == 0),
+  feols(hhbus ~ i(as.factor(female), -mccaig_bta) + as.factor(female) | year + hhid,
+        subset(emp0204_p, agri_2002 == 1 & hhbus_2002 == 1),
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(private ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65 & agri_2002 == 1 | age > 19 & age < 65 & work_2002 == 0),
+  feols(hhbus == 0 & manu == 1 ~ i(as.factor(female), -mccaig_bta) + as.factor(female) | year + hhid,
+        subset(emp0204_p, agri_2002 == 1 & hhbus_2002 == 1),
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(fdi ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65 & agri_2002 == 1 | age > 19 & age < 65 & work_2002 == 0),
+  feols(hhbus == 0 & service == 1 ~ i(as.factor(female), -mccaig_bta) + as.factor(female) | year + hhid,
+        subset(emp0204_p, agri_2002 == 1 & hhbus_2002 == 1),
         weights = ~hhwt,
         vcov = ~tinh)
 ), tex = T)
 
 etable(list(
-  feols(hhbus ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65 & agri_2002 == 1 | age > 19 & age < 65 & work_2002 == 0),
+  feols(hhbus ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+        subset(emp0204_p, agri_2002 == 1 & hhbus_2002 == 1),
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(private ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65 & agri_2002 == 1 | age > 19 & age < 65 & work_2002 == 0),
+  feols(hhbus == 0 & manu == 1 ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+        subset(emp0204_p, agri_2002 == 1 & hhbus_2002 == 1),
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(fdi ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65 & agri_2002 == 1 | age > 19 & age < 65 & work_2002 == 0),
-        weights = ~hhwt,
-        vcov = ~tinh)), tex = T)
-
-# Hours and days
-
-etable(list(
-  feols(log(hours) ~ i(as.factor(female), tariff) | year + ivid,
-        subset(subset(emp0204_p, age > 19 & age < 65), hours > -1),
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(log(hours) ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(subset(emp0204_p, age > 19 & age < 65), days > -1),
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(log(days) ~ i(as.factor(female), tariff) | year + ivid,
-        subset(subset(emp0204_p, age > 19 & age < 65), hours > -1),
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(log(days) ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(subset(emp0204_p, age > 19 & age < 65), days > -1),
+  feols(hhbus == 0 & service == 1 ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+        subset(emp0204_p, agri_2002 == 1 & hhbus_2002 == 1),
         weights = ~hhwt,
         vcov = ~tinh)
 ), tex = T)
@@ -116,74 +73,74 @@ etable(list(
 #########################################
 
 etable(list(
-  feols(log(rlinc) ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(log(rlinc) ~ i(as.factor(female), mccaig_bta) | year + ivid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(rlinc) ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(log(rlinc) ~ i(as.factor(female), mccaig_bta) | year + ivid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(rlinc) ~ i(as.factor(female), tariff) + as.factor(female) | year + hhid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(log(rlinc) ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(rlinc) ~ i(as.factor(female), tariff) + as.factor(female) | year + hhid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(log(rlinc) ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh)
 ), tex = T)
 
 etable(list(
   feols(log(rlinc) ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
   feols(log(rlinc) ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
   feols(log(rlinc) ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
-        subset(emp0204_p, age > 19 & age < 65),
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
   feols(log(rlinc) ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
-        subset(emp0204_p, age > 19 & age < 65),
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh)
 ), tex = T)
 
 etable(list(
-  feols(log(imputed_income) ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(log(imputed_income) ~ i(as.factor(female), mccaig_bta) | year + ivid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(imputed_income) ~ i(as.factor(female), tariff) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(log(imputed_income) ~ i(as.factor(female), mccaig_bta) | year + ivid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(imputed_income) ~ i(as.factor(female), tariff) + as.factor(female) | year + hhid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(log(imputed_income) ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
-  feols(log(imputed_income) ~ i(as.factor(female), tariff) + as.factor(female) | year + hhid,
-        subset(emp0204_p, age > 19 & age < 65),
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(log(imputed_income) ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+  feols(log(imputed_income) ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
   feols(log(imputed_income) ~ i(as.factor(female), tariff_f) | year + ivid,
-        subset(emp0204_p, age > 19 & age < 65),
+        emp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(log(imputed_income) ~ i(as.factor(female), tariff_f) | year + ivid,
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
   feols(log(imputed_income) ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
-        subset(emp0204_p, age > 19 & age < 65),
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
   feols(log(imputed_income) ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
-        subset(emp0204_p, age > 19 & age < 65),
+        emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh)
 ), tex = T)
