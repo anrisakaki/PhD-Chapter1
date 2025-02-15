@@ -51,16 +51,13 @@ provtariffs02 <- provtariffs %>%
   rename(tinh_old = tinh,
          tariff = preprov_tariff,
          tariff_f = preprov_tariff_f) %>% 
-  left_join(tariff02_mccaig, by = "tinh_old") %>% 
-  mutate(year = 2002)
+  left_join(tariff02_mccaig, by = "tinh_old") 
 
 provtariffs04 <- provtariffs %>%
   select(tinh, postprov_tariff, postprov_tariff_f) %>% 
   rename(tinh_old = tinh,
          tariff = postprov_tariff,
          tariff_f = postprov_tariff_f) %>% 
-  left_join(tariff04_mccaig, by = "tinh_old") %>% 
-  mutate(year = 2004)
+  left_join(tariff04_mccaig, by = "tinh_old") 
 
 bta0204 <- bind_rows(provtariffs02, provtariffs04)
-
