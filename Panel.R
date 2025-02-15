@@ -16,6 +16,20 @@ panel0204 <- ho1_04 %>%
   mutate(hhid = cur_group_id()) %>% 
   ungroup()
 
+# 2002 - 2006
+
+panel0406 <- ttchung_06 %>% 
+  select(tinh, huyen, xa, hoso, tinh04, huyen04, xa04, hoso04) %>% 
+  filter(!is.na(hoso04)) %>% 
+  rename(tinh06 = tinh, huyen06 = huyen, xa06 = xa, hoso06 = hoso)
+
+panel0206 <- inner_join(panel0204, panel0406, by = c("tinh" = "tinh04", "huyen" = "huyen04", "xa" = "xa04", "hoso" = "hoso04")) %>% 
+  distinct() %>% 
+  select(-c(tinh, huyen, xa, hoso)) %>%  
+  group_by(tinh02, huyen02, xa02, hoso02, tinh06, huyen06, xa06, hoso06) %>%
+  mutate(hhid = cur_group_id()) %>%
+  ungroup()
+
 ###########################################
 # SETTING UP INDIVIDUAL PANEL IDENTIFIERS #
 ###########################################
@@ -55,5 +69,44 @@ ivid04 <- ivid0204_ %>%
 
 ivid0204 <- bind_rows(ivid02, ivid04)
 
+# 2002 - 2006
+
+ivid0406 <- m1b_06 %>% 
+  filter(m1bc6 == 1) %>% 
+  rename(matv04 = m1bc3) %>% 
+  select(tinh, huyen, xa, hoso, m1bc7, matv04) %>% 
+  rename(tinh06 = tinh, huyen06 = huyen, xa06 = xa, hoso06 = hoso, matv06 = m1bc7) %>% 
+  merge(panel0406, by = c("tinh06", "huyen06", "xa06", "hoso06"))
+
+ivid0204_ <- ivid0204_ %>% 
+  rename(tinh04 = tinh,
+         huyen04 = huyen,
+         xa04 = xa,
+         hoso04 = hoso)
+
+ivid0206_ <- merge(ivid0204_, ivid0406, by = c("tinh04", "huyen04", "xa04", "hoso04", "matv04")) %>% 
+  select(-c("tinh04", "huyen04", "xa04", "hoso04", "matv04"))
+
+ivid02_ <- ivid0206_ %>% 
+  select(tinh02, huyen02, xa02, hoso02, matv02, female, hhid, ivid) %>% 
+  rename(tinh = tinh02,
+         huyen = huyen02, 
+         xa = xa02,
+         hoso = hoso02,
+         matv = matv02) %>% 
+  mutate(year = 2002)
+
+ivid06_ <- ivid0206_ %>% 
+  select(tinh06, huyen06, xa06, hoso06, matv06, female, hhid, ivid) %>% 
+  rename(tinh = tinh06,
+         huyen = huyen06, 
+         xa = xa06,
+         hoso = hoso06,
+         matv = matv06) %>% 
+  mutate(year = 2006)
+
+ivid0206 <- bind_rows(ivid02_, ivid06_)
+
 ivid <- c("year", "ky", "tinh", "huyen", "xa", "hoso", "matv", "female")
+ivid_0206 <- c("year", "tinh", "huyen", "xa", "hoso", "matv", "female")
 hhid <- c("tinh", "huyen", "xa", "hoso", "year")
