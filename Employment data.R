@@ -30,7 +30,6 @@ vhlss02 <- list(m1_02, m2_02, m3_02, m5a_02) %>%
          hhbus = ifelse(m3c8 < 3, 1, 0),
          selfagri = ifelse(agri == 1 & hhbus == 1, 1, 0),
          formal = ifelse(m3c8 == 7 | m3c8 == 9, 1, 0),
-         formal = ifelse(work == 0, NA, formal),
          fdi = ifelse(m3c8 == 9, 1, 0),
          private = ifelse(m3c8 == 7, 1, 0),
          female = ifelse(m1c2 == 2, 1, 0),
@@ -48,12 +47,14 @@ vhlss02 <- list(m1_02, m2_02, m3_02, m5a_02) %>%
          xa = xa02,
          diaban = diaban02,
          hoso = hoso02,
-         hhwt = wt75) %>% 
+         hhwt = wt75,
+         ky = qui) %>% 
   provrecode_fn() %>% 
   left_join(provtariffs02, by = "tinh_old") %>% 
   mutate(tariff = tariff*-1,
          tariff_f = tariff_f*-1) %>% 
-  select(tinh, tinh_old, huyen, xa, diaban, hoso, matv, female, age, educ, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, rlinc, rlhhinc, urban, inc_quint, tariff, tariff_f, year, hhwt)
+  select(tinh, tinh_old, huyen, xa, diaban, hoso, matv, ky, female, age, educ, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, 
+         rlinc, rlhhinc, urban, inc_quint, tariff, tariff_f, mccaig_bta, mccaig_bta98, year, hhwt)
 
 # 2004 
 vhlss04 <- full_join(m123a_04, m4a_04, by = c("tinh", "huyen", "diaban", "xa", "hoso", "matv", "ky")) %>%
@@ -71,7 +72,7 @@ vhlss04 <- full_join(m123a_04, m4a_04, by = c("tinh", "huyen", "diaban", "xa", "
          work = ifelse(m4ac2 == 1, 1, 0),
          wage_work = ifelse(m4ac1a == 1, 1, 0),
          housework = ifelse(m4ac26 == 1, 1, 0),
-         married = ifelse(m1ac6 == 1, 1, 0),
+         married = ifelse(m1ac6 == 2, 1, 0),
          female = ifelse(sex == 2, 1, 0),
          agri = ifelse(industry == 1 & work == 1, 1, 0),
          agri = ifelse(work == 0, NA, agri),
@@ -81,15 +82,13 @@ vhlss04 <- full_join(m123a_04, m4a_04, by = c("tinh", "huyen", "diaban", "xa", "
          fdi = ifelse(m4ac10a== 7, 1, 0),
          private = ifelse(m4ac10a == 6, 1, 0),
          divorce = ifelse(m4ac6 == 4, 1, 0),
-         m4ac11 = ifelse(is.na(m4ac11), 0, m4ac11),
-         m4ac12e = ifelse(is.na(m4ac12e), 0, m4ac12e),
          urban = ifelse(urban == 1, 1, 0)) %>% 
   provrecode_fn() %>% 
   left_join(provtariffs04, by = "tinh_old") %>% 
   mutate(tariff = tariff*-1,
          tariff_f = tariff_f*-1) %>% 
-  select(tinh, tinh_old, huyen, xa, diaban, hoso, matv, female, age, educ, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, rlinc, rlhhinc, urban, inc_quint, tariff, tariff_f, year, hhwt)
-
+  select(tinh, tinh_old, huyen, xa, diaban, hoso, matv, ky, female, age, educ, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, 
+         rlinc, rlhhinc, urban, inc_quint, tariff, tariff_f, mccaig_bta, mccaig_bta98, year, hhwt)
 # 2006 
 vhlss06 <- list(m1a_06, m2a_06, m4a_06) %>% 
   reduce(full_join, by = c("tinh", "huyen", "xa", "diaban", "hoso", "matv")) %>% 
@@ -134,8 +133,9 @@ vhlss_fn <- function(i) {
       construction = as.numeric(industry == 45),
       hours = ifelse(work == 1 & hours == 0, NA, hours),
       days = ifelse(work == 1 & days == 0, NA, days),
-      formal_manu = ifelse(manu == 1 & formal == 1, 1, 0),
-      formal_service = ifelse(service == 1 & formal == 1, 1, 0)
+      formal_agri = ifelse(agri == 1 & hhbus == 0, 1, 0),
+      formal_manu = ifelse(manu == 1 & hhbus == 0, 1, 0),
+      formal_service = ifelse(service == 1 & hhbus == 1, 1, 0)
     ) %>%
     mutate(
       Industry = recode(
@@ -212,33 +212,35 @@ vhlss06 <- vhlss_fn(vhlss06)
 vhlss <- bind_rows(vhlss02, vhlss04, vhlss06)
 
 emp0204 <- bind_rows(vhlss02, vhlss04)
-emp0206 <- bind_rows(vhlss02, vhlss06)
 
 ####################
 # Setting up panel #
 ####################
 
-emp0204_p <- bind_rows(vhlss02, vhlss04) %>%
-  merge(ivid0204, by = ivid) %>%
-  group_by(hhid, year) %>%
-  mutate(
-    total_known_income = sum(rlinc, na.rm = TRUE), 
-    count_missing = sum(is.na(rlinc)),  
-    imputed_income = ifelse(is.na(rlinc) & work == 1, (rlhhinc - total_known_income) / count_missing, rlinc)
-  ) %>%
-  ungroup() %>%
-  select(-total_known_income, -count_missing) 
+vhlss02_married <- vhlss02 %>% 
+  filter(married == 1 & age < 65 & age > 15)
+vhlss04_married <- vhlss04 %>% 
+  filter(married == 1 & age < 65 & age > 15)
 
-emp0206_p <- bind_rows(vhlss02, vhlss06) %>%
-  merge(ivid0206, by = ivid) %>%
+balanced_ivid <- bind_rows(vhlss02_married, vhlss04_married) %>%
+  merge(ivid0204, by = ivid) %>%  
+  group_by(ivid) %>%
+  summarise(n_years = n_distinct(year)) %>%
+  filter(n_years == 2) %>%  
+  select(ivid)  
+
+emp0204_p <- bind_rows(vhlss02_married, vhlss04) %>%
+  merge(ivid0204, by = ivid) %>%
+  semi_join(balanced_ivid, by = "ivid") %>%  
   group_by(hhid, year) %>%
   mutate(
     total_known_income = sum(rlinc, na.rm = TRUE), 
     count_missing = sum(is.na(rlinc)),  
-    imputed_income = ifelse(is.na(rlinc) & work == 1, (rlhhinc - total_known_income) / count_missing, rlinc)
+    imputed_income = ifelse(is.na(rlinc) & work == 1 & count_missing > 0, 
+                            (rlhhinc - total_known_income) / count_missing, rlinc)
   ) %>%
   ungroup() %>%
-  select(-total_known_income, -count_missing) 
+  select(-total_known_income, -count_missing)
 
 # Reallocation panel 
 
@@ -246,13 +248,14 @@ reallocation_fn <- function(i){
   i %>% 
     group_by(ivid, year) %>%
     summarise(
-      agri = ifelse(all(is.na(agri)), NA, max(agri, na.rm = TRUE)), 
+      hhbus = ifelse(all(is.na(hhbus)), NA, max(hhbus, na.rm = TRUE)), 
       work = ifelse(all(is.na(work)), NA, max(work, na.rm = TRUE)),
+      agri = ifelse(all(is.na(agri)), NA, max(agri, na.rm = TRUE)),
       .groups = "drop"
     ) %>%
     pivot_wider(
       names_from = year, 
-      values_from = c(agri, work), 
+      values_from = c(hhbus, work, agri), 
       names_sep = "_" 
     ) 
 }
@@ -261,24 +264,11 @@ emp0204_wide <- emp0204_p %>%
   reallocation_fn() %>%
   mutate(
     reallocated = ifelse(
-      (work_2002 == 0 | agri_2002 == 1) & (work_2004 == 1 & agri_2004 == 0), 1, 
-      ifelse(agri_2002 == 0, NA, 0)
-    )  
-  )
-
-emp0206_wide <- emp0206_p %>%
-  reallocation_fn() %>%
-  mutate(
-    reallocated = ifelse(
-      (work_2002 == 0 | agri_2002 == 1) & (work_2006 == 1 & agri_2006 == 0), 1, 
-      ifelse(agri_2002 == 0, NA, 0)
+      (work_2002 == 0 | hhbus_2002 == 1 | agri_2002 == 1) & (work_2004 == 1 & hhbus_2004 == 0), 1, 
+      ifelse(hhbus_2002 == 0, NA, 0)
     )  
   )
 
 emp0204_p <- emp0204_p %>%
-  left_join(emp0204_wide %>% select(ivid, reallocated, agri_2002, work_2002), by = "ivid") %>%
-  mutate(reallocated_recode = ifelse(year == 2002 & !is.na(reallocated), 0, reallocated))
-
-emp0206_p <- emp0206_p %>%
-  left_join(emp0206_wide %>% select(ivid, reallocated, agri_2002, work_2002), by = "ivid") %>%
+  left_join(emp0204_wide %>% select(ivid, reallocated, hhbus_2002, agri_2002, work_2002), by = "ivid") %>%
   mutate(reallocated_recode = ifelse(year == 2002 & !is.na(reallocated), 0, reallocated))
