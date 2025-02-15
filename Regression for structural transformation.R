@@ -1,7 +1,3 @@
-emp0204_p <- emp0204_p %>% 
-  mutate(hhbus_recode = ifelse(is.na(hhbus), 0 , hhbus),
-         formal_manu_recode = ifelse(is.na(formal_manu), 0 , formal_manu))
-
 ################################################
 # REGRESSION ON FORMALISATION USING PANEL DATA #
 ################################################
@@ -64,6 +60,38 @@ etable(list(
         vcov = ~tinh),
   feols(hhbus == 0 & service == 1 ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
         subset(emp0204_p, agri_2002 == 1 & hhbus_2002 == 1),
+        weights = ~hhwt,
+        vcov = ~tinh)
+), tex = T)
+
+# Restricting to those who were in manufacturing in 2002 
+
+etable(list(
+  feols(hhbus ~ i(as.factor(female), -mccaig_bta) + as.factor(female) | year + hhid,
+        subset(emp0204_p, manu_2002 == 1 & hhbus_2002 == 1),
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(hhbus == 0 & manu == 1 ~ i(as.factor(female), -mccaig_bta) + as.factor(female) | year + hhid,
+        subset(emp0204_p, manu_2002 == 1 & hhbus_2002 == 1),
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(hhbus == 0 & service == 1 ~ i(as.factor(female), -mccaig_bta) + as.factor(female) | year + hhid,
+        subset(emp0204_p, manu_2002 == 1 & hhbus_2002 == 1),
+        weights = ~hhwt,
+        vcov = ~tinh)
+), tex = T)
+
+etable(list(
+  feols(hhbus ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+        subset(emp0204_p, manu_2002 == 1 & hhbus_2002 == 1),
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(hhbus == 0 & manu == 1 ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+        subset(emp0204_p, manu_2002 == 1 & hhbus_2002 == 1),
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(hhbus == 0 & service == 1 ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+        subset(emp0204_p, manu_2002 == 1 & hhbus_2002 == 1),
         weights = ~hhwt,
         vcov = ~tinh)
 ), tex = T)
