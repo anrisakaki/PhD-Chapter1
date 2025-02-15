@@ -12,6 +12,7 @@ library(kableExtra)
 library(ggeffects)
 library(xtable)
 library(ggstats)
+library(survey)
 
 rm(list=ls())
 
@@ -20,7 +21,7 @@ setwd("C:/Users/Anri Sakakibara/OneDrive/PhD Political Economy/VHLSS Data/")
 
 ## Tariff data 
 tariff <- read_dta("2001 US AVE tariffs 2-digit ISIC industry weight all.dta")
-provtariff <- read_dta("JIE final dataset.dta")
+provtariff_mccaig <- read_dta("JIE final dataset.dta")
 
 ## Map data 
 vnmap0 <- read_sf("Full VHLSS/Chloropleth Maps/VNShapefile/gadm36_VNM_0.shp")
