@@ -14,6 +14,8 @@ provrecode_fn <- function(i){
 
 # 2002 
 
+traded <- traded %>% mutate(isic2 = as.double(isic2))
+
 vhlss02 <- list(m1_02, m2_02, m3_02, m5a_02) %>% 
   reduce(full_join, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02",  "tinh", "xa", "hoso", "matv", "qui", "phieu")) %>% 
   left_join(inc_02, by = c("tinh02", "huyen02", "xa02", "diaban02", "hoso02", "tinh", "xa", "hoso", "qui")) %>% 
@@ -55,7 +57,9 @@ vhlss02 <- list(m1_02, m2_02, m3_02, m5a_02) %>%
          tariff_f = tariff_f*-1,
          year = 2002) %>% 
   select(tinh, tinh_old, huyen, xa, diaban, hoso, matv, ky, female, age, educ, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, 
-         rlinc, rlhhinc, urban, inc_quint, tariff, tariff_f, mccaig_bta, mccaig_bta98, year, hhwt)
+         rlinc, rlhhinc, urban, inc_quint, tariff, tariff_f, mccaig_bta, mccaig_bta98, year, hhwt) %>% 
+  left_join(traded, by = c("industry" = "isic2")) %>% 
+  mutate(traded = ifelse(is.na(traded) & work == 1, 0, traded))
 
 # 2004 
 vhlss04 <- full_join(m123a_04, m4a_04, by = c("tinh", "huyen", "diaban", "xa", "hoso", "matv", "ky")) %>%
@@ -90,7 +94,9 @@ vhlss04 <- full_join(m123a_04, m4a_04, by = c("tinh", "huyen", "diaban", "xa", "
          tariff_f = tariff_f*-1,
          year = 2004) %>% 
   select(tinh, tinh_old, huyen, xa, diaban, hoso, matv, ky, female, age, educ, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, 
-         rlinc, rlhhinc, urban, inc_quint, tariff, tariff_f, mccaig_bta, mccaig_bta98, year, hhwt)
+         rlinc, rlhhinc, urban, inc_quint, tariff, tariff_f, mccaig_bta, mccaig_bta98, year, hhwt) %>% 
+  left_join(traded, by = c("industry" = "isic2")) %>% 
+  mutate(traded = ifelse(is.na(traded) & work == 1, 0, traded))
 # 2006 
 vhlss06 <- list(m1a_06, m2a_06, m4a_06) %>% 
   reduce(full_join, by = c("tinh", "huyen", "xa", "diaban", "hoso", "matv")) %>% 
@@ -123,7 +129,9 @@ vhlss06 <- list(m1a_06, m2a_06, m4a_06) %>%
          tariff_f = tariff_f*-1,
          year = 2006) %>% 
   select(tinh, tinh_old, huyen, xa, diaban, hoso, matv, female, age, educ, married, work, industry, agri, selfagri, hhbus, formal, private, fdi, inc, days, hours, 
-         rlinc, rlhhinc, urban, inc_quint, tariff, tariff_f, mccaig_bta, mccaig_bta98, year, hhwt)
+         rlinc, rlhhinc, urban, inc_quint, tariff, tariff_f, mccaig_bta, mccaig_bta98, year, hhwt) %>% 
+  left_join(traded, by = c("industry" = "isic2")) %>% 
+  mutate(traded = ifelse(is.na(traded) & work == 1, 0, traded))
 
 #########################################################
 # CREATING EMPLOMYMENT DUMMIES AND LABELLING INDUSTRIES #
@@ -247,16 +255,18 @@ vhlss02_married <- vhlss02 %>%
   filter(married == 1 & age < 65 & age > 15)
 vhlss04_married <- vhlss04 %>% 
   filter(age < 65 & age > 15)
-vhlss06_married <- vhlss06 %>% 
-  filter(married == 1 & age < 65 & age > 15) %>% 
-  mutate(diaban = as.numeric(diaban))
+
+inc_02 <- vhlss02 %>% 
+  filter(!is.na(rlinc) & married == 1 & age < 65 & age > 15)
+inc_04 <- vhlss04 %>% 
+  filter(!is.na(rlinc) & age < 65 & age > 15)
 
 balanced_ivid <- bind_rows(vhlss02_married, vhlss04_married) %>%
   merge(ivid0204, by = ivid) %>%  
   balanced_panel_fn()
 
-balanced_ivid0206 <- bind_rows(vhlss02_married, vhlss06_married) %>%
-  merge(ivid0206, by = ivid_0206) %>%  
+balanced_inc <- bind_rows(inc_02, inc_04) %>%
+  merge(ivid0204, by = ivid) %>%  
   balanced_panel_fn()
 
 emp0204_p <- bind_rows(vhlss02_married, vhlss04) %>%
@@ -264,10 +274,9 @@ emp0204_p <- bind_rows(vhlss02_married, vhlss04) %>%
   semi_join(balanced_ivid, by = "ivid") %>%  
   panel_fn()
 
-emp0206_p <- bind_rows(vhlss02_married, vhlss06) %>%
-  merge(ivid0206, by = ivid_0206) %>%
-  semi_join(balanced_ivid, by = "ivid") %>%  
-  panel_fn()
+inc0204_p <- bind_rows(inc_02, inc_04) %>%
+  merge(ivid0204, by = ivid) %>%
+  semi_join(balanced_inc, by = "ivid")
 
 # Reallocation panel 
 
@@ -299,4 +308,5 @@ emp0204_wide <- emp0204_p %>%
 
 emp0204_p <- emp0204_p %>%
   left_join(emp0204_wide %>% select(ivid, reallocated, hhbus_2002, agri_2002, manu_2002, work_2002), by = "ivid") %>%
-  mutate(reallocated_recode = ifelse(year == 2002 & !is.na(reallocated), 0, reallocated))
+  mutate(reallocated_recode = ifelse(year == 2002 & !is.na(reallocated), 0, reallocated),
+         mccaig_bta = mccaig_bta*-1)
