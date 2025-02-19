@@ -1,69 +1,58 @@
+emp0204_p <- emp0204_p %>% 
+  mutate(private_manu = ifelse(private == 1 & manu == 1, 1, 0),
+         fdi_manu = ifelse(fdi == 1 & manu == 1, 1, 0),
+         private_manu = ifelse(is.na(private_manu), 0, private_manu),
+         fdi_manu = ifelse(is.na(fdi_manu), 0, fdi_manu),
+         hhbus_recode = ifelse(is.na(hhbus), 0, hhbus))
+
 ################################################
 # REGRESSION ON FORMALISATION USING PANEL DATA #
 ################################################
 
 etable(list(
   # All observations 
-  feols(manu ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
+  feols(hhbus ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
+        emp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(private ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
+        emp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(fdi ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
+        emp0204_p,
+        weights = ~hhwt,
+        vcov = ~tinh),
+  feols(private == 1 & manu == 1 ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
         emp0204_p,
         weights = ~hhwt,
         vcov = ~tinh),
   feols(fdi == 1 & manu == 1 ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
         emp0204_p,
-        weights = ~hhwt,
-        vcov = ~tinh),
-  
-  # Agriculture in 2002 
-  feols(manu ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
-        subset(emp0204_p, agri_2002 == 1),
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(fdi == 1 & manu == 1 ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
-        subset(emp0204_p, agri_2002 == 1),
-        weights = ~hhwt,
-        vcov = ~tinh),
-  
-  # Manufacturing in 2002 
-  feols(manu ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
-        subset(emp0204_p, manu_2002 == 1),
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(fdi == 1 & manu == 1 ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
-        subset(emp0204_p, manu_2002 == 1),
         weights = ~hhwt,
         vcov = ~tinh)
 ), tex = T)
 
 etable(list(
-  # All observations 
-  feols(manu ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
-        emp0204_p,
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(fdi == 1 & manu == 1 ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
-        emp0204_p,
-        weights = ~hhwt,
-        vcov = ~tinh),
-  
   # Agriculture in 2002 
-  feols(manu ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+  feols(private == 1 & manu == 1 ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
         subset(emp0204_p, agri_2002 == 1),
         weights = ~hhwt,
-        vcov = ~tinh),
-  feols(fdi == 1 & manu == 1 ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+        vcov = ~diaban),
+  feols(fdi == 1 & manu == 1 ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
         subset(emp0204_p, agri_2002 == 1),
         weights = ~hhwt,
-        vcov = ~tinh),
+        vcov = ~diaban),
   
   # Manufacturing in 2002 
-  feols(manu ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+  feols(private == 1 & manu == 1 ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
         subset(emp0204_p, manu_2002 == 1),
         weights = ~hhwt,
-        vcov = ~tinh),
-  feols(fdi == 1 & manu == 1 ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
+        vcov = ~diaban),
+  feols(fdi == 1 & manu == 1 ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
         subset(emp0204_p, manu_2002 == 1),
         weights = ~hhwt,
-        vcov = ~tinh)
+        vcov = ~diaban)
 ), tex = T)
 
 #########################################
@@ -71,23 +60,13 @@ etable(list(
 #########################################
 
 etable(list(
-  feols(log(rlinc) ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
+  feols(log(rlinc) ~ i(as.factor(female), -mccaig_bta) + as.factor(female) | year + hhid,
         inc0204_p,
         weights = ~hhwt,
-        vcov = ~tinh),
-  feols(log(rlinc) ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
-        inc0204_p,
+        vcov = ~diaban),
+  feols(log(imputed_income) ~ i(as.factor(female), -mccaig_bta) + as.factor(female) | year + hhid,
+        emp0204_p,
         weights = ~hhwt,
-        vcov = ~tinh)
+        vcov = ~diaban)
 ), tex = T)
 
-etable(list(
-  feols(log(imputed_income) ~ i(as.factor(female), mccaig_bta) | year + ivid,
-        emp0204_p,
-        weights = ~hhwt,
-        vcov = ~tinh),
-  feols(log(imputed_income) ~ i(as.factor(female), tariff_f) + as.factor(female) | year + hhid,
-        emp0204_p,
-        weights = ~hhwt,
-        vcov = ~tinh)
-), tex = T)
