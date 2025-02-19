@@ -36,21 +36,21 @@ etable(list(
 etable(list(
   # Agriculture in 2002 
   feols(private == 1 & manu == 1 ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
-        subset(emp0204_p, agri_2002 == 1),
+        subset(emp0204_p, agri_2002 == 1 & hhbus_2002 == 1),
         weights = ~hhwt,
         vcov = ~diaban),
   feols(fdi == 1 & manu == 1 ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
-        subset(emp0204_p, agri_2002 == 1),
+        subset(emp0204_p, agri_2002 == 1 & hhbus_2002 == 1),
         weights = ~hhwt,
         vcov = ~diaban),
   
   # Manufacturing in 2002 
   feols(private == 1 & manu == 1 ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
-        subset(emp0204_p, manu_2002 == 1),
+        subset(emp0204_p, manu_2002 == 1 & hhbus_2002 == 1),
         weights = ~hhwt,
         vcov = ~diaban),
   feols(fdi == 1 & manu == 1 ~ i(as.factor(female), mccaig_bta) + as.factor(female) | year + hhid,
-        subset(emp0204_p, manu_2002 == 1),
+        subset(emp0204_p, manu_2002 == 1 & hhbus_2002 == 1),
         weights = ~hhwt,
         vcov = ~diaban)
 ), tex = T)
