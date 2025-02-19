@@ -62,7 +62,14 @@ vhlss02 <- list(m1_02, m2_02, m3_02, m5a_02) %>%
   mutate(traded = ifelse(is.na(traded) & work == 1, 0, traded))
 
 # 2004 
+diaban04 <- m123a_04 %>%
+  filter(!is.na(diaban)) %>% 
+  select(tinh, huyen, diaban, xa) %>% 
+  distinct()
+
 vhlss04 <- full_join(m123a_04, m4a_04, by = c("tinh", "huyen", "diaban", "xa", "hoso", "matv", "ky")) %>%
+  select(-diaban) %>% 
+  left_join(diaban04, by = c("tinh", "huyen", "xa")) %>% 
   left_join(inc_04, by = c("tinh", "huyen", "xa", "hoso")) %>% 
   rename(age = m1ac5,
          industry = m4ac5,
@@ -97,6 +104,7 @@ vhlss04 <- full_join(m123a_04, m4a_04, by = c("tinh", "huyen", "diaban", "xa", "
          rlinc, rlhhinc, urban, inc_quint, tariff, tariff_f, mccaig_bta, mccaig_bta98, year, hhwt) %>% 
   left_join(traded, by = c("industry" = "isic2")) %>% 
   mutate(traded = ifelse(is.na(traded) & work == 1, 0, traded))
+
 # 2006 
 vhlss06 <- list(m1a_06, m2a_06, m4a_06) %>% 
   reduce(full_join, by = c("tinh", "huyen", "xa", "diaban", "hoso", "matv")) %>% 
@@ -308,5 +316,10 @@ emp0204_wide <- emp0204_p %>%
 
 emp0204_p <- emp0204_p %>%
   left_join(emp0204_wide %>% select(ivid, reallocated, hhbus_2002, agri_2002, manu_2002, work_2002), by = "ivid") %>%
+  mutate(reallocated_recode = ifelse(year == 2002 & !is.na(reallocated), 0, reallocated),
+         mccaig_bta = mccaig_bta*-1)
+
+inc0204_p <- inc0204_p %>%
+  left_join(emp0204_wide %>% select(ivid, reallocated, agri_2002, manu_2002), by = "ivid") %>%
   mutate(reallocated_recode = ifelse(year == 2002 & !is.na(reallocated), 0, reallocated),
          mccaig_bta = mccaig_bta*-1)
